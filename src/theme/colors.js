@@ -9,7 +9,7 @@ export const colors = {
   // Cards
   cardBackground: '#1A1A1A',
   progressBackground: '#333333',
-  
+
   // Header
   headerBackground: '#2C2C2C',
   headerText: '#FFFFFF',
@@ -41,4 +41,9 @@ export const colors = {
   inputTextError: '#FF4C4C',
   inputIcon: '#FFFFFF',
   inputPlaceholder: '#B3B3B3',
+
+  // Toast
+  toastBackground: '#1A1A1A',
+  toastText: '#FFFFFF',
+  toastBorder: '#FF4C4C',
 };

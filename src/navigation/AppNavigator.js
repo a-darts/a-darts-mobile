@@ -4,7 +4,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { LoginScreen } from '../screens/LoginScreen';
 import { HomeScreen } from '../screens/HomeScreen';
 import { ConfigX01Screen } from '../screens/ConfigX01Screen';
-import { GameScreen } from '../screens/GameScreen';
+import { GameX01Screen } from '../screens/GameX01Screen';
 import { theme } from '../theme/theme';
 
 const Stack = createNativeStackNavigator();
@@ -40,8 +40,8 @@ export const AppNavigator = () => {
           options={{ title: 'Nueva partida - x01' }}
         />
         <Stack.Screen
-          name="GameScreen"
-          component={GameScreen}
+          name="GameX01Screen"
+          component={GameX01Screen}
           options={{ title: 'Partida - x01' }}
         />
       </Stack.Navigator>

@@ -37,7 +37,7 @@ export const ConfigX01Screen = ({ navigation }) => {
 
     try {
       await AsyncStorage.setItem('@current_match_config', JSON.stringify(matchConfig));
-      navigation.navigate('GameScreen');
+      navigation.navigate('GameX01Screen');
     } catch (error) {
       console.error('Error saving match config:', error);
     }
