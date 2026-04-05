@@ -2,11 +2,16 @@ import React, { useState } from 'react';
 import { View, StyleSheet, Text, Image } from 'react-native';
 import { Button } from '../components/Button';
 import { TextInput } from '../components/TextInput';
+import { Tabs } from '../components/Tabs';
 import { theme } from '../theme/theme';
 
 export const HomeScreen = ({ navigation }) => {
+  const [activeTab, setActiveTab] = useState(0);
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
+  const isLogin = activeTab === 0;
 
   return (
     <View style={styles.container}>
@@ -19,16 +24,24 @@ export const HomeScreen = ({ navigation }) => {
         />
       </View>
 
-      <View style={styles.tabsContainer}>
-        <View style={styles.activeTab}>
-          <Text style={styles.activeTabText}>Iniciar sesión</Text>
-        </View>
-        <View style={styles.inactiveTab}>
-          <Text style={styles.inactiveTabText}>Registrarse</Text>
-        </View>
-      </View>
+      <Tabs
+        options={['Iniciar sesión', 'Registrarse']}
+        activeIndex={activeTab}
+        onChange={setActiveTab}
+      />
 
       <View style={styles.form}>
+        {!isLogin && (
+          <TextInput
+            label="Nombre"
+            placeholder="Introduce tu nombre"
+            iconName="user"
+            value={name}
+            onChangeText={setName}
+            autoCapitalize="words"
+          />
+        )}
+
         <TextInput
           label="Correo"
           placeholder="Introduce el correo"
@@ -50,7 +63,7 @@ export const HomeScreen = ({ navigation }) => {
 
         <View style={styles.buttonContainer}>
           <Button
-            title="Iniciar sesión"
+            title={isLogin ? "Iniciar sesión" : "Registrarse"}
             onPress={() => navigation.navigate('Details', { name: email })}
           />
 
@@ -79,7 +92,7 @@ const styles = StyleSheet.create({
   },
   header: {
     alignItems: 'center',
-    marginVertical: 40,
+    marginVertical: 16,
   },
   title: {
     fontFamily: theme.typography.fontFamily.bold,
@@ -91,32 +104,7 @@ const styles = StyleSheet.create({
     height: 50,
     marginTop: 10,
   },
-  tabsContainer: {
-    flexDirection: 'row',
-    marginBottom: 30,
-    borderBottomWidth: 1,
-    borderBottomColor: theme.colors.tabInactiveBorder,
-  },
-  activeTab: {
-    flex: 1,
-    paddingVertical: 12,
-    borderBottomWidth: 2,
-    borderBottomColor: theme.colors.tabActiveBorder,
-    alignItems: 'center',
-  },
-  inactiveTab: {
-    flex: 1,
-    paddingVertical: 12,
-    alignItems: 'center',
-  },
-  activeTabText: {
-    fontFamily: theme.typography.fontFamily.semiBold,
-    color: theme.colors.text,
-  },
-  inactiveTabText: {
-    fontFamily: theme.typography.fontFamily.medium,
-    color: theme.colors.textSecondary,
-  },
+
   form: {
     flex: 1,
   },
