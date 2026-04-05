@@ -83,7 +83,7 @@ export const HomeScreen = ({ route, navigation }) => {
         <Button
           title="Nueva Partida"
           iconName="target"
-          onPress={() => { }}
+          onPress={() => navigation.navigate('ConfigX01')}
         />
       </View>
 
@@ -118,20 +118,6 @@ const styles = StyleSheet.create({
     paddingVertical: theme.spacing.xl,
     marginBottom: theme.spacing.md,
   },
-  levelBadge: {
-    position: 'absolute',
-    top: 135, // Adjust according to avatar size
-    backgroundColor: theme.colors.buttonPrimaryBackground,
-    paddingHorizontal: 12,
-    paddingVertical: 4,
-    borderRadius: theme.borderRadius.round,
-    zIndex: 10,
-  },
-  levelText: {
-    fontFamily: theme.typography.fontFamily.bold,
-    fontSize: theme.typography.sizes.xs,
-    color: theme.colors.buttonPrimaryText,
-  },
   usernameText: {
     fontFamily: theme.typography.fontFamily.bold,
     fontSize: theme.typography.sizes.xl,
@@ -141,32 +127,6 @@ const styles = StyleSheet.create({
   },
   usernameTextGuest: {
     marginTop: theme.spacing.sm,
-  },
-  xpContainer: {
-    width: '100%',
-    marginTop: theme.spacing.lg,
-    paddingHorizontal: theme.spacing.md,
-  },
-  xpBarBackground: {
-    height: 4,
-    backgroundColor: theme.colors.progressBackground,
-    borderRadius: 2,
-    width: '100%',
-    marginBottom: theme.spacing.xs,
-  },
-  xpBarFill: {
-    height: '100%',
-    backgroundColor: theme.colors.buttonPrimaryBackground,
-    borderRadius: 2,
-  },
-  xpTextContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  xpText: {
-    fontFamily: theme.typography.fontFamily.regular,
-    fontSize: 10, // slightly smaller
-    color: theme.colors.textSecondary,
   },
 
   // Stats

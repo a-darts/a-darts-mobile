@@ -3,10 +3,14 @@ import { TextInput as RNTextInput, StyleSheet, View, Text } from 'react-native';
 import { theme } from '../theme/theme';
 import { Feather } from '@expo/vector-icons';
 
-export const TextInput = ({ label, error, iconName, ...props }) => {
+export const TextInput = ({ description, label, placeholder, error, iconName, ...props }) => {
+  // If user passes label instead of description, we map it to placeholder based on the request.
+  const topText = description;
+  const fieldPlaceholder = placeholder || label;
+
   return (
     <View style={styles.container}>
-      {(label || iconName) && (
+      {topText && (
         <View style={styles.labelContainer}>
           {iconName && (
             <Feather
@@ -16,12 +20,13 @@ export const TextInput = ({ label, error, iconName, ...props }) => {
               style={styles.labelIcon}
             />
           )}
-          {label && <Text style={styles.label}>{label}</Text>}
+          <Text style={styles.label}>{topText}</Text>
         </View>
       )}
       <View style={[styles.inputContainer, error && styles.errorInputContainer]}>
         <RNTextInput
           style={styles.input}
+          placeholder={fieldPlaceholder}
           placeholderTextColor={theme.colors.inputPlaceholder}
           {...props}
         />
@@ -45,7 +50,7 @@ const styles = StyleSheet.create({
   },
   label: {
     fontFamily: theme.typography.fontFamily.regular,
-    fontSize: theme.typography.sizes.sm,
+    fontSize: theme.typography.sizes.md,
     color: theme.colors.inputLabel,
   },
   inputContainer: {

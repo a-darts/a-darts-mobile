@@ -33,7 +33,7 @@ export const LoginScreen = ({ navigation }) => {
       <View style={styles.form}>
         {!isLogin && (
           <TextInput
-            label="Nombre"
+            description="Nombre"
             placeholder="Introduce tu nombre"
             iconName="user"
             value={name}
@@ -43,7 +43,7 @@ export const LoginScreen = ({ navigation }) => {
         )}
 
         <TextInput
-          label="Correo"
+          description="Correo"
           placeholder="Introduce el correo"
           iconName="mail"
           value={email}
@@ -53,7 +53,7 @@ export const LoginScreen = ({ navigation }) => {
         />
 
         <TextInput
-          label="Contraseña"
+          description="Contraseña"
           placeholder="Introduce la contraseña"
           iconName="lock"
           value={password}

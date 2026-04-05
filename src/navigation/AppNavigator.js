@@ -3,6 +3,8 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { LoginScreen } from '../screens/LoginScreen';
 import { HomeScreen } from '../screens/HomeScreen';
+import { ConfigX01Screen } from '../screens/ConfigX01Screen';
+import { GameScreen } from '../screens/GameScreen';
 import { theme } from '../theme/theme';
 
 const Stack = createNativeStackNavigator();
@@ -31,6 +33,16 @@ export const AppNavigator = () => {
           name="HomeScreen"
           component={HomeScreen}
           options={{ title: 'scoreo' }}
+        />
+        <Stack.Screen
+          name="ConfigX01"
+          component={ConfigX01Screen}
+          options={{ title: 'Nueva partida - x01' }}
+        />
+        <Stack.Screen
+          name="GameScreen"
+          component={GameScreen}
+          options={{ title: 'Partida - x01' }}
         />
       </Stack.Navigator>
     </NavigationContainer>
