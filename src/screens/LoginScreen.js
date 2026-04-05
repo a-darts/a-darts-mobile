@@ -5,7 +5,7 @@ import { TextInput } from '../components/TextInput';
 import { Tabs } from '../components/Tabs';
 import { theme } from '../theme/theme';
 
-export const HomeScreen = ({ navigation }) => {
+export const LoginScreen = ({ navigation }) => {
   const [activeTab, setActiveTab] = useState(0);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -76,7 +76,7 @@ export const HomeScreen = ({ navigation }) => {
           <Button
             title="Entrar como invitado"
             variant="secondary"
-            onPress={() => { }}
+            onPress={() => navigation.navigate('Details')}
           />
         </View>
       </View>
