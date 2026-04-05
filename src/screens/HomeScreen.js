@@ -188,7 +188,7 @@ const styles = StyleSheet.create({
   },
   statValue: {
     fontFamily: theme.typography.fontFamily.bold,
-    fontSize: 32, // roughly theme.typography.sizes.xxxl
+    fontSize: theme.typography.sizes.xxl,
     color: theme.colors.text,
   },
 
