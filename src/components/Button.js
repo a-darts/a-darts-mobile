@@ -1,8 +1,9 @@
 import React from 'react';
-import { TouchableOpacity, Text, StyleSheet } from 'react-native';
+import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
+import { Feather } from '@expo/vector-icons';
 import { theme } from '../theme/theme';
 
-export const Button = ({ title, onPress, variant = 'primary', style }) => {
+export const Button = ({ title, onPress, variant = 'primary', style, iconName }) => {
   const isPrimary = variant === 'primary';
 
   return (
@@ -15,12 +16,22 @@ export const Button = ({ title, onPress, variant = 'primary', style }) => {
       onPress={onPress}
       activeOpacity={0.8}
     >
-      <Text style={[
-        styles.text,
-        isPrimary ? styles.primaryText : styles.secondaryText
-      ]}>
-        {title.toUpperCase()}
-      </Text>
+      <View style={styles.contentContainer}>
+        <Text style={[
+          styles.text,
+          isPrimary ? styles.primaryText : styles.secondaryText,
+          iconName && { marginRight: theme.spacing.sm }
+        ]}>
+          {title.toUpperCase()}
+        </Text>
+        {iconName && (
+          <Feather 
+            name={iconName} 
+            size={20} 
+            color={isPrimary ? theme.colors.buttonPrimaryIcon : theme.colors.buttonSecondaryIcon} 
+          />
+        )}
+      </View>
     </TouchableOpacity>
   );
 };
@@ -30,9 +41,12 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
     paddingHorizontal: theme.spacing.lg,
     borderRadius: 14,
+    width: '100%',
+  },
+  contentContainer: {
+    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    width: '100%',
   },
   primaryButton: {
     backgroundColor: theme.colors.buttonPrimaryBackground,

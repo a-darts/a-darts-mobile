@@ -64,7 +64,7 @@ export const LoginScreen = ({ navigation }) => {
         <View style={styles.buttonContainer}>
           <Button
             title={isLogin ? "Iniciar sesión" : "Registrarse"}
-            onPress={() => navigation.navigate('Details', { name: email })}
+            onPress={() => navigation.navigate('HomeScreen', { name: email })}
           />
 
           <View style={styles.separatorContainer}>
@@ -76,7 +76,7 @@ export const LoginScreen = ({ navigation }) => {
           <Button
             title="Entrar como invitado"
             variant="secondary"
-            onPress={() => navigation.navigate('Details')}
+            onPress={() => navigation.navigate('HomeScreen')}
           />
         </View>
       </View>

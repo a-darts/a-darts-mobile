@@ -6,6 +6,10 @@ export const colors = {
   activityIndicator: '#BFE55F',
   line: '#4C4C4C',
 
+  // Cards
+  cardBackground: '#1A1A1A',
+  progressBackground: '#333333',
+  
   // Header
   headerBackground: '#2C2C2C',
   headerText: '#FFFFFF',

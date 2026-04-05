@@ -2,7 +2,7 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { LoginScreen } from '../screens/LoginScreen';
-import { DetailsScreen } from '../screens/DetailsScreen';
+import { HomeScreen } from '../screens/HomeScreen';
 import { theme } from '../theme/theme';
 
 const Stack = createNativeStackNavigator();
@@ -28,9 +28,9 @@ export const AppNavigator = () => {
           options={{ title: 'scoreo' }}
         />
         <Stack.Screen
-          name="Details"
-          component={DetailsScreen}
-          options={{ title: 'Details' }}
+          name="HomeScreen"
+          component={HomeScreen}
+          options={{ title: 'scoreo' }}
         />
       </Stack.Navigator>
     </NavigationContainer>
