@@ -7,39 +7,49 @@ import { ButtonGroup } from '../components/ButtonGroup';
 import { Stepper } from '../components/Stepper';
 import { Dropdown } from '../components/Dropdown';
 import { theme } from '../theme/theme';
+import { MatchX01Config } from '../domain/models/MatchX01Config';
+import { IMatchX01Config, GameTypes, GamesX01 } from '../domain/Ports';
 
-const GAME_OPTIONS = [
-  { label: '501', value: '501' },
-  { label: '301', value: '301' },
-  { label: '170', value: '170' },
+const GAME_OPTIONS: { label: string; value: GamesX01 }[] = [
+  { label: '501', value: 501 },
+  { label: '301', value: 301 },
+  { label: '170', value: 170 },
 ];
 
 const TYPE_OPTIONS = [
-  { label: 'A ganar', value: 'win' },
-  { label: 'Al mejor de', value: 'bestOf' },
+  { label: 'A ganar', value: GameTypes.FirstTo },
+  { label: 'Al mejor de', value: GameTypes.BestOf },
 ];
 
 export const ConfigX01Screen = ({ navigation }) => {
-  const [game, setGame] = useState('501');
-  const [type, setType] = useState('win');
+  const [game, setGame] = useState<GamesX01>(501);
+  const [type, setType] = useState<GameTypes>(GameTypes.FirstTo);
   const [numLegs, setNumLegs] = useState(1);
   const [numSets, setNumSets] = useState(1);
   const [playername, setPlayername] = useState('');
 
   const handlePlay = async () => {
-    const matchConfig = {
-      game,
-      type,
-      numLegs,
-      numSets,
-      playername: playername.trim() || 'Jugador 1'
-    };
-
     try {
-      await AsyncStorage.setItem('@current_match_config', JSON.stringify(matchConfig));
+      // 1. Instanciamos el objeto de dominio
+      const config = new MatchX01Config(
+        game,
+        type,
+        numSets,
+        numLegs,
+        1, // MIRAR / CAMBIAR
+        [playername.trim() || 'Jugador 1']
+      );
+
+      // 2. Guardamos la versión "plana" (DTO)
+      await AsyncStorage.setItem(
+        '@current_match_config',
+        JSON.stringify(config.toDTO())
+      );
+
       navigation.navigate('GameX01Screen');
     } catch (error) {
-      console.error('Error saving match config:', error);
+      console.error('Configuración inválida:', error.message);
+      // MIRAR: mostrar un Alert.alert("Error", error.message)
     }
   };
 
@@ -52,7 +62,7 @@ export const ConfigX01Screen = ({ navigation }) => {
           <ButtonGroup
             options={GAME_OPTIONS}
             selectedValue={game}
-            onSelect={setGame}
+            onSelect={(val: GamesX01) => setGame(val)}
           />
         </View>
 
@@ -61,7 +71,7 @@ export const ConfigX01Screen = ({ navigation }) => {
           <Dropdown
             options={TYPE_OPTIONS}
             selectedValue={type}
-            onSelect={setType}
+            onSelect={(val: GameTypes) => setType(val)}
           />
 
           <View style={styles.steppersRow}>

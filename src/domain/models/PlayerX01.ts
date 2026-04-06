@@ -1,62 +1,117 @@
-import { Throw } from './Throw';
+import { BustException, InvalidThrowException } from '../Exceptions';
+import { IThrowX01, IPlayerX01, GameTypes } from '../Ports';
 
-export class PlayerX01 {
-  public name: string;
-  public initialScore: number;
-  public initialSets: number;
-  public initialLegs: number;
+export class PlayerX01 implements IPlayerX01 {
+  // --------------------------------------------------------------------------
+  // Attributes
+  name: string;
+  typeOfGame: GameTypes;
+  initialScore: number;
+  initialNumSets: number;
+  initialNumLegs: number;
 
-  public scoreLeft: number;
-  public wonSets: number;
-  public wonLegs: number;
-  public throws: Throw[];
+  remainingScore: number;
+  numSetsWon: number;
+  numLegsWon: number;
+  throws: IThrowX01[];
+  // --------------------------------------------------------------------------
 
-  constructor(name: string, initialScore: number, initialSets: number, initialLegs: number) {
+  // --------------------------------------------------------------------------
+  // Constructor
+  constructor(
+    name: string,
+    initialScore: number,
+    initialNumSets: number,
+    initialNumLegs: number
+  ) {
     this.name = name || 'Jugador';
     this.initialScore = initialScore;
-    this.initialSets = initialSets;
-    this.initialLegs = initialLegs;
-    this.scoreLeft = initialScore;
-    this.wonSets = 0;
-    this.wonLegs = 0;
+    this.initialNumSets = initialNumSets;
+    this.initialNumLegs = initialNumLegs;
+    this.remainingScore = initialScore;
+    this.numSetsWon = 0;
+    this.numLegsWon = 0;
     this.throws = [];
   }
 
   /**
-   * Registers a new throw
+   * Register a new throw
    */
+  // Pre: 0 <= score <= 180 && remainingScore > 0
   public addThrow(score: number): void {
-    if (score > this.scoreLeft) {
-      // return a BustException
+    // Validar Pre-condiciones
+    if (score < 0 || score > 180) {
+      throw new InvalidThrowException('Puntuación inválida: debe estar entre 0 y 180');
+    }
+    if (this.remainingScore <= 0) {
+      // MIRAR: ha habido algún error
+    }
+
+    // 1st Rule: Bust
+    if (this.remainingScore - score == 1) {
+      // MIRAR: si tratar como excepción o como evento
+      throw new InvalidThrowException('Puntuación inválida: no puede quedar 1')
+    }
+    if (score > this.remainingScore) {
+      // MIRAR: si tratar como excepción o como evento
+      throw new BustException('Puntuación máxima excedida');
     }
 
     const currentDarts = this.throws.length === 0
       ? 3
       : this.throws[this.throws.length - 1].dartCount + 3;
 
-    this.scoreLeft -= score;
+    this.remainingScore -= score;
 
     this.throws.push({
       score,
-      remaining: this.scoreLeft,
+      remainingScore: this.remainingScore,
       dartCount: currentDarts
     });
+
+    this.checkGameStatus();
+  }
+
+  private checkGameStatus(): void {
+    if (this.remainingScore == 0) {
+      // End of the Leg
+      this.newLeg();
+    }
+  }
+
+  private newLeg(): void {
+    this.numLegsWon += 1;
+    this.throws = [];
+    this.remainingScore = this.initialScore;
+
+    if (this.numLegsWon == this.initialNumLegs) {
+      // End of the Set
+      this.newSet();
+    }
+  }
+
+  private newSet(): void {
+    this.numSetsWon += 1;
+    this.numLegsWon = 0;
+    this.throws = [];
+    this.remainingScore = this.initialScore;
+
+    if (this.numSetsWon == this.initialNumSets) {
+      // End of the Match
+      // MIRAR: qué hacer
+    }
   }
 
   /**
    * Deletes the last throw
    */
-  public undoThrow(): void {
+  // Pre: throws.length > 0
+  public undoLastThrow(): void {
     if (this.throws.length > 0) {
       this.throws.pop();
-      this.scoreLeft = this.throws.length > 0
-        ? this.throws[this.throws.length - 1].remaining
+      this.remainingScore = this.throws.length > 0
+        ? this.throws[this.throws.length - 1].remainingScore
         : this.initialScore;
     }
-  }
-
-  // Clone the instance to force re-render
-  public clone(): PlayerX01 {
-    return Object.assign(Object.create(Object.getPrototypeOf(this)), this);
   }
 }
