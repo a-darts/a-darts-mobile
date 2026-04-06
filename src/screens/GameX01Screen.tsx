@@ -5,6 +5,7 @@ import { Feather } from '@expo/vector-icons';
 import { Keypad } from '../components/Keypad';
 import { Toast } from '../components/Toast';
 import { theme } from '../theme/theme';
+import { MatchService } from '../domain/services/MatchService';
 
 export const GameX01Screen = ({ navigation }) => {
   const [config, setConfig] = useState(null);
@@ -29,24 +30,23 @@ export const GameX01Screen = ({ navigation }) => {
     type: 'error'
   });
 
-  const scrollViewRef = useRef();
+  const scrollViewRef = useRef<ScrollView>(null);
 
   useEffect(() => {
-    const loadConfig = async () => {
-      try {
-        const storedConfig = await AsyncStorage.getItem('@current_match_config');
-        if (storedConfig) {
-          const parsed = JSON.parse(storedConfig);
-          setConfig(parsed);
-          const initial = parseInt(parsed.game, 10) || 501;
-          setInitialScore(initial);
-          setScoreLeft(initial);
-        }
-      } catch (error) {
-        console.error('Error loading config:', error);
+    const loadGame = async () => {
+      const matchConfig = await MatchService.getConfig();
+
+      if (matchConfig) {
+        setConfig(matchConfig);
+        setScoreLeft(matchConfig.game);
+        setInitialScore(matchConfig.game);
+      } else {
+        console.error('No hay configuración');
+        navigation.back();
+        // MIRAR: simplemente ir a atrás??
       }
     };
-    loadConfig();
+    loadGame();
   }, []);
 
   const triggerToast = (title, description, type = 'error') => {
@@ -138,7 +138,7 @@ export const GameX01Screen = ({ navigation }) => {
       {/* Top Header Card */}
       <View style={styles.headerRow}>
         <View style={styles.playerCard}>
-          <Text style={styles.playerName}>{config.playername}</Text>
+          <Text style={styles.playerName}>{config.playerNames[0]}</Text>
           <Text style={styles.scoreLeftText}>{scoreLeft}</Text>
         </View>
 

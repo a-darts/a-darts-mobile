@@ -9,6 +9,7 @@ import { Dropdown } from '../components/Dropdown';
 import { theme } from '../theme/theme';
 import { MatchX01Config } from '../domain/models/MatchX01Config';
 import { IMatchX01Config, GameTypes, GamesX01 } from '../domain/Ports';
+import { MatchService } from '../domain/services/MatchService';
 
 const GAME_OPTIONS: { label: string; value: GamesX01 }[] = [
   { label: '501', value: 501 },
@@ -40,12 +41,7 @@ export const ConfigX01Screen = ({ navigation }) => {
         [playername.trim() || 'Jugador 1']
       );
 
-      // 2. Guardamos la versión "plana" (DTO)
-      await AsyncStorage.setItem(
-        '@current_match_config',
-        JSON.stringify(config.toDTO())
-      );
-
+      await MatchService.saveConfig(config);
       navigation.navigate('GameX01Screen');
     } catch (error) {
       console.error('Configuración inválida:', error.message);
