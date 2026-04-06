@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Animated } from '
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Feather } from '@expo/vector-icons';
 import { Keypad } from '../components/Keypad';
+import { Toast } from '../components/Toast';
 import { theme } from '../theme/theme';
 
 export const GameX01Screen = ({ navigation }) => {
@@ -21,8 +22,12 @@ export const GameX01Screen = ({ navigation }) => {
   const [inputValue, setInputValue] = useState('');
 
   // Toast / Alert state
-  const [toastVisible, setToastVisible] = useState(false);
-  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const [toast, setToast] = useState({
+    visible: false,
+    title: '',
+    description: '',
+    type: 'error'
+  });
 
   const scrollViewRef = useRef();
 
@@ -44,23 +49,8 @@ export const GameX01Screen = ({ navigation }) => {
     loadConfig();
   }, []);
 
-  const showToast = () => {
-    setToastVisible(true);
-    Animated.timing(fadeAnim, {
-      toValue: 1,
-      duration: 200,
-      useNativeDriver: true,
-    }).start();
-
-    setTimeout(() => {
-      Animated.timing(fadeAnim, {
-        toValue: 0,
-        duration: 300,
-        useNativeDriver: true,
-      }).start(() => {
-        setToastVisible(false);
-      });
-    }, 1000);
+  const triggerToast = (title, description, type = 'error') => {
+    setToast({ visible: true, title, description, type });
   };
 
   const handleKeyPress = (char) => {
@@ -75,9 +65,14 @@ export const GameX01Screen = ({ navigation }) => {
 
   const submitScore = (scoreNum) => {
     if (scoreNum > scoreLeft) {
-      showToast();
+      triggerToast('¡Exceso!', 'Puntuación mayor al resto', 'error');
       setInputValue('');
       return;
+    }
+
+    if (scoreNum == scoreLeft) {
+      triggerToast('¡Leg Finalizado!', 'Buen cierre', 'success');
+      // hacer más cosas
     }
 
     const newScoreLeft = scoreLeft - scoreNum;
@@ -132,12 +127,13 @@ export const GameX01Screen = ({ navigation }) => {
     <View style={styles.container}>
 
       {/* Toast Alert */}
-      {toastVisible && (
-        <Animated.View style={[styles.toastContainer, { opacity: fadeAnim }]}>
-          <Text style={styles.toastText}>¡Exceso!</Text>
-          <Text style={styles.toastSubText}>Puntuación mayor al resto</Text>
-        </Animated.View>
-      )}
+      <Toast
+        visible={toast.visible}
+        title={toast.title}
+        description={toast.description}
+        type={toast.type}
+        onFinished={() => setToast({ ...toast, visible: false })}
+      />
 
       {/* Top Header Card */}
       <View style={styles.headerRow}>
@@ -214,34 +210,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: theme.colors.background,
     padding: theme.spacing.sm,
-  },
-  toastContainer: {
-    position: 'absolute',
-    top: '20%',
-    bottom: '20%',
-    left: '10%',
-    right: '10%',
-    backgroundColor: theme.colors.toastBackground,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: theme.colors.toastBorder,
-    padding: 16,
-    alignItems: 'center',
-    justifyContent: 'center',
-    zIndex: 100,
-    elevation: 10,
-    shadowColor: '#000',
-    shadowOpacity: 0.3,
-    shadowRadius: 5,
-  },
-  toastText: {
-    color: theme.colors.toastText,
-    fontFamily: theme.typography.fontFamily.bold,
-    fontSize: theme.typography.sizes.lg,
-  },
-  toastSubText: {
-    color: theme.colors.toastText,
-    fontFamily: theme.typography.fontFamily.bold,
   },
   headerRow: {
     flexDirection: 'row',

@@ -1,7 +1,7 @@
 export const colors = {
   background: '#0E0E0E',
   text: '#FFFFFF',
-  textSecondary: '#8E8E8E',
+  textSecondary: '#B3B3B3',
 
   activityIndicator: '#BFE55F',
   line: '#4C4C4C',
@@ -29,12 +29,12 @@ export const colors = {
   keyBackground: '#242424',
   keyBorder: '#4C4C4C',
   keyText: '#C7C7C7',
-  keyTextSecondary: '#B0B0B0',
+  keyTextSecondary: '#B3B3B3',
   keyIcon: '#C7C7C7',
 
   // Tabs
   tabActiveText: '#FFFFFF',
-  tabInactiveText: '#808080',
+  tabInactiveText: '#B3B3B3',
   tabActiveBorder: '#BFE55F',
   tabInactiveBorder: '#4C4C4C',
 
@@ -57,5 +57,8 @@ export const colors = {
   // Toast
   toastBackground: '#1A1A1A',
   toastText: '#FFFFFF',
-  toastBorder: '#FF4C4C',
+  toastTextSecondary: '#B3B3B3',
+  toastBorderError: '#FF4C4C',
+  toastBorderSuccess: '#BFE55F',
+  toastShadow: '#B3B3B3',
 };
