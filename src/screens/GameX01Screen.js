@@ -125,9 +125,8 @@ export const GameX01Screen = ({ navigation }) => {
 
   if (!config) return <View style={styles.container} />; // Loading state placeholder
 
-  const displayThrows = throws.slice(-15);
-  // Re-prepend the start score only if we haven't scrolled past it
-  const isStartVisible = throws.length <= 15;
+  const displayThrows = throws;
+  const isStartVisible = true;
 
   return (
     <View style={styles.container}>
@@ -161,7 +160,6 @@ export const GameX01Screen = ({ navigation }) => {
         <ScrollView
           ref={scrollViewRef}
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ paddingBottom: 20 }}
         >
           {isStartVisible && (
             <View style={styles.tableRow}>
@@ -215,6 +213,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: theme.colors.background,
+    padding: theme.spacing.sm,
   },
   toastContainer: {
     position: 'absolute',
@@ -302,7 +301,7 @@ const styles = StyleSheet.create({
   tableContainer: {
     flex: 1,
     paddingHorizontal: theme.spacing.xl,
-    paddingTop: theme.spacing.xs,
+    paddingVertical: theme.spacing.sm,
   },
   tableRow: {
     flexDirection: 'row',
@@ -340,7 +339,6 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: theme.borderRadius.lg,
     borderTopRightRadius: theme.borderRadius.lg,
     padding: theme.spacing.sm,
-    paddingBottom: theme.spacing.lg + 16, // SafeArea padding basically
   },
   controlBarRow: {
     flexDirection: 'row',
@@ -349,13 +347,15 @@ const styles = StyleSheet.create({
   },
   inputBox: {
     flex: 2,
-    backgroundColor: '#333333',
+    backgroundColor: theme.colors.inputBoxBackground,
     borderRadius: theme.borderRadius.md,
+    borderBottomWidth: 1,
+    borderColor: theme.colors.buttonPrimaryBackground,
     justifyContent: 'center',
     paddingHorizontal: theme.spacing.md,
   },
   inputText: {
-    color: theme.colors.text,
+    color: theme.colors.inputText,
     fontFamily: theme.typography.fontFamily.bold,
     fontSize: theme.typography.sizes.xl,
   },

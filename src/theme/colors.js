@@ -25,6 +25,13 @@ export const colors = {
   buttonSecondaryIcon: '#FFFFFF',
   buttonSecondaryBorder: '#4C4C4C',
 
+  // Key
+  keyBackground: '#242424',
+  keyBorder: '#4C4C4C',
+  keyText: '#C7C7C7',
+  keyTextSecondary: '#B0B0B0',
+  keyIcon: '#C7C7C7',
+
   // Tabs
   tabActiveText: '#FFFFFF',
   tabInactiveText: '#808080',
@@ -41,6 +48,11 @@ export const colors = {
   inputTextError: '#FF4C4C',
   inputIcon: '#FFFFFF',
   inputPlaceholder: '#B3B3B3',
+
+  // Input Box (x01)
+  inputBoxBackground: '#242424',
+  inputBoxText: '#FFFFFF',
+  inputBoxBorder: '#BFE55F',
 
   // Toast
   toastBackground: '#1A1A1A',

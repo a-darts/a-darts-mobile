@@ -65,7 +65,7 @@ export const HomeScreen = ({ route, navigation }) => {
       </Card>
 
       {/* Stats Section */}
-      {!isGuest && (
+      {/* {!isGuest && (
         <View style={styles.statsContainer}>
           <Card style={styles.statCard}>
             <Text style={styles.statLabel}>MEDIA</Text>
@@ -76,7 +76,7 @@ export const HomeScreen = ({ route, navigation }) => {
             <Text style={styles.statValue}>68%</Text>
           </Card>
         </View>
-      )}
+      )} */}
 
       {/* New Game Button */}
       <View style={styles.newGameContainer}>
