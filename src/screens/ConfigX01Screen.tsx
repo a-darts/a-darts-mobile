@@ -10,6 +10,7 @@ import { theme } from '../theme/theme';
 import { MatchX01Config } from '../domain/models/MatchX01Config';
 import { IMatchX01Config, GameTypes, GamesX01 } from '../domain/Ports';
 import { MatchService } from '../domain/services/MatchService';
+import { AsyncStorageMatchX01Repository } from '../infrastructure/repositories/AsyncStorageMatchX01Repository';
 
 const GAME_OPTIONS: { label: string; value: GamesX01 }[] = [
   { label: '501', value: 501 },
@@ -23,6 +24,10 @@ const TYPE_OPTIONS = [
 ];
 
 export const ConfigX01Screen = ({ navigation }) => {
+  // Instanciamos el adaptador y se lo pasamos al servicio
+  const repository = new AsyncStorageMatchX01Repository();
+  const matchService = new MatchService(repository);
+
   const [game, setGame] = useState<GamesX01>(501);
   const [type, setType] = useState<GameTypes>(GameTypes.FirstTo);
   const [numLegs, setNumLegs] = useState(1);
@@ -41,7 +46,7 @@ export const ConfigX01Screen = ({ navigation }) => {
         [playername.trim() || 'Jugador 1']
       );
 
-      await MatchService.saveConfig(config);
+      await matchService.saveMatchConfig(config);
       navigation.navigate('GameX01Screen');
     } catch (error) {
       console.error('Configuración inválida:', error.message);

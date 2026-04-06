@@ -6,17 +6,19 @@ import { Keypad } from '../components/Keypad';
 import { Toast } from '../components/Toast';
 import { theme } from '../theme/theme';
 import { MatchService } from '../domain/services/MatchService';
+import { AsyncStorageMatchX01Repository } from '../infrastructure/repositories/AsyncStorageMatchX01Repository';
 
 export const GameX01Screen = ({ navigation }) => {
+  // Instanciamos el adaptador y se lo pasamos al servicio
+  const repository = new AsyncStorageMatchX01Repository();
+  const matchService = new MatchService(repository);
+
   const [config, setConfig] = useState(null);
 
-  // Game state
   const [scoreLeft, setScoreLeft] = useState(501);
   const [initialScore, setInitialScore] = useState(501);
   const [wonSets, setWonSets] = useState(0);
   const [wonLegs, setWonLegs] = useState(0);
-
-  // Throws log
   const [throws, setThrows] = useState([]);
 
   // Input
@@ -34,7 +36,7 @@ export const GameX01Screen = ({ navigation }) => {
 
   useEffect(() => {
     const loadGame = async () => {
-      const matchConfig = await MatchService.getConfig();
+      const matchConfig = await matchService.getMatchConfig();
 
       if (matchConfig) {
         setConfig(matchConfig);
