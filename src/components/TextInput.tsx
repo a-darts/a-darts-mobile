@@ -2,8 +2,16 @@ import React from 'react';
 import { TextInput as RNTextInput, StyleSheet, View, Text } from 'react-native';
 import { theme } from '../theme/theme';
 import { Feather } from '@expo/vector-icons';
+import { TextInputProps } from 'react-native';
 
-export const TextInput = ({ description, label, placeholder, error, iconName, ...props }) => {
+interface CustomTextInputProps extends TextInputProps {
+  description?: string;
+  label?: string;
+  error?: string;
+  iconName?: any;
+}
+
+export const TextInput = ({ description, label, placeholder, error, iconName, ...props }: CustomTextInputProps) => {
   // If user passes label instead of description, we map it to placeholder based on the request.
   const topText = description;
   const fieldPlaceholder = placeholder || label;

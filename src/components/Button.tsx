@@ -3,7 +3,15 @@ import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { theme } from '../theme/theme';
 
-export const Button = ({ title, onPress, variant = 'primary', style, iconName }) => {
+interface ButtonProps {
+  title: string;
+  onPress: () => void;
+  variant?: 'primary' | 'secondary' | string;
+  style?: any;
+  iconName?: any;
+}
+
+export const Button = ({ title, onPress, variant = 'primary', style, iconName }: ButtonProps) => {
   const isPrimary = variant === 'primary';
 
   return (

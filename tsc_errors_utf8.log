@@ -1,0 +1,106 @@
+﻿src/components/Avatar.tsx(5,43): error TS7031: Binding element 'imageUri' implicitly has an 'any' type.
+src/components/Button.tsx(6,26): error TS7031: Binding element 'title' implicitly has an 'any' type.
+src/components/Button.tsx(6,33): error TS7031: Binding element 'onPress' implicitly has an 'any' type.
+src/components/Button.tsx(6,63): error TS7031: Binding element 'style' implicitly has an 'any' type.
+src/components/Button.tsx(6,70): error TS7031: Binding element 'iconName' implicitly has an 'any' type.
+src/components/ButtonGroup.tsx(5,31): error TS7031: Binding element 'options' implicitly has an 'any' type.
+src/components/ButtonGroup.tsx(5,40): error TS7031: Binding element 'selectedValue' implicitly has an 'any' type.
+src/components/ButtonGroup.tsx(5,55): error TS7031: Binding element 'onSelect' implicitly has an 'any' type.
+src/components/ButtonGroup.tsx(8,21): error TS7006: Parameter 'option' implicitly has an 'any' type.
+src/components/Card.tsx(5,24): error TS7031: Binding element 'children' implicitly has an 'any' type.
+src/components/Card.tsx(5,34): error TS7031: Binding element 'style' implicitly has an 'any' type.
+src/components/Dropdown.tsx(6,28): error TS7031: Binding element 'options' implicitly has an 'any' type.
+src/components/Dropdown.tsx(6,37): error TS7031: Binding element 'selectedValue' implicitly has an 'any' type.
+src/components/Dropdown.tsx(6,52): error TS7031: Binding element 'onSelect' implicitly has an 'any' type.
+src/components/Dropdown.tsx(9,39): error TS7006: Parameter 'o' implicitly has an 'any' type.
+src/components/Dropdown.tsx(11,25): error TS7006: Parameter 'val' implicitly has an 'any' type.
+src/components/Keypad.tsx(6,26): error TS7031: Binding element 'onKeyPress' implicitly has an 'any' type.
+src/components/Keypad.tsx(6,38): error TS7031: Binding element 'onBackspace' implicitly has an 'any' type.
+src/components/Keypad.tsx(6,51): error TS7031: Binding element 'onEnter' implicitly has an 'any' type.
+src/components/Keypad.tsx(6,60): error TS7031: Binding element 'onFastScore' implicitly has an 'any' type.
+src/components/Stepper.tsx(6,27): error TS7031: Binding element 'label' implicitly has an 'any' type.
+src/components/Stepper.tsx(6,34): error TS7031: Binding element 'value' implicitly has an 'any' type.
+src/components/Stepper.tsx(6,41): error TS7031: Binding element 'onChange' implicitly has an 'any' type.
+src/components/Tabs.tsx(5,24): error TS7031: Binding element 'options' implicitly has an 'any' type.
+src/components/Tabs.tsx(5,33): error TS7031: Binding element 'activeIndex' implicitly has an 'any' type.
+src/components/Tabs.tsx(5,46): error TS7031: Binding element 'onChange' implicitly has an 'any' type.
+src/components/Tabs.tsx(8,21): error TS7006: Parameter 'option' implicitly has an 'any' type.
+src/components/Tabs.tsx(8,29): error TS7006: Parameter 'index' implicitly has an 'any' type.
+src/components/Tabs.tsx(32,71): error TS2339: Property 'border' does not exist on type '{ background: string; text: string; textSecondary: string; activityIndicator: string; line: string; cardBackground: string; progressBackground: string; headerBackground: string; headerText: string; ... 34 more ...; toastShadow: string; }'.
+src/components/Tabs.tsx(41,69): error TS2339: Property 'primary' does not exist on type '{ background: string; text: string; textSecondary: string; activityIndicator: string; line: string; cardBackground: string; progressBackground: string; headerBackground: string; headerText: string; ... 34 more ...; toastShadow: string; }'.
+src/components/TextInput.tsx(6,29): error TS7031: Binding element 'description' implicitly has an 'any' type.
+src/components/TextInput.tsx(6,42): error TS7031: Binding element 'label' implicitly has an 'any' type.
+src/components/TextInput.tsx(6,49): error TS7031: Binding element 'placeholder' implicitly has an 'any' type.
+src/components/TextInput.tsx(6,62): error TS7031: Binding element 'error' implicitly has an 'any' type.
+src/components/TextInput.tsx(6,69): error TS7031: Binding element 'iconName' implicitly has an 'any' type.
+src/components/Toast.tsx(5,25): error TS7031: Binding element 'visible' implicitly has an 'any' type.
+src/components/Toast.tsx(5,34): error TS7031: Binding element 'title' implicitly has an 'any' type.
+src/components/Toast.tsx(5,41): error TS7031: Binding element 'description' implicitly has an 'any' type.
+src/components/Toast.tsx(5,70): error TS7031: Binding element 'onFinished' implicitly has an 'any' type.
+src/domain/gameX01Logic.ts(1,35): error TS7006: Parameter 'scoreNum' implicitly has an 'any' type.
+src/domain/gameX01Logic.ts(1,45): error TS7006: Parameter 'currentScore' implicitly has an 'any' type.
+src/domain/gameX01Logic.ts(1,59): error TS7006: Parameter 'throwsCount' implicitly has an 'any' type.
+src/domain/gameX01Logic.ts(12,24): error TS7006: Parameter 'scoreNum' implicitly has an 'any' type.
+src/domain/gameX01Logic.ts(12,34): error TS7006: Parameter 'currentScore' implicitly has an 'any' type.
+src/domain/gameX01Logic.ts(13,28): error TS7006: Parameter 'scoreNum' implicitly has an 'any' type.
+src/domain/gameX01Logic.ts(13,38): error TS7006: Parameter 'currentScore' implicitly has an 'any' type.
+src/hooks/useX01Game.ts(2,28): error TS2307: Cannot find module '../domain/gameLogic' or its corresponding type declarations.
+src/hooks/useX01Game.ts(26,27): error TS7006: Parameter 'title' implicitly has an 'any' type.
+src/hooks/useX01Game.ts(26,34): error TS7006: Parameter 'description' implicitly has an 'any' type.
+src/hooks/useX01Game.ts(29,29): error TS7006: Parameter 'char' implicitly has an 'any' type.
+src/hooks/useX01Game.ts(33,26): error TS7006: Parameter 'scoreNum' implicitly has an 'any' type.
+src/hooks/useX01Game.ts(45,19): error TS2345: Argument of type '(prev: never[]) => any[]' is not assignable to parameter of type 'SetStateAction<never[]>'.
+  Type '(prev: never[]) => any[]' is not assignable to type '(prevState: never[]) => never[]'.
+    Type 'any[]' is not assignable to type 'never[]'.
+      Type 'any' is not assignable to type 'never'.
+src/hooks/useX01Game.ts(55,77): error TS2339: Property 'remaining' does not exist on type 'never'.
+src/hooks/useX01Game.ts(55,99): error TS18047: 'config' is possibly 'null'.
+src/screens/ConfigX01Screen.tsx(22,35): error TS7031: Binding element 'navigation' implicitly has an 'any' type.
+src/screens/ConfigX01Screen.tsx(87,12): error TS2739: Type '{ description: string; placeholder: string; iconName: string; value: string; onChangeText: Dispatch<SetStateAction<string>>; autoCapitalize: string; }' is missing the following properties from type '{ [x: string]: any; description: any; label: any; placeholder: any; error: any; iconName: any; }': label, error
+src/screens/ConfigX01Screen.tsx(100,10): error TS2741: Property 'style' is missing in type '{ title: string; iconName: string; onPress: () => Promise<void>; }' but required in type '{ title: any; onPress: any; variant?: string | undefined; style: any; iconName: any; }'.
+src/screens/GameX01Screen.tsx(9,33): error TS7031: Binding element 'navigation' implicitly has an 'any' type.
+src/screens/GameX01Screen.tsx(32,25): error TS2554: Expected 1 arguments, but got 0.
+src/screens/GameX01Screen.tsx(52,25): error TS7006: Parameter 'title' implicitly has an 'any' type.
+src/screens/GameX01Screen.tsx(52,32): error TS7006: Parameter 'description' implicitly has an 'any' type.
+src/screens/GameX01Screen.tsx(56,27): error TS7006: Parameter 'char' implicitly has an 'any' type.
+src/screens/GameX01Screen.tsx(66,24): error TS7006: Parameter 'scoreNum' implicitly has an 'any' type.
+src/screens/GameX01Screen.tsx(79,78): error TS2339: Property 'dartCount' does not exist on type 'never'.
+src/screens/GameX01Screen.tsx(87,15): error TS2345: Argument of type '(prev: never[]) => { score: any; remaining: number; dartCount: any; }[]' is not assignable to parameter of type 'SetStateAction<never[]>'.
+  Type '(prev: never[]) => { score: any; remaining: number; dartCount: any; }[]' is not assignable to type '(prevState: never[]) => never[]'.
+    Type '{ score: any; remaining: number; dartCount: any; }[]' is not assignable to type 'never[]'.
+      Type '{ score: any; remaining: number; dartCount: any; }' is not assignable to type 'never'.
+src/screens/GameX01Screen.tsx(93,30): error TS2339: Property 'scrollToEnd' does not exist on type '{}'.
+src/screens/GameX01Screen.tsx(103,28): error TS7006: Parameter 'score' implicitly has an 'any' type.
+src/screens/GameX01Screen.tsx(114,62): error TS2339: Property 'remaining' does not exist on type 'never'.
+src/screens/GameX01Screen.tsx(141,51): error TS2339: Property 'playername' does not exist on type 'never'.
+src/screens/GameX01Screen.tsx(146,105): error TS2339: Property 'numSets' does not exist on type 'never'.
+src/screens/GameX01Screen.tsx(149,126): error TS2339: Property 'numLegs' does not exist on type 'never'.
+src/screens/GameX01Screen.tsx(157,11): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(props: ScrollViewProps): ScrollView', gave the following error.
+    Type 'RefObject<unknown>' is not assignable to type 'Ref<ScrollView> | undefined'.
+      Type 'RefObject<unknown>' is not assignable to type 'RefObject<ScrollView | null>'.
+        Type 'unknown' is not assignable to type 'ScrollView | null'.
+  Overload 2 of 2, '(props: ScrollViewProps, context: any): ScrollView', gave the following error.
+    Type 'RefObject<unknown>' is not assignable to type 'Ref<ScrollView> | undefined'.
+      Type 'RefObject<unknown>' is not assignable to type 'RefObject<ScrollView | null>'.
+        Type 'unknown' is not assignable to type 'ScrollView | null'.
+src/screens/GameX01Screen.tsx(170,50): error TS2339: Property 'score' does not exist on type 'never'.
+src/screens/GameX01Screen.tsx(171,54): error TS2339: Property 'remaining' does not exist on type 'never'.
+src/screens/GameX01Screen.tsx(172,54): error TS2339: Property 'dartCount' does not exist on type 'never'.
+src/screens/HomeScreen.tsx(16,30): error TS7031: Binding element 'route' implicitly has an 'any' type.
+src/screens/HomeScreen.tsx(16,37): error TS7031: Binding element 'navigation' implicitly has an 'any' type.
+src/screens/HomeScreen.tsx(35,24): error TS2345: Argument of type '{ id: string; title: string; players: string; }[]' is not assignable to parameter of type 'SetStateAction<never[]>'.
+  Type '{ id: string; title: string; players: string; }[]' is not assignable to type 'never[]'.
+    Type '{ id: string; title: string; players: string; }' is not assignable to type 'never'.
+src/screens/HomeScreen.tsx(39,22): error TS2345: Argument of type '{ id: string; title: string; players: string; }[]' is not assignable to parameter of type 'SetStateAction<never[]>'.
+  Type '{ id: string; title: string; players: string; }[]' is not assignable to type 'never[]'.
+    Type '{ id: string; title: string; players: string; }' is not assignable to type 'never'.
+src/screens/HomeScreen.tsx(43,29): error TS7031: Binding element 'item' implicitly has an 'any' type.
+src/screens/HomeScreen.tsx(63,10): error TS2741: Property 'imageUri' is missing in type '{ isGuest: boolean; }' but required in type '{ isGuest?: boolean | undefined; imageUri: any; size?: number | undefined; }'.
+src/screens/HomeScreen.tsx(83,10): error TS2741: Property 'style' is missing in type '{ title: string; iconName: string; onPress: () => any; }' but required in type '{ title: any; onPress: any; variant?: string | undefined; style: any; iconName: any; }'.
+src/screens/LoginScreen.tsx(8,31): error TS7031: Binding element 'navigation' implicitly has an 'any' type.
+src/screens/LoginScreen.tsx(35,12): error TS2739: Type '{ description: string; placeholder: string; iconName: string; value: string; onChangeText: Dispatch<SetStateAction<string>>; autoCapitalize: string; }' is missing the following properties from type '{ [x: string]: any; description: any; label: any; placeholder: any; error: any; iconName: any; }': label, error
+src/screens/LoginScreen.tsx(45,10): error TS2739: Type '{ description: string; placeholder: string; iconName: string; value: string; onChangeText: Dispatch<SetStateAction<string>>; keyboardType: string; autoCapitalize: string; }' is missing the following properties from type '{ [x: string]: any; description: any; label: any; placeholder: any; error: any; iconName: any; }': label, error
+src/screens/LoginScreen.tsx(55,10): error TS2739: Type '{ description: string; placeholder: string; iconName: string; value: string; onChangeText: Dispatch<SetStateAction<string>>; secureTextEntry: true; }' is missing the following properties from type '{ [x: string]: any; description: any; label: any; placeholder: any; error: any; iconName: any; }': label, error
+src/screens/LoginScreen.tsx(65,12): error TS2739: Type '{ title: string; onPress: () => any; }' is missing the following properties from type '{ title: any; onPress: any; variant?: string | undefined; style: any; iconName: any; }': style, iconName
+src/screens/LoginScreen.tsx(76,12): error TS2739: Type '{ title: string; variant: string; onPress: () => any; }' is missing the following properties from type '{ title: any; onPress: any; variant?: string | undefined; style: any; iconName: any; }': style, iconName
