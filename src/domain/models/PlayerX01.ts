@@ -1,6 +1,7 @@
 import { BustException, InvalidThrowException } from '../exceptions/Exceptions';
 import { IThrowX01, ThrowX01 } from './ThrowX01';
 import { GameTypes } from '../enums/GameTypes';
+import { ILegX01History } from './LegX01History';
 
 export interface IPlayerX01 {
   id: string;
@@ -13,6 +14,7 @@ export interface IPlayerX01 {
   numSetsWon: number;
   numLegsWon: number;
   throws: IThrowX01[];
+  history: ILegX01History[];
 
   addThrow(score: number): void;
   undoLastThrow(): void;
@@ -33,6 +35,7 @@ export class PlayerX01 implements IPlayerX01 {
   numSetsWon: number;
   numLegsWon: number;
   throws: IThrowX01[];
+  history: ILegX01History[];
   // --------------------------------------------------------------------------
 
   // --------------------------------------------------------------------------
@@ -53,6 +56,7 @@ export class PlayerX01 implements IPlayerX01 {
     this.numSetsWon = 0;
     this.numLegsWon = 0;
     this.throws = [];
+    this.history = [];
 
     const firstThrow = new ThrowX01(0, this.initialScore, 0);
     this.throws.push(firstThrow);
@@ -87,11 +91,12 @@ export class PlayerX01 implements IPlayerX01 {
 
     this.remainingScore -= score;
 
-    this.throws.push({
+    const newThrow: IThrowX01 = {
       score,
       remainingScore: this.remainingScore,
-      dartCount: currentDarts
-    });
+      dartCount: currentDarts,
+    }
+    this.throws.push(newThrow);
 
     this.checkGameStatus();
   }
@@ -99,8 +104,19 @@ export class PlayerX01 implements IPlayerX01 {
   private checkGameStatus(): void {
     if (this.remainingScore == 0) {
       // End of the Leg
+      this.saveLegToHistory();
       this.newLeg();
     }
+  }
+
+  private saveLegToHistory(): void {
+    const legFinished: ILegX01History = {
+      legNumber: this.numLegsWon + 1,
+      setNumber: this.numSetsWon + 1,
+      throws: [...this.throws]
+    };
+
+    this.history.push(legFinished);
   }
 
   private newLeg(): void {
