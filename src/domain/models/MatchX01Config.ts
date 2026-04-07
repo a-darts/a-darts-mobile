@@ -1,7 +1,14 @@
-import { IMatchX01Config } from "../ports/Ports";
 import { GamesX01 } from "../enums/GamesX01";
 import { GameTypes } from "../enums/GameTypes";
 
+export interface IMatchX01Config {
+    game: GamesX01;
+    typeOfGame: GameTypes;
+    numSets: number;
+    numLegs: number;
+    numPlayers: number;
+    playerNames: string[];
+}
 
 export class MatchX01Config implements IMatchX01Config {
     // --------------------------------------------------------------------------
@@ -34,6 +41,16 @@ export class MatchX01Config implements IMatchX01Config {
     // --------------------------------------------------------------------------
 
     // --------------------------------------------------------------------------
+    public clone(): MatchX01Config {
+        return new MatchX01Config(
+            this.game,
+            this.typeOfGame,
+            this.numSets,
+            this.numLegs,
+            this.numPlayers,
+            this.playerNames,
+        );
+    }
     public toDTO(): IMatchX01Config {
         return {
             game: this.game,

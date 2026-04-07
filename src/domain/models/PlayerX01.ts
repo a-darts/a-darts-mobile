@@ -1,9 +1,28 @@
 import { BustException, InvalidThrowException } from '../exceptions/Exceptions';
-import { IThrowX01, IPlayerX01, GameTypes } from '../ports/Ports';
+import { IThrowX01, ThrowX01 } from './ThrowX01';
+import { GameTypes } from '../enums/GameTypes';
+
+export interface IPlayerX01 {
+  id: string;
+  name: string;
+  typeOfGame: GameTypes;
+  initialScore: number;
+  initialNumSets: number;
+  initialNumLegs: number;
+  remainingScore: number;
+  numSetsWon: number;
+  numLegsWon: number;
+  throws: IThrowX01[];
+
+  addThrow(score: number): void;
+  undoLastThrow(): void;
+  clone(): IPlayerX01;
+}
 
 export class PlayerX01 implements IPlayerX01 {
   // --------------------------------------------------------------------------
   // Attributes
+  id: string;
   name: string;
   typeOfGame: GameTypes;
   initialScore: number;
@@ -22,8 +41,10 @@ export class PlayerX01 implements IPlayerX01 {
     name: string,
     initialScore: number,
     initialNumSets: number,
-    initialNumLegs: number
+    initialNumLegs: number,
+    id?: string,
   ) {
+    this.id = id || crypto.randomUUID();
     this.name = name || 'Jugador';
     this.initialScore = initialScore;
     this.initialNumSets = initialNumSets;
@@ -32,6 +53,9 @@ export class PlayerX01 implements IPlayerX01 {
     this.numSetsWon = 0;
     this.numLegsWon = 0;
     this.throws = [];
+
+    const firstThrow = new ThrowX01(0, this.initialScore, 0);
+    this.throws.push(firstThrow);
   }
 
   /**
@@ -113,5 +137,15 @@ export class PlayerX01 implements IPlayerX01 {
         ? this.throws[this.throws.length - 1].remainingScore
         : this.initialScore;
     }
+  }
+
+  public clone(): PlayerX01 {
+    return new PlayerX01(
+      this.name,
+      this.initialScore,
+      this.initialNumSets,
+      this.initialNumLegs,
+      this.id,
+    );
   }
 }

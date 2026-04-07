@@ -1,5 +1,10 @@
 import { InvalidThrowException } from "../exceptions/Exceptions";
-import { IThrowX01 } from "../ports/Ports";
+
+export interface IThrowX01 {
+    score: number;
+    remainingScore: number;
+    dartCount: number;
+}
 
 export class ThrowX01 implements IThrowX01 {
     // --------------------------------------------------------------------------

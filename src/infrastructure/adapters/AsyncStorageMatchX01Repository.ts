@@ -1,14 +1,13 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { IMatchX01Repository } from '../../domain/ports/IMatchX01Repository';
 import { MatchX01Config } from '../../domain/models/MatchX01Config';
-import { IMatchX01Config } from '../../domain/ports/Ports';
+import { IMatchX01Config } from '../../domain/models/MatchX01Config';
 
 const STORAGE_KEY = '@current_match_config';
 
 export class AsyncStorageMatchX01Repository implements IMatchX01Repository {
     async save(config: MatchX01Config): Promise<void> {
-        const dto = config.toDTO();
-        await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(dto));
+        await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(config));
     }
 
     async get(): Promise<MatchX01Config | null> {

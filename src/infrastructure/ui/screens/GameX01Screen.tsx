@@ -5,21 +5,20 @@ import { Feather } from '@expo/vector-icons';
 import { Keypad } from '../components/Keypad';
 import { Toast } from '../components/Toast';
 import { theme } from '../theme/theme';
-import { MatchService } from '../../../domain/services/MatchService';
-import { AsyncStorageMatchX01Repository } from '../../adapters/AsyncStorageMatchX01Repository';
+import MatchX01ConfigServiceFactory from '../../factories/MatchX01ConfigServiceFactory';
+import { PlayerX01 } from '../../../domain/models/PlayerX01';
+import { MatchX01Config } from '../../../domain/models/MatchX01Config';
+
 
 export const GameX01Screen = ({ navigation }) => {
-  // Instanciamos el adaptador y se lo pasamos al servicio
-  const repository = new AsyncStorageMatchX01Repository();
-  const matchService = new MatchService(repository);
+  const matchService = MatchX01ConfigServiceFactory.getInstance();
 
-  const [config, setConfig] = useState(null);
+  // ESTADO
+  const [config, setConfig] = useState<MatchX01Config | null>(null);
+  const [player, setPlayer] = useState<PlayerX01 | null>(null);
 
-  const [scoreLeft, setScoreLeft] = useState(501);
-  const [initialScore, setInitialScore] = useState(501);
-  const [wonSets, setWonSets] = useState(0);
-  const [wonLegs, setWonLegs] = useState(0);
-  const [throws, setThrows] = useState([]);
+  // para forzar el re-render
+  const [tick, setTick] = useState(0);
 
   // Input
   const [inputValue, setInputValue] = useState('');
@@ -40,22 +39,28 @@ export const GameX01Screen = ({ navigation }) => {
 
       if (matchConfig) {
         setConfig(matchConfig);
-        setScoreLeft(matchConfig.game);
-        setInitialScore(matchConfig.game);
+        const newPlayer = new PlayerX01(
+          matchConfig.playerNames[0],
+          matchConfig.game,
+          matchConfig.numSets,
+          matchConfig.numLegs,
+          matchConfig.typeOfGame,
+        );
+        setPlayer(newPlayer);
       } else {
         console.error('No hay configuración');
         navigation.back();
-        // MIRAR: simplemente ir a atrás??
       }
     };
     loadGame();
   }, []);
 
+  //
   const triggerToast = (title, description, type = 'error') => {
     setToast({ visible: true, title, description, type });
   };
 
-  const handleKeyPress = (char) => {
+  const handleKeyPress = (char: string) => {
     if (inputValue.length < 3) {
       setInputValue((prev) => prev + char);
     }
@@ -64,36 +69,21 @@ export const GameX01Screen = ({ navigation }) => {
   const handleBackspace = () => {
     setInputValue((prev) => prev.slice(0, -1));
   };
+  //
 
-  const submitScore = (scoreNum) => {
-    if (scoreNum > scoreLeft) {
-      triggerToast('¡Exceso!', 'Puntuación mayor al resto', 'error');
-      setInputValue('');
-      return;
+  const submitScore = (scoreNum: number) => {
+    if (player) {
+      try {
+        player.addThrow(scoreNum);
+        // Forzamos re-render
+        setTick(t => t + 1);
+        setInputValue('');
+      } catch (error) {
+        triggerToast('Error', error.message, 'error');
+        setInputValue('');
+        return; //BORRAR
+      }
     }
-
-    if (scoreNum == scoreLeft) {
-      triggerToast('¡Leg Finalizado!', 'Buen cierre', 'success');
-      // hacer más cosas
-    }
-
-    const newScoreLeft = scoreLeft - scoreNum;
-    const newDartCount = throws.length === 0 ? 3 : throws[throws.length - 1].dartCount + 3;
-
-    const newThrow = {
-      score: scoreNum,
-      remaining: newScoreLeft,
-      dartCount: newDartCount,
-    };
-
-    setThrows((prev) => [...prev, newThrow]);
-    setScoreLeft(newScoreLeft);
-    setInputValue('');
-
-    // Auto scroll delay to ensure layout
-    setTimeout(() => {
-      scrollViewRef.current?.scrollToEnd({ animated: true });
-    }, 100);
   };
 
   const handleEnter = () => {
@@ -102,28 +92,19 @@ export const GameX01Screen = ({ navigation }) => {
     }
   };
 
-  const handleFastScore = (score) => {
+  const handleFastScore = (score: number) => {
     submitScore(score);
   };
 
   const handleUndo = () => {
-    if (throws.length > 0) {
-      const updatedThrows = [...throws];
-      updatedThrows.pop();
-      setThrows(updatedThrows);
-
-      if (updatedThrows.length > 0) {
-        setScoreLeft(updatedThrows[updatedThrows.length - 1].remaining);
-      } else {
-        setScoreLeft(initialScore);
-      }
+    if (player) {
+      player.undoLastThrow();
+      // Forzamos re-render
+      setTick(t => t + 1);
     }
   };
 
-  if (!config) return <View style={styles.container} />; // Loading state placeholder
-
-  const displayThrows = throws;
-  const isStartVisible = true;
+  if (!player || !config) return <View style={styles.container} />;
 
   return (
     <View style={styles.container}>
@@ -140,15 +121,23 @@ export const GameX01Screen = ({ navigation }) => {
       {/* Top Header Card */}
       <View style={styles.headerRow}>
         <View style={styles.playerCard}>
-          <Text style={styles.playerName}>{config.playerNames[0]}</Text>
-          <Text style={styles.scoreLeftText}>{scoreLeft}</Text>
+          <Text style={styles.playerName}>
+            {player.name}
+          </Text>
+          <Text style={styles.scoreLeftText}>
+            {player.remainingScore}
+          </Text>
         </View>
 
         <View style={styles.statsCard}>
-          <Text style={styles.statsText}><Text style={styles.statsHighlight}>{wonSets}</Text> / {config.numSets}</Text>
+          <Text style={styles.statsText}>
+            <Text style={styles.statsHighlight}>
+              {player.numSetsWon}</Text> / {player.initialNumSets}</Text>
           <Text style={styles.statsLabel}>S E T S</Text>
 
-          <Text style={[styles.statsText, { marginTop: 16 }]}><Text style={styles.statsHighlight}>{wonLegs}</Text> / {config.numLegs}</Text>
+          <Text style={[styles.statsText, { marginTop: 16 }]}>
+            <Text style={styles.statsHighlight}>
+              {player.numLegsWon}</Text> / {player.initialNumLegs}</Text>
           <Text style={styles.statsLabel}>L E G S</Text>
         </View>
       </View>
@@ -158,20 +147,19 @@ export const GameX01Screen = ({ navigation }) => {
         <ScrollView
           ref={scrollViewRef}
           showsVerticalScrollIndicator={false}
+          onContentSizeChange={() => scrollViewRef.current?.scrollToEnd({ animated: true })}
         >
-          {isStartVisible && (
-            <View style={styles.tableRow}>
-              <Text style={styles.tableScore}> </Text>
-              <Text style={styles.tableRemaining}>{initialScore}</Text>
-              <Text style={styles.tableDartCount}>0</Text>
-            </View>
-          )}
-
-          {displayThrows.map((t, index) => (
-            <View style={styles.tableRow} key={`throw-${index}`}>
-              <Text style={styles.tableScore}>{t.score}</Text>
-              <Text style={styles.tableRemaining}>{t.remaining}</Text>
-              <Text style={styles.tableDartCount}>{t.dartCount}</Text>
+          {player.throws.map((t, index) => (
+            <View style={styles.tableRow} key={index}>
+              <Text style={styles.tableScore}>
+                {t.score}
+              </Text>
+              <Text style={styles.tableRemaining}>
+                {t.remainingScore}
+              </Text>
+              <Text style={styles.tableDartCount}>
+                {t.dartCount}
+              </Text>
             </View>
           ))}
         </ScrollView>
