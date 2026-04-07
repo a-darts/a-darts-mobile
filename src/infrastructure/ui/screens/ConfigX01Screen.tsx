@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Feather } from '@expo/vector-icons';
 import { Button } from '../components/Button';
 import { TextInput } from '../components/TextInput';
 import { ButtonGroup } from '../components/ButtonGroup';
@@ -33,6 +34,8 @@ export const ConfigX01Screen = ({ navigation }) => {
     new MatchX01Config(501, GameTypes.FirstTo, 1, 1, 1, [''])
   );
 
+  const hasSecondPlayer = config.playerNames.length > 1;
+
   useEffect(() => {
     const loadDefaultPlayerName = async () => {
       const user = await userService.getCurrentUser();
@@ -45,6 +48,26 @@ export const ConfigX01Screen = ({ navigation }) => {
 
   const updateConfig = (changes: Partial<IMatchX01Config>) => {
     setConfig(config.copyWith(changes));
+  };
+
+  const handlePlayerNameChange = (index: number, value: string) => {
+    const newNames = [...config.playerNames];
+    newNames[index] = value;
+    updateConfig({ playerNames: newNames, numPlayers: newNames.length });
+  };
+
+  const handleAddPlayer = () => {
+    if (!hasSecondPlayer) {
+      const newNames = [...config.playerNames, ''];
+      updateConfig({ playerNames: newNames, numPlayers: 2 });
+    }
+  };
+
+  const handleRemovePlayer = () => {
+    if (hasSecondPlayer) {
+      const newNames = [config.playerNames[0]];
+      updateConfig({ playerNames: newNames, numPlayers: 1 });
+    }
   };
 
   const handlePlay = async () => {
@@ -98,14 +121,51 @@ export const ConfigX01Screen = ({ navigation }) => {
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>JUGADORES</Text>
+
+          {/* Jugador 1 - siempre visible */}
           <TextInput
             description="Nombre del jugador 1"
             placeholder="Introduce el nombre"
             iconName="user"
             value={config.playerNames[0]}
-            onChangeText={(val: string) => updateConfig({ playerNames: [val] })}
+            onChangeText={(val: string) => handlePlayerNameChange(0, val)}
             autoCapitalize="words"
           />
+
+          {/* Jugador 2 - solo si se ha añadido */}
+          {hasSecondPlayer && (
+            <View style={styles.player2Row}>
+              <View style={styles.player2Input}>
+                <TextInput
+                  description="Nombre del jugador 2"
+                  placeholder="Introduce el nombre"
+                  iconName="user"
+                  value={config.playerNames[1]}
+                  onChangeText={(val: string) => handlePlayerNameChange(1, val)}
+                  autoCapitalize="words"
+                />
+              </View>
+              <TouchableOpacity
+                style={styles.removePlayerBtn}
+                onPress={handleRemovePlayer}
+                activeOpacity={0.7}
+              >
+                <Feather name="trash-2" size={20} color={theme.colors.inputTextError} />
+              </TouchableOpacity>
+            </View>
+          )}
+
+          {/* Botón añadir jugador */}
+          {!hasSecondPlayer && (
+            <TouchableOpacity
+              style={styles.addPlayerBtn}
+              onPress={handleAddPlayer}
+              activeOpacity={0.7}
+            >
+              <Feather name="plus" size={18} color={theme.colors.buttonPrimaryBackground} />
+              <Text style={styles.addPlayerText}>Añadir otro jugador</Text>
+            </TouchableOpacity>
+          )}
         </View>
 
       </ScrollView>
@@ -143,15 +203,44 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: theme.spacing.xl,
   },
-  playerLabel: {
-    fontFamily: theme.typography.fontFamily.regular,
+  player2Row: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+  },
+  player2Input: {
+    flex: 1,
+  },
+  removePlayerBtn: {
+    width: 44,
+    height: 44,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 34,
+    marginLeft: theme.spacing.sm,
+    borderWidth: 1,
+    borderColor: theme.colors.buttonErrorBorder,
+    borderRadius: theme.borderRadius.round,
+  },
+  addPlayerBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    alignSelf: 'flex-start',
+    paddingVertical: theme.spacing.sm,
+    paddingHorizontal: theme.spacing.md,
+    borderWidth: 1,
+    borderColor: theme.colors.buttonPrimaryBackground,
+    borderRadius: theme.borderRadius.xl,
+  },
+  addPlayerText: {
+    fontFamily: theme.typography.fontFamily.semiBold,
     fontSize: theme.typography.sizes.sm,
-    color: theme.colors.textSecondary,
-    marginBottom: theme.spacing.sm,
+    color: theme.colors.buttonPrimaryBackground,
+    marginLeft: theme.spacing.sm,
   },
   footer: {
     padding: theme.spacing.lg,
     paddingBottom: theme.spacing.xl,
     paddingTop: theme.spacing.md,
-  }
+  },
 });

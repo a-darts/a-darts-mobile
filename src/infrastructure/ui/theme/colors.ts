@@ -25,6 +25,16 @@ export const colors = {
   buttonSecondaryIcon: '#FFFFFF',
   buttonSecondaryBorder: '#4C4C4C',
 
+  buttonTertiaryBackground: '#2C2C2C',
+  buttonTertiaryText: '#FFFFFF',
+  buttonTertiaryIcon: '#FFFFFF',
+  buttonTertiaryBorder: '#BFE55F',
+
+  buttonErrorBackground: 'transparent',
+  buttonErrorText: '#FF4C4C',
+  buttonErrorIcon: '#FF4C4C',
+  buttonErrorBorder: '#FF4C4C',
+
   // Key
   keyBackground: '#242424',
   keyBorder: '#4C4C4C',

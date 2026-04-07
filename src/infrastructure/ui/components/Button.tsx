@@ -6,19 +6,35 @@ import { theme } from '../theme/theme';
 interface ButtonProps {
   title: string;
   onPress: () => void;
-  variant?: 'primary' | 'secondary' | string;
+  variant?: 'primary' | 'secondary' | 'tertiary';
   style?: any;
   iconName?: any;
 }
 
-export const Button = ({ title, onPress, variant = 'primary', style, iconName }: ButtonProps) => {
-  const isPrimary = variant === 'primary';
+const variantButtonStyles = {
+  primary: 'primaryButton' as const,
+  secondary: 'secondaryButton' as const,
+  tertiary: 'tertiaryButton' as const,
+};
 
+const variantTextStyles = {
+  primary: 'primaryText' as const,
+  secondary: 'secondaryText' as const,
+  tertiary: 'tertiaryText' as const,
+};
+
+const variantIconColors = {
+  primary: theme.colors.buttonPrimaryIcon,
+  secondary: theme.colors.buttonSecondaryIcon,
+  tertiary: theme.colors.buttonTertiaryIcon,
+};
+
+export const Button = ({ title, onPress, variant = 'primary', style, iconName }: ButtonProps) => {
   return (
     <TouchableOpacity
       style={[
         styles.button,
-        isPrimary ? styles.primaryButton : styles.secondaryButton,
+        styles[variantButtonStyles[variant]],
         style
       ]}
       onPress={onPress}
@@ -27,16 +43,16 @@ export const Button = ({ title, onPress, variant = 'primary', style, iconName }:
       <View style={styles.contentContainer}>
         <Text style={[
           styles.text,
-          isPrimary ? styles.primaryText : styles.secondaryText,
+          styles[variantTextStyles[variant]],
           iconName && { marginRight: theme.spacing.sm }
         ]}>
           {title.toUpperCase()}
         </Text>
         {iconName && (
-          <Feather 
-            name={iconName} 
-            size={20} 
-            color={isPrimary ? theme.colors.buttonPrimaryIcon : theme.colors.buttonSecondaryIcon} 
+          <Feather
+            name={iconName}
+            size={20}
+            color={variantIconColors[variant]}
           />
         )}
       </View>
@@ -70,6 +86,11 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: theme.colors.buttonSecondaryBorder,
   },
+  tertiaryButton: {
+    backgroundColor: theme.colors.buttonTertiaryBackground,
+    borderWidth: 1,
+    borderColor: theme.colors.buttonTertiaryBorder,
+  },
   text: {
     fontFamily: theme.typography.fontFamily.bold,
     fontSize: theme.typography.sizes.md,
@@ -80,5 +101,8 @@ const styles = StyleSheet.create({
   },
   secondaryText: {
     color: theme.colors.buttonSecondaryText,
+  },
+  tertiaryText: {
+    color: theme.colors.buttonTertiaryText,
   }
 });
