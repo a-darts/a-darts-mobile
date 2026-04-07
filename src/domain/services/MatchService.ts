@@ -1,5 +1,5 @@
 // domain/services/MatchService.ts
-import { IMatchX01Repository } from '../IMatchX01Repository';
+import { IMatchX01Repository } from '../ports/IMatchX01Repository';
 import { MatchX01Config } from '../models/MatchX01Config';
 
 export class MatchService {

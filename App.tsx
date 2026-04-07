@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, ActivityIndicator } from 'react-native';
-import { AppNavigator } from './src/navigation/AppNavigator';
-import { theme } from './src/theme/theme';
+import { AppNavigator } from './src/infrastructure/ui/navigation/AppNavigator';
+import { theme } from './src/infrastructure/ui/theme/theme';
 import * as Font from 'expo-font';
 import {
   Manrope_400Regular,

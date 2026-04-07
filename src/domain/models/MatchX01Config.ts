@@ -1,6 +1,6 @@
-import { IMatchX01Config } from "../Ports";
-import { GamesX01 } from "../Ports";
-import { GameTypes } from "../Ports";
+import { IMatchX01Config } from "../ports/Ports";
+import { GamesX01 } from "../enums/GamesX01";
+import { GameTypes } from "../enums/GameTypes";
 
 
 export class MatchX01Config implements IMatchX01Config {

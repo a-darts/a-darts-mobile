@@ -1,5 +1,5 @@
-import { BustException, InvalidThrowException } from '../Exceptions';
-import { IThrowX01, IPlayerX01, GameTypes } from '../Ports';
+import { BustException, InvalidThrowException } from '../exceptions/Exceptions';
+import { IThrowX01, IPlayerX01, GameTypes } from '../ports/Ports';
 
 export class PlayerX01 implements IPlayerX01 {
   // --------------------------------------------------------------------------

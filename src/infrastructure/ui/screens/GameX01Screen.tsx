@@ -5,8 +5,8 @@ import { Feather } from '@expo/vector-icons';
 import { Keypad } from '../components/Keypad';
 import { Toast } from '../components/Toast';
 import { theme } from '../theme/theme';
-import { MatchService } from '../domain/services/MatchService';
-import { AsyncStorageMatchX01Repository } from '../infrastructure/repositories/AsyncStorageMatchX01Repository';
+import { MatchService } from '../../../domain/services/MatchService';
+import { AsyncStorageMatchX01Repository } from '../../adapters/AsyncStorageMatchX01Repository';
 
 export const GameX01Screen = ({ navigation }) => {
   // Instanciamos el adaptador y se lo pasamos al servicio

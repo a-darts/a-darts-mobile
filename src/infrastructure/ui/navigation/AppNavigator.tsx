@@ -13,6 +13,7 @@ export const AppNavigator = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator
+        id="AppStack"
         screenOptions={{
           headerTitleAlign: 'center',
           headerStyle: {

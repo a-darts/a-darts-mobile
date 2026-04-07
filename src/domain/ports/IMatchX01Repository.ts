@@ -1,4 +1,4 @@
-import { MatchX01Config } from "./models/MatchX01Config";
+import { MatchX01Config } from "../models/MatchX01Config";
 
 export interface IMatchX01Repository {
     save(config: MatchX01Config): Promise<void>;

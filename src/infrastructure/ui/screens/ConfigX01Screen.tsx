@@ -7,10 +7,12 @@ import { ButtonGroup } from '../components/ButtonGroup';
 import { Stepper } from '../components/Stepper';
 import { Dropdown } from '../components/Dropdown';
 import { theme } from '../theme/theme';
-import { MatchX01Config } from '../domain/models/MatchX01Config';
-import { IMatchX01Config, GameTypes, GamesX01 } from '../domain/Ports';
-import { MatchService } from '../domain/services/MatchService';
-import { AsyncStorageMatchX01Repository } from '../infrastructure/repositories/AsyncStorageMatchX01Repository';
+import { MatchX01Config } from '../../../domain/models/MatchX01Config';
+import { IMatchX01Config } from '../../../domain/ports/Ports';
+import { GamesX01 } from '../../../domain/enums/GamesX01';
+import { GameTypes } from '../../../domain/enums/GameTypes';
+import { MatchService } from '../../../domain/services/MatchService';
+import { AsyncStorageMatchX01Repository } from '../../adapters/AsyncStorageMatchX01Repository';
 
 const GAME_OPTIONS: { label: string; value: GamesX01 }[] = [
   { label: '501', value: 501 },

@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { IMatchX01Repository } from '../../domain/IMatchX01Repository';
+import { IMatchX01Repository } from '../../domain/ports/IMatchX01Repository';
 import { MatchX01Config } from '../../domain/models/MatchX01Config';
-import { IMatchX01Config } from '../../domain/Ports';
+import { IMatchX01Config } from '../../domain/ports/Ports';
 
 const STORAGE_KEY = '@current_match_config';
 

@@ -1,9 +1,5 @@
-export type GamesX01 = 170 | 301 | 501;
-
-export enum GameTypes {
-    BestOf = 'bestOf',
-    FirstTo = 'firstTo'
-}
+import { GamesX01 } from "../enums/GamesX01";
+import { GameTypes } from "../enums/GameTypes";
 
 export interface IMatchX01Config {
     game: GamesX01;

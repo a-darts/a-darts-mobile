@@ -1,5 +1,5 @@
-import { InvalidThrowException } from "../Exceptions";
-import { IThrowX01 } from "../Ports";
+import { InvalidThrowException } from "../exceptions/Exceptions";
+import { IThrowX01 } from "../ports/Ports";
 
 export class ThrowX01 implements IThrowX01 {
     // --------------------------------------------------------------------------
