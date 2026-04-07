@@ -61,5 +61,15 @@ export class MatchX01Config implements IMatchX01Config {
             playerNames: this.playerNames
         };
     }
+    public copyWith(changes: Partial<IMatchX01Config>): MatchX01Config {
+        return new MatchX01Config(
+            changes.game ?? this.game,
+            changes.typeOfGame ?? this.typeOfGame,
+            changes.numSets ?? this.numSets,
+            changes.numLegs ?? this.numLegs,
+            changes.numPlayers ?? this.numPlayers,
+            changes.playerNames ?? [...this.playerNames]
+        );
+    }
     // --------------------------------------------------------------------------
 }

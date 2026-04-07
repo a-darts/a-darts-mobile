@@ -2,7 +2,15 @@ import React from 'react';
 import { View, Image, Text, StyleSheet } from 'react-native';
 import { theme } from '../theme/theme';
 
-export const Avatar = ({ isGuest = false, imageUri, size = 100 }) => {
+interface AvatarProps {
+  isGuest?: boolean;
+  imageUri?: any;
+  size?: number;
+}
+
+export const Avatar = (
+  { isGuest = false, imageUri, size = 100 }: AvatarProps
+) => {
   return (
     <View style={[styles.container, { width: size, height: size, borderRadius: size / 2 }]}>
       {isGuest ? (

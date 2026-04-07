@@ -27,24 +27,16 @@ const TYPE_OPTIONS = [
 export const ConfigX01Screen = ({ navigation }) => {
   const matchService = MatchX01ConfigServiceFactory.getInstance();
 
-  const [game, setGame] = useState<GamesX01>(501);
-  const [type, setType] = useState<GameTypes>(GameTypes.FirstTo);
-  const [numLegs, setNumLegs] = useState(1);
-  const [numSets, setNumSets] = useState(1);
-  const [playername, setPlayername] = useState('');
+  const [config, setConfig] = useState<MatchX01Config>(
+    new MatchX01Config(501, GameTypes.FirstTo, 1, 1, 1, [''])
+  );
+
+  const updateConfig = (changes: Partial<IMatchX01Config>) => {
+    setConfig(config.copyWith(changes));
+  };
 
   const handlePlay = async () => {
     try {
-      // 1. Instanciamos el objeto de dominio
-      const config = new MatchX01Config(
-        game,
-        type,
-        numSets,
-        numLegs,
-        1, // MIRAR / CAMBIAR
-        [playername.trim() || 'Jugador 1']
-      );
-
       await matchService.saveMatchConfig(config);
       navigation.navigate('GameX01Screen');
     } catch (error) {
@@ -61,8 +53,8 @@ export const ConfigX01Screen = ({ navigation }) => {
           <Text style={styles.sectionTitle}>JUEGO</Text>
           <ButtonGroup
             options={GAME_OPTIONS}
-            selectedValue={game}
-            onSelect={(val: GamesX01) => setGame(val)}
+            selectedValue={config.game}
+            onSelect={(val: GamesX01) => updateConfig({ game: val })}
           />
         </View>
 
@@ -70,22 +62,22 @@ export const ConfigX01Screen = ({ navigation }) => {
           <Text style={styles.sectionTitle}>SETS Y LEGS</Text>
           <Dropdown
             options={TYPE_OPTIONS}
-            selectedValue={type}
-            onSelect={(val: GameTypes) => setType(val)}
+            selectedValue={config.typeOfGame}
+            onSelect={(val: GameTypes) => updateConfig({ typeOfGame: val })}
           />
 
           <View style={styles.steppersRow}>
             <Stepper
               label="Legs"
-              value={numLegs}
-              onChange={setNumLegs}
+              value={config.numLegs}
+              onChange={(val: number) => updateConfig({ numLegs: val })}
               min={1}
               max={99}
             />
             <Stepper
               label="Sets"
-              value={numSets}
-              onChange={setNumSets}
+              value={config.numSets}
+              onChange={(val: number) => updateConfig({ numSets: val })}
               min={1}
               max={99}
             />
@@ -98,8 +90,8 @@ export const ConfigX01Screen = ({ navigation }) => {
             description="Nombre del jugador 1"
             placeholder="Introduce el nombre"
             iconName="user"
-            value={playername}
-            onChangeText={setPlayername}
+            value={config.playerNames[0]}
+            onChangeText={(val: string) => updateConfig({ playerNames: [val] })}
             autoCapitalize="words"
           />
         </View>

@@ -129,13 +129,11 @@ export class PlayerX01 implements IPlayerX01 {
   /**
    * Deletes the last throw
    */
-  // Pre: throws.length > 0
+  // Pre: throws.length > 1
   public undoLastThrow(): void {
-    if (this.throws.length > 0) {
+    if (this.throws.length > 1) {
       this.throws.pop();
-      this.remainingScore = this.throws.length > 0
-        ? this.throws[this.throws.length - 1].remainingScore
-        : this.initialScore;
+      this.remainingScore = this.throws[this.throws.length - 1].remainingScore;
     }
   }
 

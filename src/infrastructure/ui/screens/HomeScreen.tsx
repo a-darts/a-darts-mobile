@@ -16,7 +16,7 @@ const DEFAULT_GAMES = [
 export const HomeScreen = ({ route, navigation }) => {
   const { name } = route.params || {};
   const isGuest = !name;
-  const username = isGuest ? 'INVITADO' : 'JUAN GARCÍA'; // Hardcoded for demo/design match
+  const username = isGuest ? 'INVITADO' : name;
 
   const [recentGames, setRecentGames] = useState([]);
 

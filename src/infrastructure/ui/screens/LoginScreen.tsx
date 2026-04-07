@@ -6,12 +6,19 @@ import { Tabs } from '../components/Tabs';
 import { theme } from '../theme/theme';
 
 export const LoginScreen = ({ navigation }) => {
-  const [activeTab, setActiveTab] = useState(0);
   const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
 
-  const isLogin = activeTab === 0;
+  const handleEntrar = () => {
+    navigation.reset({
+      index: 0,
+      routes: [
+        {
+          name: 'HomeScreen',
+          params: { name: name.trim() }
+        }
+      ],
+    });
+  };
 
   return (
     <View style={styles.container}>
@@ -24,59 +31,20 @@ export const LoginScreen = ({ navigation }) => {
         />
       </View>
 
-      <Tabs
-        options={['Iniciar sesión', 'Registrarse']}
-        activeIndex={activeTab}
-        onChange={setActiveTab}
-      />
-
       <View style={styles.form}>
-        {!isLogin && (
-          <TextInput
-            description="Nombre"
-            placeholder="Introduce tu nombre"
-            iconName="user"
-            value={name}
-            onChangeText={setName}
-            autoCapitalize="words"
-          />
-        )}
-
         <TextInput
-          description="Correo"
-          placeholder="Introduce el correo"
-          iconName="mail"
-          value={email}
-          onChangeText={setEmail}
-          keyboardType="email-address"
-          autoCapitalize="none"
-        />
-
-        <TextInput
-          description="Contraseña"
-          placeholder="Introduce la contraseña"
-          iconName="lock"
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry
+          description="Nombre"
+          placeholder="Introduce tu nombre"
+          iconName="user"
+          value={name}
+          onChangeText={setName}
+          autoCapitalize="words"
         />
 
         <View style={styles.buttonContainer}>
           <Button
-            title={isLogin ? "Iniciar sesión" : "Registrarse"}
-            onPress={() => navigation.navigate('HomeScreen', { name: email })}
-          />
-
-          <View style={styles.separatorContainer}>
-            <View style={styles.line} />
-            <Text style={styles.separatorText}>o</Text>
-            <View style={styles.line} />
-          </View>
-
-          <Button
-            title="Entrar como invitado"
-            variant="secondary"
-            onPress={() => navigation.navigate('HomeScreen')}
+            title={"ENTRAR"}
+            onPress={handleEntrar}
           />
         </View>
       </View>
@@ -111,19 +79,4 @@ const styles = StyleSheet.create({
   buttonContainer: {
     marginTop: 10,
   },
-  separatorContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginVertical: 24,
-  },
-  line: {
-    flex: 1,
-    height: 1,
-    backgroundColor: theme.colors.line,
-  },
-  separatorText: {
-    color: theme.colors.textSecondary,
-    paddingHorizontal: 16,
-    fontFamily: theme.typography.fontFamily.regular,
-  }
 });
