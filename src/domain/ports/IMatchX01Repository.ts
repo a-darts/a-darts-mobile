@@ -1,7 +1,7 @@
-import { MatchX01Config } from "../models/MatchX01Config";
+import { MatchX01 } from "../models/MatchX01";
 
 export interface IMatchX01Repository {
-    save(config: MatchX01Config): Promise<void>;
-    get(): Promise<MatchX01Config | null>;
+    save(match: MatchX01): Promise<void>;
+    get(): Promise<MatchX01 | null>;
     clear(): Promise<void>;
 }

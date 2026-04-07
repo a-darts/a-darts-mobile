@@ -1,16 +1,26 @@
 import { useState, useEffect } from 'react';
-import { MatchX01Config, IMatchX01Config } from '../../../../../domain/models/MatchX01Config';
-import MatchX01ConfigServiceFactory from '../../../../factories/MatchX01ConfigServiceFactory';
+import { GameTypes } from '../../../../../../backend/domain/enums/GameTypes';
+import { GamesX01 } from '../../../../../../backend/domain/enums/GamesX01';
+
+import { AsyncStorageMatchX01Repository } from '../../../../../../backend/infrastructure/repositories/AsyncStorageMatchX01Repository';
+import { CreateMatchX01Service } from '../../../../../../backend/application/services/CreateMatchX01Service';
 import UserServiceFactory from '../../../../factories/UserServiceFactory';
-import { GameTypes } from '../../../../../domain/enums/GameTypes';
+import { CreateMatchX01Request } from '../../../../../../backend/application/dtos/CreateMatchX01Request';
+
 
 export const useConfigX01 = (navigation: any) => {
-    const matchService = MatchX01ConfigServiceFactory.getInstance();
     const userService = UserServiceFactory.getInstance();
 
-    const [config, setConfig] = useState<MatchX01Config>(
-        new MatchX01Config(501, GameTypes.FirstTo, 1, 1, [''])
-    );
+    const matchRepository = new AsyncStorageMatchX01Repository();
+    const createMatchService = new CreateMatchX01Service(matchRepository);
+
+    const [config, setConfig] = useState({
+        game: 501,
+        typeOfGame: GameTypes.FirstTo,
+        numSets: 1,
+        numLegs: 1,
+        playerNames: ['']
+    });
 
     useEffect(() => {
         const loadDefaultPlayerName = async () => {
@@ -20,8 +30,8 @@ export const useConfigX01 = (navigation: any) => {
         loadDefaultPlayerName();
     }, []);
 
-    const updateConfig = (changes: Partial<IMatchX01Config>) => {
-        setConfig(config.copyWith(changes));
+    const updateConfig = (changes: Partial<typeof config>) => {
+        setConfig(prev => ({ ...prev, ...changes }));
     };
 
     const handlePlayerNameChange = (index: number, value: string) => {
@@ -44,10 +54,25 @@ export const useConfigX01 = (navigation: any) => {
 
     const handlePlay = async () => {
         try {
-            await matchService.saveMatchConfig(config);
-            navigation.navigate('GameX01Screen');
-        } catch (error) {
-            console.error(error.message);
+            // 1. Validar que los nombres no estén vacíos
+            const names = config.playerNames.filter(n => n.trim() !== '');
+            if (names.length === 0) return;
+
+            // 2. Ejecutar el servicio con el DTO (request)
+            const request: CreateMatchX01Request = {
+                game: config.game,
+                typeOfGame: config.typeOfGame,
+                numSets: config.numSets,
+                numLegs: config.numLegs,
+                playerNames: names,
+            };
+            const match = await createMatchService.execute(request);
+
+            // 3. Navegar a la partida pasando el ID generado
+            navigation.navigate('GameX01Screen', { matchId: match.id });
+
+        } catch (error: any) {
+            console.error("Error al crear la partida:", error.message);
         }
     };
 

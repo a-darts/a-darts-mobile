@@ -7,16 +7,20 @@ import { Keypad } from '../../components/Keypad';
 import { Toast } from '../../components/Toast';
 import { styles } from './styles/GameX01.styles';
 
-export const GameX01Screen = ({ navigation }: any) => {
+export const GameX01Screen = ({ navigation, route }: any) => {
+  console.log("DENTRO");
   const insets = useSafeAreaInsets();
+
   const {
     match, inputValue, toast, setToast, scrollViewRef,
     handleKeyPress, handleBackspace, handleUndo, submitScore, handleEnter
-  } = useGameX01(navigation);
+  } = useGameX01(navigation, route);
 
   if (!match) return <View style={styles.container} />;
 
-  const { players, activePlayerIndex } = match;
+  const { players, activePlayer } = match;
+  const activeIndex = (match as any).activePlayerIndex;
+
   const p1 = players[0];
   const p2 = players.length > 1 ? players[1] : null;
 
@@ -32,22 +36,38 @@ export const GameX01Screen = ({ navigation }: any) => {
 
       {/* Header */}
       <View style={styles.headerRow}>
-        <View style={[styles.playerCard, activePlayerIndex === 0 && styles.playerCardActive]}>
-          <Text style={styles.playerName}>{p1.name}</Text>
-          <Text style={[styles.scoreLeftText, activePlayerIndex === 0 && styles.scoreActiveText]}>{p1.remainingScore}</Text>
+
+        {/* Jugador 1 */}
+        <View style={[styles.playerCard, activeIndex === 0 && styles.playerCardActive]}>
+          <Text style={styles.playerName}>
+            {p1.name}
+          </Text>
+          <Text style={[styles.scoreLeftText, activeIndex === 0 && styles.scoreActiveText]}>
+            {p1.remainingScore}
+          </Text>
         </View>
 
+        {/* Marcador central  */}
         <View style={styles.statsCard}>
-          <Text style={styles.statsRowText}>{p1.numSetsWon} - {p2?.numSetsWon ?? 0}</Text>
+          <Text style={styles.statsRowText}>
+            {p1.numSetsWon} - {p2?.numSetsWon ?? 0}
+          </Text>
           <Text style={styles.statsLabel}>S E T S</Text>
-          <Text style={[styles.statsRowText, { marginTop: 12 }]}>{p1.numLegsWon} - {p2?.numLegsWon ?? 0}</Text>
+          <Text style={[styles.statsRowText, { marginTop: 12 }]}>
+            {p1.numLegsWon} - {p2?.numLegsWon ?? 0}
+          </Text>
           <Text style={styles.statsLabel}>L E G S</Text>
         </View>
 
+        {/* Jugador 2 */}
         {p2 && (
-          <View style={[styles.playerCard, activePlayerIndex === 1 && styles.playerCardActive]}>
-            <Text style={styles.playerName}>{p2.name}</Text>
-            <Text style={[styles.scoreLeftText, activePlayerIndex === 1 && styles.scoreActiveText]}>{p2.remainingScore}</Text>
+          <View style={[styles.playerCard, activeIndex === 1 && styles.playerCardActive]}>
+            <Text style={styles.playerName}>
+              {p2.name}
+            </Text>
+            <Text style={[styles.scoreLeftText, activeIndex === 1 && styles.scoreActiveText]}>
+              {p2.remainingScore}
+            </Text>
           </View>
         )}
       </View>
@@ -57,7 +77,11 @@ export const GameX01Screen = ({ navigation }: any) => {
       {/* Controls Area */}
       <View style={[styles.controlsArea, { paddingBottom: Math.max(insets.bottom, 16) }]}>
         <View style={styles.controlBarRow}>
-          <View style={styles.inputBox}><Text style={styles.inputText}>{inputValue}</Text></View>
+          <View style={styles.inputBox}>
+            <Text style={styles.inputText}>
+              {inputValue}
+            </Text>
+          </View>
           <TouchableOpacity style={styles.topControlBtn} onPress={handleUndo}>
             <Text style={styles.topControlText}>DESHACER</Text>
           </TouchableOpacity>

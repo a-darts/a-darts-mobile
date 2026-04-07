@@ -2,6 +2,7 @@ import { User } from '../../domain/models/User';
 import { IUserRepository } from '../../domain/ports/IUserRepository';
 
 export class UserService {
+    // Inyectamos la dependencia en el constructor
     constructor(private userRepository: IUserRepository) { }
 
     async login(name: string): Promise<User> {

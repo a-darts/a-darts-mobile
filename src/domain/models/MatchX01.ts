@@ -7,6 +7,11 @@ export interface IMatchX01 {
     config: IMatchX01Config;
     players: IPlayerX01[];
     activePlayerIndex: number;
+
+    create(config: IMatchX01Config): MatchX01;
+    addThrow(score: number): void;
+    undoLastThrow(): void;
+    getCurrentPlayer(): IPlayerX01;
 }
 
 export class MatchX01 implements IMatchX01 {
@@ -14,18 +19,29 @@ export class MatchX01 implements IMatchX01 {
     // Attributes
     config: IMatchX01Config;
     players: IPlayerX01[];
-    activePlayerIndex: number = 0;
+    activePlayerIndex: number;
     // --------------------------------------------------------------------------
 
     // --------------------------------------------------------------------------
     // Constructor
     constructor(
         config: IMatchX01Config,
+        players: IPlayerX01[],
+        activePlayerIndex?: number,
     ) {
         this.config = config;
-        this.players = config.playerNames.map((name) =>
+        this.players = [...players];
+        this.activePlayerIndex = activePlayerIndex ? activePlayerIndex : 0;
+    }
+    // --------------------------------------------------------------------------
+
+    // --------------------------------------------------------------------------
+    // Factory method
+    public create(config: IMatchX01Config): MatchX01 {
+        const players = config.playerNames.map((name) =>
             new PlayerX01(name, config.game, config.numSets, config.numLegs)
         );
+        return new MatchX01(config, players);
     }
     // --------------------------------------------------------------------------
 
@@ -65,16 +81,8 @@ export class MatchX01 implements IMatchX01 {
         this.activePlayerIndex = inactivePlayerIndex;
     }
 
-    public get currentPlayer() {
+    public getCurrentPlayer(): IPlayerX01 {
         return this.players[this.activePlayerIndex];
     }
-
-    // Factory method
-    // public static create(config: IMatchX01Config): MatchX01 {
-    //     const players = config.playerNames.map((name) =>
-    //         new PlayerX01(name, config.game, config.numSets, config.numLegs)
-    //     );
-    //     return new MatchX01(config, players);
-    // }
     // --------------------------------------------------------------------------
 }

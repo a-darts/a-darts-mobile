@@ -66,52 +66,33 @@ export const ConfigX01Screen = ({ navigation }) => {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>JUGADORES</Text>
 
-          {/* Jugador 1 - siempre visible */}
-          <TextInput
-            description="Nombre del jugador 1"
-            placeholder="Introduce el nombre"
-            iconName="user"
-            value={config.playerNames[0]}
-            onChangeText={(val: string) => handlePlayerNameChange(0, val)}
-            autoCapitalize="words"
-          />
-
-          {/* Jugador 2 - solo si se ha añadido */}
-          {hasSecondPlayer && (
-            <View style={styles.player2Row}>
-              <View style={styles.player2Input}>
+          {config.playerNames.map((name, index) => (
+            <View key={index} style={index === 1 ? styles.player2Row : null}>
+              <View style={index === 1 ? styles.player2Input : null}>
                 <TextInput
-                  description="Nombre del jugador 2"
+                  description={`Nombre del jugador ${index + 1}`}
                   placeholder="Introduce el nombre"
                   iconName="user"
-                  value={config.playerNames[1]}
-                  onChangeText={(val: string) => handlePlayerNameChange(1, val)}
+                  value={name}
+                  onChangeText={(val: string) => handlePlayerNameChange(index, val)}
                   autoCapitalize="words"
                 />
               </View>
-              <TouchableOpacity
-                style={styles.removePlayerBtn}
-                onPress={handleRemovePlayer}
-                activeOpacity={0.7}
-              >
-                <Feather name="trash-2" size={20} color={theme.colors.inputTextError} />
-              </TouchableOpacity>
+              {index === 1 && (
+                <TouchableOpacity style={styles.removePlayerBtn} onPress={handleRemovePlayer}>
+                  <Feather name="trash-2" size={20} color={theme.colors.inputTextError} />
+                </TouchableOpacity>
+              )}
             </View>
-          )}
+          ))}
 
-          {/* Botón añadir jugador */}
           {!hasSecondPlayer && (
-            <TouchableOpacity
-              style={styles.addPlayerBtn}
-              onPress={handleAddPlayer}
-              activeOpacity={0.7}
-            >
+            <TouchableOpacity style={styles.addPlayerBtn} onPress={handleAddPlayer}>
               <Feather name="plus" size={18} color={theme.colors.buttonPrimaryBackground} />
               <Text style={styles.addPlayerText}>Añadir otro jugador</Text>
             </TouchableOpacity>
           )}
         </View>
-
       </ScrollView>
 
       <View style={styles.footer}>

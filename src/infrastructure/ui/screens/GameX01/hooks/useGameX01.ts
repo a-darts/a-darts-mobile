@@ -1,28 +1,37 @@
 import { useState, useEffect, useRef } from 'react';
 import { ScrollView } from 'react-native';
-import { MatchX01 } from '../../../../../domain/models/MatchX01';
-import MatchX01ConfigServiceFactory from '../../../../factories/MatchX01ConfigServiceFactory';
+import { AddScoreService } from '../../../../../../backend/application/services/AddScoreService';
+import { AsyncStorageMatchX01Repository } from '../../../../../../backend/infrastructure/repositories/AsyncStorageMatchX01Repository';
+import { UndoScoreService } from '../../../../../../backend/application/services/UndoScoreService';
+import { MatchX01 } from '../../../../../../backend/domain/models/MatchX01';
 
-export const useGameX01 = (navigation: any) => {
-    const matchService = MatchX01ConfigServiceFactory.getInstance();
+
+// MIRAR: Inyección manual (o vía Factory si prefieres)
+const matchRepo = new AsyncStorageMatchX01Repository();
+const addScoreService = new AddScoreService(matchRepo);
+const undoScoreService = new UndoScoreService(matchRepo);
+
+
+export const useGameX01 = (navigation: any, route: any) => {
+    const { matchId } = route.params;
 
     const [match, setMatch] = useState<MatchX01 | null>(null);
-    const [tick, setTick] = useState(0);
     const [inputValue, setInputValue] = useState('');
     const [toast, setToast] = useState({ visible: false, title: '', description: '', type: 'error' });
     const scrollViewRef = useRef<ScrollView>(null);
 
     useEffect(() => {
         const loadGame = async () => {
-            const matchConfig = await matchService.getMatchConfig();
-            if (!matchConfig) {
-                navigation.goBack();
+            const result = await matchRepo.getById(matchId);
+            if (!result) {
+                setToast({ visible: true, title: 'Error', description: 'No se pudo cargar la partida', type: 'error' });
+                setTimeout(() => navigation.goBack(), 2000);
                 return;
             }
-            setMatch(new MatchX01(matchConfig));
+            setMatch(result);
         };
         loadGame();
-    }, []);
+    }, [matchId]);
 
     const handleKeyPress = (char: string) => {
         if (inputValue.length < 3) setInputValue(prev => prev + char);
@@ -30,23 +39,46 @@ export const useGameX01 = (navigation: any) => {
 
     const handleBackspace = () => setInputValue(prev => prev.slice(0, -1));
 
-    const submitScore = (scoreNum: number) => {
+    const submitScore = async (scoreNum: number) => {
         if (!match) return;
+        // MIRAR: si usuario introduce un numero, pulsa Enter y la operación
+        // tarda 200ms, el número se queda ahí congelado -> Optimistic UI
+        // const previousValue = inputValue;
+        // setInputValue('');
+
         try {
-            match.addThrow(scoreNum);
-            setTick(t => t + 1);
+            // Llamamos al servicio de aplicación
+            const updatedMatch = await addScoreService.execute(match.id, scoreNum);
+
+            // Actualizamos el estado con la nueva instancia (esto dispara el re-render)
+            setMatch(updatedMatch);
             setInputValue('');
+
+            if (updatedMatch.status === 'FINISHED') {
+                setToast({ visible: true, title: '¡Victoria!', description: 'Partida finalizada', type: 'success' });
+            }
         } catch (error: any) {
-            setToast({ visible: true, title: 'Error', description: error.message, type: 'error' });
+            setToast({ visible: true, title: 'Tiro inválido', description: error.message, type: 'error' });
             setInputValue('');
         }
     };
 
-    const handleUndo = () => {
-        if (match) {
-            match.undoLastThrow();
-            setTick(t => t + 1);
+    const handleUndo = async () => {
+        if (!match) return;
+        try {
+            const updatedMatch = await undoScoreService.execute(match.id);
+            setMatch(updatedMatch);
+        } catch (error: any) {
+            setToast({ visible: true, title: 'Error', description: error.message, type: 'error' });
         }
+    };
+
+    const handleEnter = async () => {
+        if (inputValue === '') return;
+        const score = parseInt(inputValue, 10);
+        if (isNaN(score)) return;
+
+        await submitScore(score);
     };
 
     return {
@@ -59,6 +91,6 @@ export const useGameX01 = (navigation: any) => {
         handleBackspace,
         handleUndo,
         submitScore,
-        handleEnter: () => inputValue !== '' && submitScore(parseInt(inputValue, 10)),
+        handleEnter,
     };
 };
