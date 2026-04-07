@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
 import { Keypad } from '../components/Keypad';
 import { Toast } from '../components/Toast';
@@ -10,6 +11,8 @@ import { MatchX01Config } from '../../../domain/models/MatchX01Config';
 import { MatchX01 } from '../../../domain/models/MatchX01';
 
 export const GameX01Screen = ({ navigation }) => {
+  const insets = useSafeAreaInsets();
+
   const matchService = MatchX01ConfigServiceFactory.getInstance();
 
   const [match, setMatch] = useState<MatchX01 | null>(null);
@@ -214,6 +217,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: theme.colors.background,
     padding: theme.spacing.sm,
+    paddingBottom: theme.spacing.xl,
   },
   headerRow: {
     flexDirection: 'row',
@@ -268,7 +272,7 @@ const styles = StyleSheet.create({
   },
   statsRowText: {
     fontFamily: theme.typography.fontFamily.semiBold,
-    fontSize: theme.typography.sizes.lg,
+    fontSize: theme.typography.sizes.md,
   },
   statsHighlight: {
     color: theme.colors.text,
@@ -298,7 +302,7 @@ const styles = StyleSheet.create({
   tableCol: {
     flex: 1,
     fontFamily: theme.typography.fontFamily.regular,
-    fontSize: theme.typography.sizes.md,
+    fontSize: theme.typography.sizes.sm,
     color: theme.colors.text,
   },
   tableScore: {

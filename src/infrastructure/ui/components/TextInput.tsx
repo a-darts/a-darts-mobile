@@ -58,7 +58,7 @@ const styles = StyleSheet.create({
   },
   label: {
     fontFamily: theme.typography.fontFamily.regular,
-    fontSize: theme.typography.sizes.md,
+    fontSize: theme.typography.sizes.sm,
     color: theme.colors.inputLabel,
   },
   inputContainer: {
@@ -77,13 +77,13 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 16,
     fontFamily: theme.typography.fontFamily.regular,
-    fontSize: theme.typography.sizes.md,
+    fontSize: theme.typography.sizes.sm,
     color: theme.colors.text,
     height: '100%',
   },
   errorText: {
     fontFamily: theme.typography.fontFamily.regular,
-    fontSize: theme.typography.sizes.xs,
+    fontSize: theme.typography.sizes.sm,
     color: theme.colors.inputTextError,
     marginTop: 6,
   }

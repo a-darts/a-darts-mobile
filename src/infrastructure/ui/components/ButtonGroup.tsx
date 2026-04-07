@@ -47,7 +47,7 @@ const styles = StyleSheet.create({
   text: {
     fontFamily: theme.typography.fontFamily.semiBold,
     color: theme.colors.textSecondary,
-    fontSize: theme.typography.sizes.md,
+    fontSize: theme.typography.sizes.sm,
   },
   selectedText: {
     color: theme.colors.buttonPrimaryBackground,

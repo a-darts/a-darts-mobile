@@ -49,7 +49,7 @@ export class PlayerX01 implements IPlayerX01 {
     initialNumLegs: number,
     id?: string,
   ) {
-    this.id = id || crypto.randomUUID();
+    this.id = id || Math.random().toString(36).substring(2, 9);
     this.name = name || 'Jugador';
     this.initialScore = initialScore;
     this.initialNumSets = initialNumSets;

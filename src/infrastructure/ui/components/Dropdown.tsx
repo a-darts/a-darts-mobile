@@ -15,8 +15,8 @@ export const Dropdown = ({ options, selectedValue, onSelect, placeholder = 'Sele
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity 
-        style={styles.dropdownButton} 
+      <TouchableOpacity
+        style={styles.dropdownButton}
         onPress={() => setModalVisible(true)}
         activeOpacity={0.8}
       >
@@ -38,7 +38,7 @@ export const Dropdown = ({ options, selectedValue, onSelect, placeholder = 'Sele
               data={options}
               keyExtractor={(item) => item.value}
               renderItem={({ item }) => (
-                <TouchableOpacity 
+                <TouchableOpacity
                   style={[styles.optionItem, item.value === selectedValue && styles.selectedOptionItem]}
                   onPress={() => handleSelect(item.value)}
                 >
@@ -70,7 +70,7 @@ const styles = StyleSheet.create({
   },
   dropdownText: {
     fontFamily: theme.typography.fontFamily.regular,
-    fontSize: theme.typography.sizes.md,
+    fontSize: theme.typography.sizes.sm,
     color: theme.colors.text,
   },
   modalOverlay: {
@@ -95,7 +95,7 @@ const styles = StyleSheet.create({
   },
   optionText: {
     fontFamily: theme.typography.fontFamily.regular,
-    fontSize: theme.typography.sizes.md,
+    fontSize: theme.typography.sizes.sm,
     color: theme.colors.text,
     textAlign: 'center',
   },

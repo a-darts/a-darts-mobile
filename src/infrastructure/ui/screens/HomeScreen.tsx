@@ -164,7 +164,7 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontFamily: theme.typography.fontFamily.bold,
-    fontSize: theme.typography.sizes.md,
+    fontSize: theme.typography.sizes.sm,
     color: theme.colors.text,
     marginBottom: theme.spacing.md,
   },

@@ -45,7 +45,7 @@ const styles = StyleSheet.create({
     borderBottomColor: 'transparent',
   },
   tabText: {
-    fontSize: theme.typography.sizes.md,
+    fontSize: theme.typography.sizes.sm,
   },
   activeTabText: {
     fontFamily: theme.typography.fontFamily.semiBold,

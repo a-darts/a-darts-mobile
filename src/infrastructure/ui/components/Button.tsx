@@ -93,7 +93,7 @@ const styles = StyleSheet.create({
   },
   text: {
     fontFamily: theme.typography.fontFamily.bold,
-    fontSize: theme.typography.sizes.md,
+    fontSize: theme.typography.sizes.sm,
     letterSpacing: 0.5,
   },
   primaryText: {
