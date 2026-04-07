@@ -7,13 +7,12 @@ import { theme } from '../theme/theme';
 import MatchX01ConfigServiceFactory from '../../factories/MatchX01ConfigServiceFactory';
 import { PlayerX01 } from '../../../domain/models/PlayerX01';
 import { MatchX01Config } from '../../../domain/models/MatchX01Config';
+import { MatchX01 } from '../../../domain/models/MatchX01';
 
 export const GameX01Screen = ({ navigation }) => {
   const matchService = MatchX01ConfigServiceFactory.getInstance();
 
-  const [config, setConfig] = useState<MatchX01Config | null>(null);
-  const [players, setPlayers] = useState<PlayerX01[]>([]);
-  const [activeIndex, setActiveIndex] = useState(0);
+  const [match, setMatch] = useState<MatchX01 | null>(null);
 
   // Para forzar re-render tras mutaciones
   const [tick, setTick] = useState(0);
@@ -33,11 +32,7 @@ export const GameX01Screen = ({ navigation }) => {
         navigation.goBack();
         return;
       }
-      setConfig(matchConfig);
-      const newPlayers = matchConfig.playerNames.map(
-        (name) => new PlayerX01(name, matchConfig.game, matchConfig.numSets, matchConfig.numLegs, matchConfig.typeOfGame)
-      );
-      setPlayers(newPlayers);
+      setMatch(new MatchX01(matchConfig));
     };
     loadGame();
   }, []);
@@ -53,16 +48,12 @@ export const GameX01Screen = ({ navigation }) => {
   const handleBackspace = () => setInputValue(prev => prev.slice(0, -1));
 
   const submitScore = (scoreNum: number) => {
-    const active = players[activeIndex];
-    if (!active) return;
+    if (!match) return;
     try {
-      active.addThrow(scoreNum);
-      setTick(t => t + 1);
+      match.addThrow(scoreNum);
+
+      setTick(t => t + 1); // Forzamos re-render
       setInputValue('');
-      // Switch turn if there are multiple players
-      if (players.length > 1) {
-        setActiveIndex(i => (i + 1) % players.length);
-      }
     } catch (error: any) {
       triggerToast('Error', error.message, 'error');
       setInputValue('');
@@ -76,20 +67,19 @@ export const GameX01Screen = ({ navigation }) => {
   const handleFastScore = (score: number) => submitScore(score);
 
   const handleUndo = () => {
-    const active = players[activeIndex];
-    if (active) {
-      active.undoLastThrow();
+    if (match) {
+      match.currentPlayer.undoLastThrow();
       setTick(t => t + 1);
     }
   };
 
-  if (!config || players.length === 0) return <View style={styles.container} />;
+  if (!match) return <View style={styles.container} />;
 
+  const { players, activePlayerIndex } = match;
   const p1 = players[0];
   const p2 = players.length > 1 ? players[1] : null;
-  const isTwoPlayers = !!p2;
 
-  // Align throws table: zip p1 and p2 throws by index
+  // Tabla de lanzamientos (la lógica se mantiene similar pero usando match)
   const maxThrows = Math.max(p1.throws.length, p2 ? p2.throws.length : 0);
   const throwRows = Array.from({ length: maxThrows }, (_, i) => ({
     p1: p1.throws[i] ?? null,
@@ -114,10 +104,10 @@ export const GameX01Screen = ({ navigation }) => {
         {/* Player 1 card */}
         <View style={[
           styles.playerCard,
-          activeIndex === 0 && styles.playerCardActive,
+          activePlayerIndex === 0 && styles.playerCardActive,
         ]}>
           <Text style={styles.playerName} numberOfLines={1}>{p1.name}</Text>
-          <Text style={[styles.scoreLeftText, activeIndex === 0 && styles.scoreActiveText]}>
+          <Text style={[styles.scoreLeftText, activePlayerIndex === 0 && styles.scoreActiveText]}>
             {p1.remainingScore}
           </Text>
         </View>
@@ -127,7 +117,7 @@ export const GameX01Screen = ({ navigation }) => {
           {/* Sets row */}
           <Text style={styles.statsRowText}>
             <Text style={styles.statsHighlight}>{p1.numSetsWon}</Text>
-            <Text style={styles.statsSep}> - </Text>
+            <Text style={styles.statsSep}>{p2 ? ' - ' : ''}</Text>
             <Text style={styles.statsHighlight}>{p2 ? p2.numSetsWon : ''}</Text>
           </Text>
           <Text style={styles.statsLabel}>S E T S</Text>
@@ -135,20 +125,20 @@ export const GameX01Screen = ({ navigation }) => {
           {/* Legs row */}
           <Text style={[styles.statsRowText, { marginTop: 12 }]}>
             <Text style={styles.statsHighlight}>{p1.numLegsWon}</Text>
-            <Text style={styles.statsSep}> - </Text>
+            <Text style={styles.statsSep}>{p2 ? ' - ' : ''}</Text>
             <Text style={styles.statsHighlight}>{p2 ? p2.numLegsWon : ''}</Text>
           </Text>
           <Text style={styles.statsLabel}>L E G S</Text>
         </View>
 
         {/* Player 2 card (only when 2 players) */}
-        {isTwoPlayers && (
+        {p2 && (
           <View style={[
             styles.playerCard,
-            activeIndex === 1 && styles.playerCardActive,
+            activePlayerIndex === 1 && styles.playerCardActive,
           ]}>
             <Text style={styles.playerName} numberOfLines={1}>{p2!.name}</Text>
-            <Text style={[styles.scoreLeftText, activeIndex === 1 && styles.scoreActiveText]}>
+            <Text style={[styles.scoreLeftText, activePlayerIndex === 1 && styles.scoreActiveText]}>
               {p2!.remainingScore}
             </Text>
           </View>
@@ -177,7 +167,7 @@ export const GameX01Screen = ({ navigation }) => {
               <Text style={styles.tableDartCount}>{row.dartCount}</Text>
 
               {/* P2 columns: remaining | score */}
-              {isTwoPlayers && (
+              {p2 && (
                 <>
                   <Text style={[styles.tableCol, styles.tableRemaining, styles.textLeft]}>
                     {row.p2 ? row.p2.remainingScore : ''}
@@ -251,6 +241,12 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.5,
     shadowRadius: 15,
     elevation: 8,
+  },
+  playerName: {
+    color: theme.colors.text,
+    fontFamily: theme.typography.fontFamily.semiBold,
+    marginBottom: 4,
+    fontSize: theme.typography.sizes.sm,
   },
   scoreLeftText: {
     color: theme.colors.textSecondary,
@@ -370,115 +366,4 @@ const styles = StyleSheet.create({
     fontFamily: theme.typography.fontFamily.bold,
     fontSize: theme.typography.sizes.sm,
   },
-
-  playerName: {
-    color: theme.colors.text,
-    fontFamily: theme.typography.fontFamily.semiBold,
-    marginBottom: 4,
-    fontSize: theme.typography.sizes.sm,
-  },
-  // scoreLeftText: {
-  //   color: theme.colors.buttonPrimaryBackground,
-  //   fontFamily: theme.typography.fontFamily.bold,
-  //   fontSize: 56,
-  // },
-  // statsCard: {
-  //   flex: 1,
-  //   backgroundColor: theme.colors.cardBackground,
-  //   borderRadius: theme.borderRadius.lg,
-  //   alignItems: 'center',
-  //   justifyContent: 'center',
-  //   paddingVertical: theme.spacing.md,
-  // },
-  // statsText: {
-  //   color: theme.colors.textSecondary,
-  //   fontFamily: theme.typography.fontFamily.semiBold,
-  //   fontSize: theme.typography.sizes.lg,
-  // },
-  // statsHighlight: {
-  //   color: theme.colors.text,
-  // },
-  // statsLabel: {
-  //   color: theme.colors.textSecondary,
-  //   fontFamily: theme.typography.fontFamily.regular,
-  //   fontSize: theme.typography.sizes.xs,
-  //   letterSpacing: 2,
-  //   marginTop: 4,
-  // },
-
-  // tableContainer: {
-  //   flex: 1,
-  //   paddingHorizontal: theme.spacing.xl,
-  //   paddingVertical: theme.spacing.sm,
-  // },
-  // tableRow: {
-  //   flexDirection: 'row',
-  //   justifyContent: 'space-between',
-  //   alignItems: 'center',
-  //   paddingVertical: 12,
-  // },
-  // tableScore: {
-  //   flex: 1,
-  //   color: theme.colors.text,
-  //   fontFamily: theme.typography.fontFamily.regular,
-  //   fontSize: theme.typography.sizes.md,
-  //   textAlign: 'center',
-  // },
-  // tableRemaining: {
-  //   flex: 1,
-  //   color: theme.colors.text,
-  //   fontFamily: theme.typography.fontFamily.regular,
-  //   fontSize: theme.typography.sizes.md,
-  //   textAlign: 'center',
-  // },
-  // tableDartCount: {
-  //   width: 60,
-  //   backgroundColor: theme.colors.cardBackground,
-  //   color: theme.colors.textSecondary,
-  //   paddingVertical: 8,
-  //   borderRadius: theme.borderRadius.md,
-  //   textAlign: 'center',
-  //   fontFamily: theme.typography.fontFamily.bold,
-  //   fontSize: theme.typography.sizes.md,
-  // },
-
-  // controlsArea: {
-  //   backgroundColor: theme.colors.cardBackground,
-  //   borderTopLeftRadius: theme.borderRadius.lg,
-  //   borderTopRightRadius: theme.borderRadius.lg,
-  //   padding: theme.spacing.sm,
-  // },
-  // controlBarRow: {
-  //   flexDirection: 'row',
-  //   gap: theme.spacing.sm,
-  //   marginBottom: theme.spacing.sm,
-  // },
-  // inputBox: {
-  //   flex: 2,
-  //   backgroundColor: theme.colors.inputBoxBackground,
-  //   borderRadius: theme.borderRadius.md,
-  //   borderBottomWidth: 1,
-  //   borderColor: theme.colors.buttonPrimaryBackground,
-  //   justifyContent: 'center',
-  //   paddingHorizontal: theme.spacing.md,
-  // },
-  // inputText: {
-  //   color: theme.colors.inputText,
-  //   fontFamily: theme.typography.fontFamily.bold,
-  //   fontSize: theme.typography.sizes.xl,
-  // },
-  // topControlBtn: {
-  //   flex: 2,
-  //   borderWidth: 1,
-  //   borderColor: theme.colors.buttonPrimaryBackground,
-  //   borderRadius: theme.borderRadius.md,
-  //   alignItems: 'center',
-  //   justifyContent: 'center',
-  //   height: 50,
-  // },
-  // topControlText: {
-  //   color: theme.colors.buttonPrimaryBackground,
-  //   fontFamily: theme.typography.fontFamily.bold,
-  //   fontSize: theme.typography.sizes.sm,
-  // },
 });

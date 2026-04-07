@@ -16,8 +16,10 @@ export interface IPlayerX01 {
   throws: IThrowX01[];
   history: ILegX01History[];
 
-  addThrow(score: number): void;
+  addThrow(score: number): boolean;
   undoLastThrow(): void;
+  resetForNewLeg(): boolean;
+  resetForNewSet(): void;
   clone(): IPlayerX01;
 }
 
@@ -58,6 +60,10 @@ export class PlayerX01 implements IPlayerX01 {
     this.throws = [];
     this.history = [];
 
+    this.addFirstThrow();
+  }
+
+  private addFirstThrow(): void {
     const firstThrow = new ThrowX01(0, this.initialScore, 0);
     this.throws.push(firstThrow);
   }
@@ -66,7 +72,7 @@ export class PlayerX01 implements IPlayerX01 {
    * Register a new throw
    */
   // Pre: 0 <= score <= 180 && remainingScore > 0
-  public addThrow(score: number): void {
+  public addThrow(score: number): boolean {
     // Validar Pre-condiciones
     if (score < 0 || score > 180) {
       throw new InvalidThrowException('Puntuación inválida: debe estar entre 0 y 180');
@@ -98,48 +104,12 @@ export class PlayerX01 implements IPlayerX01 {
     }
     this.throws.push(newThrow);
 
-    this.checkGameStatus();
-  }
-
-  private checkGameStatus(): void {
     if (this.remainingScore == 0) {
       // End of the Leg
-      this.saveLegToHistory();
-      this.newLeg();
+      this.numLegsWon++;
+      return true;
     }
-  }
-
-  private saveLegToHistory(): void {
-    const legFinished: ILegX01History = {
-      legNumber: this.numLegsWon + 1,
-      setNumber: this.numSetsWon + 1,
-      throws: [...this.throws]
-    };
-
-    this.history.push(legFinished);
-  }
-
-  private newLeg(): void {
-    this.numLegsWon += 1;
-    this.throws = [];
-    this.remainingScore = this.initialScore;
-
-    if (this.numLegsWon == this.initialNumLegs) {
-      // End of the Set
-      this.newSet();
-    }
-  }
-
-  private newSet(): void {
-    this.numSetsWon += 1;
-    this.numLegsWon = 0;
-    this.throws = [];
-    this.remainingScore = this.initialScore;
-
-    if (this.numSetsWon == this.initialNumSets) {
-      // End of the Match
-      // MIRAR: qué hacer
-    }
+    return false;
   }
 
   /**
@@ -152,6 +122,66 @@ export class PlayerX01 implements IPlayerX01 {
       this.remainingScore = this.throws[this.throws.length - 1].remainingScore;
     }
   }
+
+  public resetForNewLeg(): boolean {
+    this.saveLegToHistory();
+    this.remainingScore = this.initialScore;
+    this.throws = [];
+    this.addFirstThrow();
+
+    if (this.numLegsWon == this.initialNumLegs) {
+      this.numSetsWon++;
+      return true;
+    }
+    return false;
+  }
+
+  public resetForNewSet(): void {
+    this.numLegsWon = 0;
+
+    if (this.numSetsWon == this.initialNumSets) {
+      // Fin de la partida
+      // MIRAR QUE HACER
+    }
+  }
+
+  // private newLeg(): void {
+  //   this.numLegsWon++;
+  //   this.throws = [];
+  //   this.remainingScore = this.initialScore;
+  //   if (this.numLegsWon == this.initialNumLegs) {
+  //     // End of the Set
+  //     this.newSet();
+  //   }
+  // }
+
+  // private newSet(): void {
+  //   this.numSetsWon++;
+  //   this.numLegsWon = 0;
+  //   this.throws = [];
+  //   this.remainingScore = this.initialScore;
+  //   if (this.numSetsWon == this.initialNumSets) {
+  //     // End of the Match
+  //     // MIRAR: qué hacer
+  //   }
+  // }
+
+  private saveLegToHistory(): void {
+    const legFinished: ILegX01History = {
+      legNumber: this.numLegsWon + 1,
+      setNumber: this.numSetsWon + 1,
+      throws: [...this.throws]
+    };
+
+    this.history.push(legFinished);
+  }
+
+
+
+
+
+
+
 
   public clone(): PlayerX01 {
     return new PlayerX01(

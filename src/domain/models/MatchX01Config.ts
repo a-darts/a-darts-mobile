@@ -6,7 +6,6 @@ export interface IMatchX01Config {
     typeOfGame: GameTypes;
     numSets: number;
     numLegs: number;
-    numPlayers: number;
     playerNames: string[];
 }
 
@@ -17,7 +16,6 @@ export class MatchX01Config implements IMatchX01Config {
     typeOfGame: GameTypes;
     numSets: number;
     numLegs: number;
-    numPlayers: number;
     playerNames: string[];
     // --------------------------------------------------------------------------
 
@@ -28,14 +26,12 @@ export class MatchX01Config implements IMatchX01Config {
         typeOfGame: GameTypes,
         numSets: number,
         numLegs: number,
-        numPlayers: number,
         playerNames: string[]
     ) {
         this.game = game;
         this.typeOfGame = typeOfGame;
         this.numSets = numSets;
         this.numLegs = numLegs;
-        this.numPlayers = numPlayers;
         this.playerNames = [...playerNames];
     }
     // --------------------------------------------------------------------------
@@ -47,7 +43,6 @@ export class MatchX01Config implements IMatchX01Config {
             this.typeOfGame,
             this.numSets,
             this.numLegs,
-            this.numPlayers,
             this.playerNames,
         );
     }
@@ -57,7 +52,6 @@ export class MatchX01Config implements IMatchX01Config {
             typeOfGame: this.typeOfGame,
             numSets: this.numSets,
             numLegs: this.numLegs,
-            numPlayers: this.numPlayers,
             playerNames: this.playerNames
         };
     }
@@ -67,7 +61,6 @@ export class MatchX01Config implements IMatchX01Config {
             changes.typeOfGame ?? this.typeOfGame,
             changes.numSets ?? this.numSets,
             changes.numLegs ?? this.numLegs,
-            changes.numPlayers ?? this.numPlayers,
             changes.playerNames ?? [...this.playerNames]
         );
     }

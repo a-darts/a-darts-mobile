@@ -17,7 +17,7 @@ export class AsyncStorageMatchX01Repository implements IMatchX01Repository {
         const dto: IMatchX01Config = JSON.parse(data);
         return new MatchX01Config(
             dto.game, dto.typeOfGame, dto.numSets,
-            dto.numLegs, dto.numPlayers, dto.playerNames
+            dto.numLegs, dto.playerNames,
         );
     }
 

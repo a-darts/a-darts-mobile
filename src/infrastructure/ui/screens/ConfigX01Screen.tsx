@@ -31,7 +31,7 @@ export const ConfigX01Screen = ({ navigation }) => {
   const userService = UserServiceFactory.getInstance();
 
   const [config, setConfig] = useState<MatchX01Config>(
-    new MatchX01Config(501, GameTypes.FirstTo, 1, 1, 1, [''])
+    new MatchX01Config(501, GameTypes.FirstTo, 1, 1, [''])
   );
 
   const hasSecondPlayer = config.playerNames.length > 1;
@@ -53,20 +53,20 @@ export const ConfigX01Screen = ({ navigation }) => {
   const handlePlayerNameChange = (index: number, value: string) => {
     const newNames = [...config.playerNames];
     newNames[index] = value;
-    updateConfig({ playerNames: newNames, numPlayers: newNames.length });
+    updateConfig({ playerNames: newNames });
   };
 
   const handleAddPlayer = () => {
     if (!hasSecondPlayer) {
       const newNames = [...config.playerNames, ''];
-      updateConfig({ playerNames: newNames, numPlayers: 2 });
+      updateConfig({ playerNames: newNames });
     }
   };
 
   const handleRemovePlayer = () => {
     if (hasSecondPlayer) {
       const newNames = [config.playerNames[0]];
-      updateConfig({ playerNames: newNames, numPlayers: 1 });
+      updateConfig({ playerNames: newNames });
     }
   };
 
