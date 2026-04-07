@@ -25,9 +25,9 @@ export const colors = {
   buttonSecondaryIcon: '#FFFFFF',
   buttonSecondaryBorder: '#4C4C4C',
 
-  buttonTertiaryBackground: '#2C2C2C',
-  buttonTertiaryText: '#FFFFFF',
-  buttonTertiaryIcon: '#FFFFFF',
+  buttonTertiaryBackground: 'rgba(191, 229, 95, 0.1)',
+  buttonTertiaryText: '#BFE55F',
+  buttonTertiaryIcon: '#BFE55F',
   buttonTertiaryBorder: '#BFE55F',
 
   buttonErrorBackground: 'transparent',

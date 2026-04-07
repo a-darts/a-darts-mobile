@@ -34,7 +34,8 @@ export const useGameX01 = (navigation: any, route: any) => {
     }, [matchId]);
 
     const handleKeyPress = (char: string) => {
-        if (inputValue.length < 3) setInputValue(prev => prev + char);
+        if (inputValue.length > 3) return;
+        setInputValue(prev => prev + char);
     };
 
     const handleBackspace = () => setInputValue(prev => prev.slice(0, -1));
@@ -81,6 +82,15 @@ export const useGameX01 = (navigation: any, route: any) => {
         await submitScore(score);
     };
 
+    const handleEnterRemaining = async () => {
+        if (inputValue === '') return;
+        const remaining = parseInt(inputValue, 10);
+        if (isNaN(remaining)) return;
+
+        const score = match.activePlayer.remainingScore - remaining;
+        await submitScore(score);
+    };
+
     return {
         match,
         inputValue,
@@ -92,5 +102,6 @@ export const useGameX01 = (navigation: any, route: any) => {
         handleUndo,
         submitScore,
         handleEnter,
+        handleEnterRemaining,
     };
 };

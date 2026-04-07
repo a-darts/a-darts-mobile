@@ -27,7 +27,13 @@ export class PlayerX01 {
     this._remainingScore = remainingScore;
     this._numSetsWon = numSetsWon ? numSetsWon : 0;
     this._numLegsWon = numLegsWon ? numLegsWon : 0;
-    this._throws = throws ? [...throws] : [];
+
+    if (throws && throws.length > 0) {
+      this._throws = [...throws];
+    } else {
+      // Initial score
+      this._throws = [new ThrowX01(0, remainingScore, 0)];
+    }
     // this.history = [];
   }
 
@@ -63,18 +69,17 @@ export class PlayerX01 {
       new ThrowX01(
         score,
         newRemaining,
-        (this._throws.length + 1) * 3,
+        (this._throws.length) * 3,
       )
     );
   }
 
   public removeLastThrow(): void {
-    if (this._throws.length === 0) return;
+    if (this._throws.length <= 1) return;
 
-    const lastThrow = this._throws.pop();
-    if (lastThrow) {
-      this._remainingScore = lastThrow.remainingScore;
-    }
+    this._throws.pop();
+    const lastRemaining = this._throws[this._throws.length - 1].remainingScore;
+    this._remainingScore = lastRemaining;
   }
 
   // Getters

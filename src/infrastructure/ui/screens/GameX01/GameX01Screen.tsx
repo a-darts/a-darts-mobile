@@ -6,14 +6,15 @@ import { GameTable } from './components/GameTable';
 import { Keypad } from '../../components/Keypad';
 import { Toast } from '../../components/Toast';
 import { styles } from './styles/GameX01.styles';
+import { Button } from '../../components/Button';
 
 export const GameX01Screen = ({ navigation, route }: any) => {
-  console.log("DENTRO");
   const insets = useSafeAreaInsets();
 
   const {
     match, inputValue, toast, setToast, scrollViewRef,
-    handleKeyPress, handleBackspace, handleUndo, submitScore, handleEnter
+    handleKeyPress, handleBackspace, handleUndo, submitScore,
+    handleEnter, handleEnterRemaining
   } = useGameX01(navigation, route);
 
   if (!match) return <View style={styles.container} />;
@@ -25,7 +26,7 @@ export const GameX01Screen = ({ navigation, route }: any) => {
   const p2 = players.length > 1 ? players[1] : null;
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top }]}>
+    <View style={[styles.container]}>
       <Toast
         visible={toast.visible}
         title={toast.title}
@@ -36,6 +37,7 @@ export const GameX01Screen = ({ navigation, route }: any) => {
 
       {/* Header */}
       <View style={styles.headerRow}>
+        <View style={styles.spacer} />
 
         {/* Jugador 1 */}
         <View style={[styles.playerCard, activeIndex === 0 && styles.playerCardActive]}>
@@ -46,6 +48,8 @@ export const GameX01Screen = ({ navigation, route }: any) => {
             {p1.remainingScore}
           </Text>
         </View>
+
+        <View style={styles.spacer} />
 
         {/* Marcador central  */}
         <View style={styles.statsCard}>
@@ -59,6 +63,10 @@ export const GameX01Screen = ({ navigation, route }: any) => {
           <Text style={styles.statsLabel}>L E G S</Text>
         </View>
 
+        {p2 && (
+          <View style={styles.spacer} />
+        )}
+
         {/* Jugador 2 */}
         {p2 && (
           <View style={[styles.playerCard, activeIndex === 1 && styles.playerCardActive]}>
@@ -70,6 +78,8 @@ export const GameX01Screen = ({ navigation, route }: any) => {
             </Text>
           </View>
         )}
+
+        <View style={styles.spacer} />
       </View>
 
       <GameTable p1={p1} p2={p2} scrollViewRef={scrollViewRef} />
@@ -82,9 +92,21 @@ export const GameX01Screen = ({ navigation, route }: any) => {
               {inputValue}
             </Text>
           </View>
-          <TouchableOpacity style={styles.topControlBtn} onPress={handleUndo}>
+          <Button
+            title='RESTO'
+            variant='tertiary'
+            onPress={handleEnterRemaining}
+            style={styles.topControlBtn}
+          />
+          <Button
+            title='DESHACER'
+            variant='tertiary'
+            onPress={handleUndo}
+            style={styles.topControlBtn}
+          />
+          {/* <TouchableOpacity style={styles.topControlBtn} onPress={handleUndo}>
             <Text style={styles.topControlText}>DESHACER</Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
 
         <Keypad

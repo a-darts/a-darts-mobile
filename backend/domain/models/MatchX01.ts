@@ -72,8 +72,9 @@ export class MatchX01 {
         // Caso A: Si la partida terminó, el índice NO se movió en el addThrow.
         // Simplemente borramos el tiro del jugador actual y reseteamos el estado.
         if (this._status === 'FINISHED') {
-            this._players[this._activePlayerIndex].removeLastThrow();
-            this._status = 'PLAYING';
+            // MIRAR porque esto no es como dice el Caso A
+            // this._players[this._activePlayerIndex].removeLastThrow();
+            // this._status = 'PLAYING';
             return;
         }
 
@@ -81,10 +82,10 @@ export class MatchX01 {
         // Debemos retroceder el turno antes de borrar.
         const newIndex = (this._activePlayerIndex - 1 + this._players.length) % this._players.length;
 
-        // Verificamos si ese jugador tiene algo que borrar (opcional pero recomendado)
-        if (this._players[newIndex].throws.length > 0) {
+        // Verificamos si ese jugador tiene algo que borrar
+        if (this._players[newIndex].throws.length > 1) {
             this._players[newIndex].removeLastThrow();
-            this._activePlayerIndex = newIndex; // <--- IMPORTANTE: Actualizar el turno
+            this._activePlayerIndex = newIndex;
         }
     }
 

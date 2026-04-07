@@ -12,13 +12,16 @@ export const styles = StyleSheet.create({
         flexDirection: 'row',
         paddingHorizontal: theme.spacing.sm,
         paddingVertical: theme.spacing.sm,
-        gap: theme.spacing.sm,
+        // gap: theme.spacing.sm,
         marginTop: theme.spacing.xs,
+    },
+    spacer: {
+        flex: 1,
     },
 
     // Player cards
     playerCard: {
-        flex: 2,
+        flex: 4,
         alignItems: 'center',
         justifyContent: 'center',
         borderWidth: 2,
@@ -52,7 +55,7 @@ export const styles = StyleSheet.create({
 
     // Stats card (centre)
     statsCard: {
-        flex: 1,
+        flex: 2,
         backgroundColor: theme.colors.cardBackground,
         borderRadius: theme.borderRadius.lg,
         alignItems: 'center',
@@ -62,6 +65,7 @@ export const styles = StyleSheet.create({
     statsRowText: {
         fontFamily: theme.typography.fontFamily.semiBold,
         fontSize: theme.typography.sizes.md,
+        color: theme.colors.text,
     },
     statsHighlight: {
         color: theme.colors.text,
@@ -86,7 +90,11 @@ export const styles = StyleSheet.create({
     tableRow: {
         flexDirection: 'row',
         alignItems: 'center',
-        paddingVertical: 10,
+        paddingVertical: theme.spacing.sm,
+    },
+    tableRowSecondary: {
+        flex: 4,
+        flexDirection: 'row',
     },
     tableCol: {
         flex: 1,
