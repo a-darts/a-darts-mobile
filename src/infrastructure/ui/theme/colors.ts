@@ -10,6 +10,13 @@ export const colors = {
   cardBackground: '#1A1A1A',
   progressBackground: '#333333',
 
+  cardActiveBorder: '#BFE55F',
+  cardActiveBackground: '#1A1A1A',
+  cardActiveShadow: '#BFE55F',
+
+  cardInactiveBorder: '#4C4C4C',
+  cardInactiveBackground: '#1A1A1A',
+
   // Header
   headerBackground: '#2C2C2C',
   headerText: '#FFFFFF',
