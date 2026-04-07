@@ -6,7 +6,7 @@ export const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: theme.colors.background,
         padding: theme.spacing.sm,
-        paddingBottom: theme.spacing.xl,
+        paddingBottom: theme.spacing.xxl,
     },
     headerRow: {
         flexDirection: 'row',
@@ -137,7 +137,7 @@ export const styles = StyleSheet.create({
     controlBarRow: {
         flexDirection: 'row',
         gap: theme.spacing.sm,
-        marginBottom: theme.spacing.sm,
+        marginBottom: theme.spacing.md,
     },
     inputBox: {
         flex: 2,
