@@ -2,7 +2,7 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { LoginScreen } from '../screens/LoginScreen';
-import { HomeScreen } from '../screens/HomeScreen';
+import { HomeScreen } from '../screens/Home/HomeScreen';
 import { ConfigX01Screen } from '../screens/ConfigX01/ConfigX01Screen';
 import { GameX01Screen } from '../screens/GameX01Screen';
 import { theme } from '../theme/theme';

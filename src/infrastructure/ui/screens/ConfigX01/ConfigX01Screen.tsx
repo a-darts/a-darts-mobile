@@ -15,7 +15,7 @@ import { GameTypes } from '../../../../domain/enums/GameTypes';
 import MatchX01ConfigServiceFactory from '../../../factories/MatchX01ConfigServiceFactory';
 import UserServiceFactory from '../../../factories/UserServiceFactory';
 import { styles } from './styles/ConfigX01.styles';
-import { GAME_OPTIONS, TYPE_OPTIONS } from './constants/configX01Options';
+import { GAME_OPTIONS, TYPE_OPTIONS } from './constants/ConfigX01.constants';
 import { useConfigX01 } from './hooks/useConfigX01';
 
 export const ConfigX01Screen = ({ navigation }) => {
