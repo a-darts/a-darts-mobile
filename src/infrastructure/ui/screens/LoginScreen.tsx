@@ -4,11 +4,22 @@ import { Button } from '../components/Button';
 import { TextInput } from '../components/TextInput';
 import { Tabs } from '../components/Tabs';
 import { theme } from '../theme/theme';
+import UserServiceFactory from '../../factories/UserServiceFactory';
 
 export const LoginScreen = ({ navigation }) => {
+  const userService = UserServiceFactory.getInstance();
+
   const [name, setName] = useState('');
 
-  const handleEntrar = () => {
+  const handleEntrar = async () => {
+    try {
+      const user = await userService.login(name);
+    } catch (error) {
+      console.error("Error en el login:", error);
+      // MIRAR: qué hacer?? mostrar un toast y volver a intentar??
+      return;
+    }
+
     navigation.reset({
       index: 0,
       routes: [

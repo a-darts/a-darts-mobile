@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Button } from '../components/Button';
@@ -12,6 +12,7 @@ import { IMatchX01Config } from '../../../domain/models/MatchX01Config';
 import { GamesX01 } from '../../../domain/enums/GamesX01';
 import { GameTypes } from '../../../domain/enums/GameTypes';
 import MatchX01ConfigServiceFactory from '../../factories/MatchX01ConfigServiceFactory';
+import UserServiceFactory from '../../factories/UserServiceFactory';
 
 const GAME_OPTIONS: { label: string; value: GamesX01 }[] = [
   { label: '501', value: 501 },
@@ -26,10 +27,21 @@ const TYPE_OPTIONS = [
 
 export const ConfigX01Screen = ({ navigation }) => {
   const matchService = MatchX01ConfigServiceFactory.getInstance();
+  const userService = UserServiceFactory.getInstance();
 
   const [config, setConfig] = useState<MatchX01Config>(
     new MatchX01Config(501, GameTypes.FirstTo, 1, 1, 1, [''])
   );
+
+  useEffect(() => {
+    const loadDefaultPlayerName = async () => {
+      const user = await userService.getCurrentUser();
+      if (user && user.name) {
+        updateConfig({ playerNames: [user.name] });
+      }
+    };
+    loadDefaultPlayerName();
+  }, []);
 
   const updateConfig = (changes: Partial<IMatchX01Config>) => {
     setConfig(config.copyWith(changes));
