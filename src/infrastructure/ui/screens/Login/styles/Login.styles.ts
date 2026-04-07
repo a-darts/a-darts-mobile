@@ -25,6 +25,7 @@ export const styles = StyleSheet.create({
         flex: 1,
     },
     buttonContainer: {
-        marginTop: 10,
+        marginTop: theme.spacing.md,
+        gap: theme.spacing.xl,
     },
 });

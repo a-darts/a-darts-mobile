@@ -57,7 +57,7 @@ const styles = StyleSheet.create({
   keypadRow: {
     flexDirection: 'row',
     gap: theme.spacing.sm,
-    marginBottom: theme.spacing.sm,
+    marginBottom: theme.spacing.md,
   },
   keyBtn: {
     flex: 1,

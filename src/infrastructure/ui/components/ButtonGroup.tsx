@@ -29,7 +29,6 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     gap: theme.spacing.sm,
-    marginBottom: theme.spacing.lg,
   },
   button: {
     flex: 1,

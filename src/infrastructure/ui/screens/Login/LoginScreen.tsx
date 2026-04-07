@@ -6,7 +6,7 @@ import { useLogin } from './hooks/useLogin';
 import { styles } from './styles/Login.styles';
 
 export const LoginScreen = ({ navigation }) => {
-  const { name, setName, handleEntrar } = useLogin(navigation);
+  const { name, setName, handleEntrar, handleEntrarComoInvitado } = useLogin(navigation);
 
   return (
     <View style={styles.container}>
@@ -32,7 +32,13 @@ export const LoginScreen = ({ navigation }) => {
         <View style={styles.buttonContainer}>
           <Button
             title="ENTRAR"
+            variant='primary'
             onPress={handleEntrar}
+          />
+          <Button
+            title="ENTRAR COMO INVITADO"
+            variant='secondary'
+            onPress={handleEntrarComoInvitado}
           />
         </View>
       </View>

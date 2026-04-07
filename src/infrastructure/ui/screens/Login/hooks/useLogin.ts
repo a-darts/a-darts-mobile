@@ -27,9 +27,14 @@ export const useLogin = (navigation: any) => {
         }
     };
 
+    const handleEntrarComoInvitado = async () => {
+        navigation.navigate('HomeScreen');
+    };
+
     return {
         name,
         setName,
-        handleEntrar
+        handleEntrar,
+        handleEntrarComoInvitado
     };
 };
