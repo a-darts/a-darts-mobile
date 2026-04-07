@@ -55,8 +55,10 @@ export const useConfigX01 = (navigation: any) => {
     const handlePlay = async () => {
         try {
             // 1. Validar que los nombres no estén vacíos
-            const names = config.playerNames.filter(n => n.trim() !== '');
-            if (names.length === 0) return;
+            const sanitizedNames = config.playerNames.map((name, index) => {
+                const trimmedName = name.trim();
+                return trimmedName === '' ? `Jugador ${index + 1}` : trimmedName;
+            });
 
             // 2. Ejecutar el servicio con el DTO (request)
             const request: CreateMatchX01Request = {
@@ -64,7 +66,7 @@ export const useConfigX01 = (navigation: any) => {
                 typeOfGame: config.typeOfGame,
                 numSets: config.numSets,
                 numLegs: config.numLegs,
-                playerNames: names,
+                playerNames: sanitizedNames,
             };
             const match = await createMatchService.execute(request);
 
