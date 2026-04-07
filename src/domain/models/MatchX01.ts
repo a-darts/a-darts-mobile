@@ -58,6 +58,13 @@ export class MatchX01 implements IMatchX01 {
         this.activePlayerIndex = 0;
     }
 
+    public undoLastThrow(): void {
+        const inactivePlayerIndex = (this.activePlayerIndex - 1 + this.players.length) % this.players.length;
+        const inactivePlayer = this.players[inactivePlayerIndex];
+        inactivePlayer.undoLastThrow();
+        this.activePlayerIndex = inactivePlayerIndex;
+    }
+
     public get currentPlayer() {
         return this.players[this.activePlayerIndex];
     }
