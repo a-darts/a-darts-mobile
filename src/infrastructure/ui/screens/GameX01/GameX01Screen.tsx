@@ -92,6 +92,7 @@ export const GameX01Screen = ({ navigation, route }: any) => {
               {inputValue}
             </Text>
           </View>
+          <View style={styles.spacer} />
           <Button
             title='RESTO'
             variant='tertiary'
@@ -104,9 +105,6 @@ export const GameX01Screen = ({ navigation, route }: any) => {
             onPress={handleUndo}
             style={styles.topControlBtn}
           />
-          {/* <TouchableOpacity style={styles.topControlBtn} onPress={handleUndo}>
-            <Text style={styles.topControlText}>DESHACER</Text>
-          </TouchableOpacity> */}
         </View>
 
         <Keypad
