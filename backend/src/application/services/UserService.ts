@@ -1,9 +1,9 @@
 import { User } from '../../domain/models/User';
-import { UserRepository } from '../../domain/repositories/UserRepository';
+import { IUserRepository } from '../../domain/repositories/IUserRepository';
 
 export class UserService {
     // Inyectamos la dependencia en el constructor
-    constructor(private userRepository: UserRepository) { }
+    constructor(private userRepository: IUserRepository) { }
 
     async login(name: string): Promise<User> {
         const newUser = new User(name.trim() || 'Jugador');

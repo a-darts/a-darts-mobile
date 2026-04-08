@@ -1,10 +1,10 @@
 import { MatchX01 } from '../../domain/models/MatchX01';
 import { MatchX01Config } from '../../domain/models/MatchX01Config';
-import { MatchX01Repository } from '../../domain/repositories/MatchX01Repository';
+import { IMatchX01Repository } from '../../domain/repositories/IMatchX01Repository';
 import { CreateMatchX01Request } from '../dtos/CreateMatchX01Request';
 
 export class CreateMatchX01Service {
-    constructor(private readonly matchRepository: MatchX01Repository) { }
+    constructor(private readonly matchRepository: IMatchX01Repository) { }
 
     async execute(request: CreateMatchX01Request): Promise<MatchX01> {
         // 1. Generamos un ID único para la partida

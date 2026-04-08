@@ -1,11 +1,11 @@
 // infrastructure/repositories/AsyncStorageMatchRepository.ts
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { MatchX01Repository } from '../../domain/repositories/MatchX01Repository';
+import { IMatchX01Repository } from '../../domain/repositories/IMatchX01Repository';
 import { MatchX01 } from '../../domain/models/MatchX01';
 import { MatchX01Mapper } from '../mappers/MatchX01Mapper';
 import { MatchX01DTO } from '../persistence/MatchX01DTO';
 
-export class AsyncStorageMatchX01Repository implements MatchX01Repository {
+export class AsyncStorageMatchX01Repository implements IMatchX01Repository {
     private readonly PREFIX = '@match_';
 
     async save(match: MatchX01): Promise<void> {

@@ -1,19 +1,14 @@
 import { useState, useEffect } from 'react';
 import { GameTypes } from '../../../../../backend/src/domain/enums/GameTypes';
-import { GamesX01 } from '../../../../../backend/src/domain/enums/GamesX01';
-
-import { AsyncStorageMatchX01Repository } from '../../../../../backend/src/infrastructure/repositories/AsyncStorageMatchX01Repository';
-import { CreateMatchX01Service } from '../../../../../backend/src/application/services/CreateMatchX01Service';
-import UserServiceFactory from '../../../../../backend/src/infrastructure/factories/UserServiceFactory';
 import { CreateMatchX01Request } from '../../../../../backend/src/application/dtos/CreateMatchX01Request';
 
+import UserServiceFactory from '../../../../../backend/src/infrastructure/factories/UserServiceFactory';
+import MatchX01ServiceFactory from '../../../../../backend/src/infrastructure/factories/MatchX01ServiceFactory';
+
+const userService = UserServiceFactory.getInstance();
+const createMatchService = MatchX01ServiceFactory.getCreateMatchService();
 
 export const useConfigX01 = (navigation: any) => {
-    const userService = UserServiceFactory.getInstance();
-
-    const matchRepository = new AsyncStorageMatchX01Repository();
-    const createMatchService = new CreateMatchX01Service(matchRepository);
-
     const [config, setConfig] = useState({
         game: 501,
         typeOfGame: GameTypes.FirstTo,

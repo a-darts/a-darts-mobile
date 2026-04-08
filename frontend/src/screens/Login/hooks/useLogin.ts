@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import UserServiceFactory from '../../../../../backend/src/infrastructure/factories/UserServiceFactory';
 
+const userService = UserServiceFactory.getInstance();
+
 export const useLogin = (navigation: any) => {
     const [name, setName] = useState('');
-    const userService = UserServiceFactory.getInstance();
 
     const handleEntrar = async () => {
         if (!name.trim()) return; // Validación básica
@@ -23,7 +24,7 @@ export const useLogin = (navigation: any) => {
             });
         } catch (error) {
             console.error("Error en el login:", error);
-            // Aquí podrías disparar un Toast si lo tienes implementado
+            // MIRAR: disparar un Toast si lo tienes implementado
         }
     };
 

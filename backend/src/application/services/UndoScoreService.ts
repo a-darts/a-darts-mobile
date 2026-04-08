@@ -1,8 +1,8 @@
 import { MatchX01 } from "../../domain/models/MatchX01";
-import { MatchX01Repository } from "../../domain/repositories/MatchX01Repository";
+import { IMatchX01Repository } from "../../domain/repositories/IMatchX01Repository";
 
 export class UndoScoreService {
-    constructor(private readonly matchRepository: MatchX01Repository) { }
+    constructor(private readonly matchRepository: IMatchX01Repository) { }
 
     async execute(matchId: string): Promise<MatchX01> {
         const match = await this.matchRepository.getById(matchId);

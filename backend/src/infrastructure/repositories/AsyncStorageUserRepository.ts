@@ -1,8 +1,8 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { User } from '../../domain/models/User';
-import { UserRepository } from '../../domain/repositories/UserRepository';
+import { IUserRepository } from '../../domain/repositories/IUserRepository';
 
-export class AsyncStorageUserRepository implements UserRepository {
+export class AsyncStorageUserRepository implements IUserRepository {
     private readonly USER_KEY = '@user_data';
 
     async saveUser(user: User): Promise<void> {

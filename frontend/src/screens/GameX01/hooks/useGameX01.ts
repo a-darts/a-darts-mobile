@@ -1,16 +1,13 @@
 import { useState, useEffect, useRef } from 'react';
 import { ScrollView } from 'react-native';
-import { AddScoreService } from '../../../../../backend/src/application/services/AddScoreService';
-import { AsyncStorageMatchX01Repository } from '../../../../../backend/src/infrastructure/repositories/AsyncStorageMatchX01Repository';
-import { UndoScoreService } from '../../../../../backend/src/application/services/UndoScoreService';
 import { MatchX01 } from '../../../../../backend/src/domain/models/MatchX01';
 
+import MatchX01ServiceFactory from '../../../../../backend/src/infrastructure/factories/MatchX01ServiceFactory';
 
-// MIRAR: Inyección manual (o vía Factory si prefieres)
-const matchRepo = new AsyncStorageMatchX01Repository();
-const addScoreService = new AddScoreService(matchRepo);
-const undoScoreService = new UndoScoreService(matchRepo);
-
+// Obtenemos los servicios y el repo desde la Factoría (fuera del hook)
+const matchRepo = MatchX01ServiceFactory.getRepository();
+const addScoreService = MatchX01ServiceFactory.getAddScoreService();
+const undoScoreService = MatchX01ServiceFactory.getUndoScoreService();
 
 export const useGameX01 = (navigation: any, route: any) => {
     const { matchId } = route.params;
