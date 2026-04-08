@@ -25,7 +25,7 @@ export class MatchX01Config {
     }
 
     public get playerNames() {
-        return this._playerNames;
+        return [...this._playerNames];
     }
 
     public get typeOfGame() {
