@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useGameX01 } from './hooks/useGameX01';
+import { useKeypad } from './hooks/useKeypad';
 import { GameTable } from './components/GameTable';
 import { Keypad } from './components/Keypad';
 import { Toast } from '../../components/Toast';
@@ -17,7 +18,16 @@ export const GameX01Screen = ({ navigation, route }: any) => {
     handleEnter, handleEnterRemaining
   } = useGameX01(navigation, route);
 
-  if (!match) return <View style={styles.container} />;
+  const {
+    isNotPossibleToCheckOut
+  } = useKeypad();
+
+  if (!match) {
+    return <View style={styles.container} />;
+  }
+
+  const scoreInput = parseInt(inputValue, 10);
+  const isLeftScoreButtonDisabled = inputValue === '' || isNotPossibleToCheckOut(scoreInput);
 
   const { players, activePlayer } = match;
   const activeIndex = (match as any).activePlayerIndex;
@@ -97,7 +107,11 @@ export const GameX01Screen = ({ navigation, route }: any) => {
             title='RESTO'
             variant='tertiary'
             onPress={handleEnterRemaining}
-            style={styles.topControlBtn}
+            disabled={isLeftScoreButtonDisabled}
+            style={[
+              styles.topControlBtn,
+              { opacity: isLeftScoreButtonDisabled ? 0.2 : 1 }
+            ]}
           />
           <Button
             title='DESHACER'

@@ -9,6 +9,7 @@ interface ButtonProps {
   variant?: 'primary' | 'secondary' | 'tertiary';
   style?: any;
   iconName?: any;
+  disabled?: boolean;
 }
 
 const variantButtonStyles = {
@@ -29,16 +30,25 @@ const variantIconColors = {
   tertiary: theme.colors.buttonTertiaryIcon,
 };
 
-export const Button = ({ title, onPress, variant = 'primary', style, iconName }: ButtonProps) => {
+export const Button = ({
+  title,
+  onPress,
+  variant = 'primary',
+  style,
+  iconName,
+  disabled = false
+}: ButtonProps) => {
   return (
     <TouchableOpacity
       style={[
         styles.button,
         styles[variantButtonStyles[variant]],
-        style
+        style,
+        disabled && { opacity: 0.2 }
       ]}
       onPress={onPress}
       activeOpacity={0.8}
+      disabled={disabled}
     >
       <View style={styles.contentContainer}>
         <Text style={[
