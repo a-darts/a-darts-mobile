@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import UserServiceFactory from '../../../../../backend/src/infrastructure/factories/UserServiceFactory';
 
 const userService = UserServiceFactory.getInstance();
@@ -6,6 +6,28 @@ const userService = UserServiceFactory.getInstance();
 export const useLogin = (navigation: any) => {
     const [name, setName] = useState('');
     const [error, setError] = useState<string | null>(null);
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        checkExistingUser();
+    }, []);
+
+    const checkExistingUser = async () => {
+        try {
+            const user = await userService.getCurrentUser();
+            if (user && user.name) {
+                // Si existe, redirigimos automáticamente
+                navigation.reset({
+                    index: 0,
+                    routes: [{ name: 'HomeScreen', params: { name: user.name } }],
+                });
+            }
+        } catch (e) {
+            console.error("Error comprobando usuario persistido:", e);
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
     const handleNameChange = (text: string) => {
         setName(text);
@@ -45,6 +67,7 @@ export const useLogin = (navigation: any) => {
         name,
         setName: handleNameChange,
         error,
+        isLoading,
         handleEntrar,
         handleEntrarComoInvitado,
     };

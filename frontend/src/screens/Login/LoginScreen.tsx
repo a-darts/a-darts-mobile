@@ -1,12 +1,23 @@
 import React from 'react';
-import { View, Text, Image } from 'react-native';
+import { View, Text, Image, ActivityIndicator } from 'react-native';
 import { Button } from '../../components/Button';
 import { TextInput } from '../../components/TextInput';
 import { useLogin } from './hooks/useLogin';
 import { styles } from './styles/Login.styles';
 
 export const LoginScreen = ({ navigation }) => {
-  const { name, setName, error, handleEntrar, handleEntrarComoInvitado } = useLogin(navigation);
+  const {
+    name, setName, error, isLoading,
+    handleEntrar, handleEntrarComoInvitado,
+  } = useLogin(navigation);
+
+  if (isLoading) {
+    return (
+      <View style={[styles.container, { justifyContent: 'center' }]}>
+        <ActivityIndicator size="large" color="#FFFFFF" />
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
