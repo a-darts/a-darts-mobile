@@ -1,3 +1,4 @@
+import { GameTypes } from "../enums/GameTypes";
 import { MatchX01Config } from "./MatchX01Config";
 import { PlayerX01 } from "./PlayerX01";
 
@@ -52,6 +53,13 @@ export class MatchX01 {
         return new MatchX01(id, config, players, activeIndex, status);
     }
 
+    private calculateTarget(total: number): number {
+        if (this._config.typeOfGame === GameTypes.BestOf) {
+            return Math.floor(total / 2) + 1; // BestOf
+        }
+        return total; // FirstTo
+    }
+
     // Lógica de Negocio
     public addThrow(score: number): void {
         if (this._status === 'FINISHED') return;
@@ -74,9 +82,11 @@ export class MatchX01 {
     private handleLegWon(winner: PlayerX01): void {
         winner.winLeg();
 
+        const legsToWinSet = this.calculateTarget(this._config.numLegs);
+
         // ¿Ha ganado el Set? (Ej: Si es al mejor de 3 legs, necesita 2)
         // Usamos la config: config.legsPerSet
-        if (winner.numLegsWon === this._config.numLegs) {
+        if (winner.numLegsWon === legsToWinSet) {
             this.handleSetWon(winner);
         } else {
             // Solo ha ganado un Leg, reseteamos a todos para el siguiente Leg
@@ -91,9 +101,11 @@ export class MatchX01 {
     private handleSetWon(winner: PlayerX01): void {
         winner.winSet();
 
+        const setsToWinMatch = this.calculateTarget(this._config.numSets);
+
         // ¿Ha ganado la partida (Match)?
         // Usamos la config: config.setsToWin
-        if (winner.numSetsWon === this._config.numSets) {
+        if (winner.numSetsWon === setsToWinMatch) {
             this._status = 'FINISHED';
         } else {
             // MIRAR: cambiar esta lógica de salida
