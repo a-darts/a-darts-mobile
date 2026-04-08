@@ -1,0 +1,116 @@
+import { PlayerX01 } from '../../../src/domain/models/PlayerX01';
+import { ThrowX01 } from '../../../src/domain/models/ThrowX01';
+
+describe('PlayerX01 Entity', () => {
+    const PLAYER_ID = 'player-123';
+    const PLAYER_NAME = 'Gerwyn Price';
+    const INITIAL_SCORE = 501;
+
+    describe('Creation (Factory Methods)', () => {
+        it('debería crearse correctamente usando el método create', () => {
+            const player = PlayerX01.create(PLAYER_ID, PLAYER_NAME, INITIAL_SCORE);
+
+            expect(player.id).toBe(PLAYER_ID);
+            expect(player.name).toBe(PLAYER_NAME);
+            expect(player.remainingScore).toBe(INITIAL_SCORE);
+            expect(player.numLegsWon).toBe(0);
+            expect(player.numSetsWon).toBe(0);
+            expect(player.throws).toHaveLength(1);
+            expect(player.throws[0].score).toBe(0);
+        });
+
+        it('debería rehidratarse correctamente usando el método restore', () => {
+            const historicThrows = [
+                new ThrowX01(0, 501, 0),
+                new ThrowX01(60, 441, 3)
+            ];
+            const player = PlayerX01.restore(PLAYER_ID, PLAYER_NAME, 441, 1, 2, historicThrows);
+
+            expect(player.remainingScore).toBe(441);
+            expect(player.numSetsWon).toBe(1);
+            expect(player.numLegsWon).toBe(2);
+            expect(player.throws).toHaveLength(2);
+        });
+    });
+
+    describe('addThrow (Game Logic)', () => {
+        it('debería actualizar el remainingScore y añadir un nuevo Throw', () => {
+            const player = PlayerX01.create(PLAYER_ID, PLAYER_NAME, INITIAL_SCORE);
+            player.addThrow(100);
+
+            expect(player.remainingScore).toBe(401);
+            expect(player.throws).toHaveLength(2);
+            expect(player.throws[1].score).toBe(100);
+            expect(player.throws[1].dartCount).toBe(3);
+        });
+
+        it('debería lanzar error "Bust" si la puntuación excede el restante', () => {
+            const player = PlayerX01.create(PLAYER_ID, PLAYER_NAME, 40);
+
+            // Intentar restar 45 dejando -5
+            expect(() => player.addThrow(45)).toThrow('Bust');
+            expect(player.remainingScore).toBe(40);
+        });
+
+        it('debería lanzar error "Bust" si el restante es exactamente 1', () => {
+            const player = PlayerX01.create(PLAYER_ID, PLAYER_NAME, 40);
+
+            expect(() => player.addThrow(39)).toThrow('Bust');
+            expect(player.remainingScore).toBe(40);
+        });
+
+        it('debería permitir llegar a exactamente 0', () => {
+            const player = PlayerX01.create(PLAYER_ID, PLAYER_NAME, 40);
+            player.addThrow(40);
+
+            expect(player.remainingScore).toBe(0);
+        });
+    });
+
+    describe('removeLastThrow', () => {
+        it('debería revertir el marcador al valor del tiro anterior', () => {
+            const player = PlayerX01.create(PLAYER_ID, PLAYER_NAME, INITIAL_SCORE);
+            player.addThrow(60);
+            player.addThrow(41);
+
+            player.removeLastThrow();
+
+            expect(player.remainingScore).toBe(441);
+            expect(player.throws).toHaveLength(2);
+        });
+
+        it('no debería hacer nada si solo queda el tiro inicial (0)', () => {
+            const player = PlayerX01.create(PLAYER_ID, PLAYER_NAME, INITIAL_SCORE);
+
+            player.removeLastThrow();
+
+            expect(player.throws).toHaveLength(1);
+            expect(player.remainingScore).toBe(INITIAL_SCORE);
+        });
+    });
+});
+
+describe('ThrowX01 Value Object', () => {
+    it('debería lanzar error si el score es mayor a 180', () => {
+        expect(() => new ThrowX01(181, 320, 3)).toThrow('Invalid score');
+    });
+
+    it('debería lanzar error si el score es negativo', () => {
+        expect(() => new ThrowX01(-1, 501, 3)).toThrow('Invalid score');
+    });
+
+    it('debería lanzar error si el remainingScore es 1', () => {
+        expect(() => new ThrowX01(39, 1, 3)).toThrow('Invalid remaining score');
+    });
+
+    it('debería lanzar error si el dartCount no es múltiplo de 3', () => {
+        expect(() => new ThrowX01(60, 441, 4)).toThrow('Invalid dart count');
+    });
+
+    it('debería crear una instancia válida con datos correctos', () => {
+        const t = new ThrowX01(140, 361, 6);
+        expect(t.score).toBe(140);
+        expect(t.remainingScore).toBe(361);
+        expect(t.dartCount).toBe(6);
+    });
+});
