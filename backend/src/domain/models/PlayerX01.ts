@@ -18,15 +18,15 @@ export class PlayerX01 {
     id: string,
     name: string,
     remainingScore: number,
-    numSetsWon?: number,
-    numLegsWon?: number,
+    numSets?: number,
+    numLegs?: number,
     throws?: ThrowX01[],
   ) {
     this.id = id;
     this.name = name || 'Jugador';
     this._remainingScore = remainingScore;
-    this._numSetsWon = numSetsWon ? numSetsWon : 0;
-    this._numLegsWon = numLegsWon ? numLegsWon : 0;
+    this._numSetsWon = numSets ? numSets : 0;
+    this._numLegsWon = numLegs ? numLegs : 0;
 
     if (throws && throws.length > 0) {
       this._throws = [...throws];
