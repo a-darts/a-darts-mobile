@@ -55,19 +55,60 @@ export class MatchX01 {
     // Lógica de Negocio
     public addThrow(score: number): void {
         if (this._status === 'FINISHED') return;
-
         if (score < 0 || score > 180) return;
 
         const currentPlayer = this._players[this._activePlayerIndex];
         currentPlayer.addThrow(score);
 
         if (currentPlayer.remainingScore === 0) {
-            this._status = 'FINISHED';
-            return;
+            this.handleLegWon(currentPlayer);
+        } else {
+            this.nextTurn();
         }
+    }
 
-        // Cambio de turno simple
+    private nextTurn(): void {
         this._activePlayerIndex = (this._activePlayerIndex + 1) % this._players.length;
+    }
+
+    private handleLegWon(winner: PlayerX01): void {
+        winner.winLeg();
+
+        // ¿Ha ganado el Set? (Ej: Si es al mejor de 3 legs, necesita 2)
+        // Usamos la config: config.legsPerSet
+        if (winner.numLegsWon === this._config.numLegs) {
+            this.handleSetWon(winner);
+        } else {
+            // Solo ha ganado un Leg, reseteamos a todos para el siguiente Leg
+            this.resetPlayersForNextLeg();
+            // MIRAR: cambiar esto
+            // El que gana el leg suele empezar el siguiente (o rotar, según reglas)
+            // Aquí simplemente reiniciamos el turno
+            this._activePlayerIndex = 0;
+        }
+    }
+
+    private handleSetWon(winner: PlayerX01): void {
+        winner.winSet();
+
+        // ¿Ha ganado la partida (Match)?
+        // Usamos la config: config.setsToWin
+        if (winner.numSetsWon === this._config.numSets) {
+            this._status = 'FINISHED';
+        } else {
+            // MIRAR: cambiar esta lógica de salida
+            // Resetear para el próximo Set
+            this.resetPlayersForNextSet();
+            this._activePlayerIndex = 0;
+        }
+    }
+
+    private resetPlayersForNextLeg(): void {
+        this._players.forEach(p => p.resetForNewLeg(this._config.game));
+    }
+
+    private resetPlayersForNextSet(): void {
+        this._players.forEach(p => p.resetForNewSet(this._config.game));
     }
 
     public undoLastThrow(): void {

@@ -94,6 +94,26 @@ export class PlayerX01 {
     this._remainingScore = lastRemaining;
   }
 
+  public winLeg(): void {
+    this._numLegsWon++;
+  }
+
+  public winSet(): void {
+    this._numSetsWon++;
+    this._numLegsWon = 0;
+  }
+
+  public resetForNewLeg(initialScore: number): void {
+    this._remainingScore = initialScore;
+    const initialThrow = new ThrowX01(0, initialScore, 0);
+    this._throws = [initialThrow];
+  }
+
+  public resetForNewSet(initialScore: number): void {
+    this._numLegsWon = 0;
+    this.resetForNewLeg(initialScore);
+  }
+
   // Getters
   public get remainingScore() {
     return this._remainingScore;
