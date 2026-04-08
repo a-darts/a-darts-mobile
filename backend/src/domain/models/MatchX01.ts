@@ -20,18 +20,18 @@ export class MatchX01 {
         id: string,
         config: MatchX01Config,
         players: PlayerX01[],
-        activePlayerIndex?: number,
-        startingLegIndex?: number,
-        startingSetIndex?: number,
-        status?: 'PLAYING' | 'FINISHED',
+        activePlayerIndex: number,
+        startingLegIndex: number,
+        startingSetIndex: number,
+        status: 'PLAYING' | 'FINISHED',
     ) {
         this.id = id;
         this._config = config;
         this._players = [...players];
-        this._activePlayerIndex = activePlayerIndex || 0;
-        this._startingPlayerIndexForLeg = startingLegIndex || 0;
-        this._startingPlayerIndexForSet = startingSetIndex || 0;
-        this._status = status || 'PLAYING';
+        this._activePlayerIndex = activePlayerIndex;
+        this._startingPlayerIndexForLeg = startingLegIndex;
+        this._startingPlayerIndexForSet = startingSetIndex;
+        this._status = status;
     }
 
     // Factory Method: Único punto de entrada para crear partidas nuevas
@@ -116,11 +116,13 @@ export class MatchX01 {
 
         const setsToWinMatch = this.calculateTarget(this._config.numSets);
 
+        this.resetPlayersForNextSet();
+
         // Ha ganado la partida
         if (winner.numSetsWon === setsToWinMatch) {
             this._status = 'FINISHED';
         } else {
-            this.resetPlayersForNextSet();
+            // this.resetPlayersForNextSet();
             this.rotateStartingPlayerForSet();
         }
     }
@@ -145,12 +147,13 @@ export class MatchX01 {
     }
 
     public undoLastThrow(): void {
+        // BORRAR
         // Caso A: Si la partida terminó, el índice NO se movió en el addThrow.
         // Simplemente borramos el tiro del jugador actual y reseteamos el estado.
         if (this._status === 'FINISHED') {
-            // MIRAR porque esto no es como dice el Caso A
-            // this._players[this._activePlayerIndex].removeLastThrow();
             // this._status = 'PLAYING';
+            // this.activePlayer.removeLastThrow();
+            // MIRAR porque esto no es como dice el Caso A
             return;
         }
 

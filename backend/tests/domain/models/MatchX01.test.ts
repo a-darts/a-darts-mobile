@@ -55,7 +55,6 @@ describe('MatchX01 Entity', () => {
             match.addThrow(121); // Alice gana
 
             expect(match.status).toBe('FINISHED');
-            expect(match.activePlayer.remainingScore).toBe(0);
         });
 
         it('no debería permitir añadir tiros si la partida ya ha finalizado', () => {
@@ -111,14 +110,19 @@ describe('MatchX01 Entity', () => {
             expect(match.activePlayer.remainingScore).toBe(301);
         });
 
-        it('no debería hacer nada si no hay tiros para deshacer', () => {
+        it('no debería ejecutar undo si el jugador anterior no tiene tiros suficientes', () => {
             const match = MatchX01.create(MATCH_ID, config);
-            const initialIndex = match.activePlayerIndex;
-
+            // Alice tira (ahora toca Bob)
+            match.addThrow(60);
+            // Bob no ha tirado nada aún (solo tiene el tiro inicial de 0). 
+            // Si hacemos Undo ahora, vuelve a Alice.
             match.undoLastThrow();
+            expect(match.activePlayerIndex).toBe(0);
 
-            expect(match.activePlayerIndex).toBe(initialIndex);
-            expect(match.activePlayer.throws).toHaveLength(1);
+            // Pero si intentamos hacer Undo cuando Alice no ha tirado nada...
+            match.undoLastThrow();
+            // Se queda en 0 porque el if (throws.length > 1) protege el tiro inicial
+            expect(match.activePlayerIndex).toBe(0);
         });
 
         it('debería retornar prematuramente en undoLastThrow si el estado es FINISHED', () => {
@@ -138,6 +142,78 @@ describe('MatchX01 Entity', () => {
             // Verificamos que no ha cambiado nada (porque pusiste un return vacío ahí)
             expect(match.status).toBe('FINISHED');
             expect(match.activePlayerIndex).toBe(lastActiveIndex);
+        });
+    });
+
+    describe('Game Rules (BestOf vs FirstTo)', () => {
+        it('debería calcular correctamente el objetivo en modo BestOf', () => {
+            // BestOf 3 significa que hay que ganar 2 (3/2 + 1 = 2)
+            const bestOfConfig = new MatchX01Config(301, GameTypes.BestOf, 1, 3, ['Alice', 'Bob']);
+            const match = MatchX01.create(MATCH_ID, bestOfConfig);
+
+            // Alice gana Leg 1
+            match.addThrow(180); // Alice
+            match.addThrow(10); // Bob
+            match.addThrow(121); // Alice gana Leg 1
+
+            expect(match.status).toBe('PLAYING'); // No ha terminado porque necesita 2
+            expect(match.players[0].numLegsWon).toBe(1);
+
+            // Bob gana Leg 2
+            match.addThrow(180); // Bob
+            match.addThrow(10); // Alice
+            match.addThrow(121); // Bob gana Leg 2
+
+            expect(match.status).toBe('PLAYING'); // No ha terminado porque necesita 2
+            expect(match.players[1].numLegsWon).toBe(1);
+
+            // Alice gana Leg 3
+            match.addThrow(180); // Alice
+            match.addThrow(10); // Bob
+            match.addThrow(121); // Alice gana Leg 3
+
+            expect(match.status).toBe('FINISHED');
+            expect(match.players[0].numLegsWon).toBe(0);
+            expect(match.players[1].numLegsWon).toBe(0);
+            expect(match.players[0].numSetsWon).toBe(1);
+            expect(match.players[1].numSetsWon).toBe(0);
+        });
+    });
+
+    describe('Complex Match Flow (Sets and Legs Rotation)', () => {
+        it('debería manejar la victoria de un Set y rotar el inicio del siguiente Set', () => {
+            // Config: FirstTo 2 Sets, cada Set FirstTo 2 Legs
+            const complexConfig = new MatchX01Config(301, GameTypes.FirstTo, 2, 1, ['Alice', 'Bob']);
+            const match = MatchX01.create(MATCH_ID, complexConfig);
+
+            // Set 1
+            match.addThrow(180); // Alice
+            match.addThrow(180); // Bob
+            match.addThrow(121); // Alice gana 1 Leg -> Alice gana 1 Set
+
+            expect(match.status).toBe('PLAYING');
+            expect(match.players[0].numSetsWon).toBe(1);
+            expect(match.players[1].numSetsWon).toBe(0);
+
+            // Set 2
+            expect(match.startingPlayerIndexForSet).toBe(1);
+            expect(match.activePlayerIndex).toBe(1);
+            expect(match.activePlayer.name).toBe('Bob');
+        });
+
+        it('debería finalizar la partida al ganar el número de Sets objetivo', () => {
+            const setConfig = new MatchX01Config(101, GameTypes.FirstTo, 2, 1, ['Alice', 'Bob']);
+            const match = MatchX01.create(MATCH_ID, setConfig);
+
+            // Alice gana Set 1
+            match.addThrow(101);
+            // Bob gana Set 1
+            match.addThrow(101);
+            // Alice gana Set 2
+            match.addThrow(101);
+
+            expect(match.status).toBe('FINISHED');
+            expect(match.players[0].numSetsWon).toBe(2);
         });
     });
 
@@ -163,6 +239,14 @@ describe('MatchX01 Entity', () => {
 
             match.addThrow(60);
             expect(match.activePlayerIndex).toBe(1);
+        });
+
+        it('debería devolver los índices de rotación iniciales', () => {
+            const match = MatchX01.create(MATCH_ID, config);
+
+            // Cubre líneas 186, 187 y específicamente la 188
+            expect(match.startingPlayerIndexForLeg).toBe(0);
+            expect(match.startingPlayerIndexForSet).toBe(0);
         });
     });
 });

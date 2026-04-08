@@ -35,6 +35,7 @@ export const GameX01Screen = ({ navigation, route }: any) => {
   const p1 = players[0];
   const p2 = players.length > 1 ? players[1] : null;
 
+  // MIRAR: cambiar por el histórico, no por el throws actual
   const hasAnyMove =
     p1.throws.some(t => t.dartCount > 0) ||
     (p2?.throws.some(t => t.dartCount > 0) ?? false);
