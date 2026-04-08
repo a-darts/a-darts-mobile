@@ -1,9 +1,52 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Feather } from '@expo/vector-icons';
-import { theme } from '../theme/theme';
+import { theme } from '../../../theme/theme';
+import { useKeypad } from '../hooks/useKeypad';
 
-export const Keypad = ({ onKeyPress, onBackspace, onEnter, onFastScore }) => {
+
+export const Keypad = ({
+  onKeyPress,
+  onBackspace,
+  onEnter,
+  onFastScore,
+  remainingScore,
+}) => {
+
+  const {
+    getButtonStatus,
+    getGameShotStatus,
+  } = useKeypad();
+
+
+  const FastButton = ({ score }: { score: number }) => {
+    const { isDisabled, style } = getButtonStatus(score, remainingScore);
+    return (
+      <TouchableOpacity
+        style={[styles.fastBtn, style]}
+        onPress={() => onFastScore(score)}
+        disabled={isDisabled}
+        activeOpacity={0.7}
+      >
+        <Text style={styles.fastNum}>{score}</Text>
+      </TouchableOpacity>
+    );
+  };
+
+  const GameShotButton = () => {
+    const { isDisabled, style } = getGameShotStatus(remainingScore);
+    return (
+      <TouchableOpacity
+        style={[styles.fastBtn, { flex: 2 }, style]}
+        onPress={() => onFastScore(remainingScore)}
+        disabled={isDisabled}
+        activeOpacity={0.7}
+      >
+        <Text style={styles.gameShotBtnText}>DARDO</Text>
+      </TouchableOpacity>
+    );
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.keypadRow}>
@@ -11,8 +54,8 @@ export const Keypad = ({ onKeyPress, onBackspace, onEnter, onFastScore }) => {
         <TouchableOpacity style={styles.keyBtn} onPress={() => onKeyPress('2')}><Text style={styles.keyNum}>2</Text></TouchableOpacity>
         <TouchableOpacity style={styles.keyBtn} onPress={() => onKeyPress('3')}><Text style={styles.keyNum}>3</Text></TouchableOpacity>
         <View style={styles.separator} />
-        <TouchableOpacity style={[styles.fastBtn]} onPress={() => onFastScore(26)}><Text style={styles.fastNum}>26</Text></TouchableOpacity>
-        <TouchableOpacity style={styles.fastBtn} onPress={() => onFastScore(45)}><Text style={styles.fastNum}>45</Text></TouchableOpacity>
+        <FastButton score={26} />
+        <FastButton score={45} />
       </View>
 
       <View style={styles.keypadRow}>
@@ -20,8 +63,8 @@ export const Keypad = ({ onKeyPress, onBackspace, onEnter, onFastScore }) => {
         <TouchableOpacity style={styles.keyBtn} onPress={() => onKeyPress('5')}><Text style={styles.keyNum}>5</Text></TouchableOpacity>
         <TouchableOpacity style={styles.keyBtn} onPress={() => onKeyPress('6')}><Text style={styles.keyNum}>6</Text></TouchableOpacity>
         <View style={styles.separator} />
-        <TouchableOpacity style={[styles.fastBtn]} onPress={() => onFastScore(60)}><Text style={styles.fastNum}>60</Text></TouchableOpacity>
-        <TouchableOpacity style={styles.fastBtn} onPress={() => onFastScore(85)}><Text style={styles.fastNum}>85</Text></TouchableOpacity>
+        <FastButton score={60} />
+        <FastButton score={85} />
       </View>
 
       <View style={styles.keypadRow}>
@@ -29,8 +72,8 @@ export const Keypad = ({ onKeyPress, onBackspace, onEnter, onFastScore }) => {
         <TouchableOpacity style={styles.keyBtn} onPress={() => onKeyPress('8')}><Text style={styles.keyNum}>8</Text></TouchableOpacity>
         <TouchableOpacity style={styles.keyBtn} onPress={() => onKeyPress('9')}><Text style={styles.keyNum}>9</Text></TouchableOpacity>
         <View style={styles.separator} />
-        <TouchableOpacity style={[styles.fastBtn]} onPress={() => onFastScore(100)}><Text style={styles.fastNum}>100</Text></TouchableOpacity>
-        <TouchableOpacity style={styles.fastBtn} onPress={() => onFastScore(140)}><Text style={styles.fastNum}>140</Text></TouchableOpacity>
+        <FastButton score={100} />
+        <FastButton score={140} />
       </View>
 
       <View style={styles.keypadRow}>
@@ -42,9 +85,8 @@ export const Keypad = ({ onKeyPress, onBackspace, onEnter, onFastScore }) => {
           <Feather name="corner-down-left" size={24} color={theme.colors.keyIcon} />
         </TouchableOpacity>
         <View style={styles.separator} />
-        <TouchableOpacity style={[styles.fastBtn, { flex: 2 }]} activeOpacity={0.7}>
-          <Text style={styles.gameShot}>DARDO</Text>
-        </TouchableOpacity>
+        <GameShotButton />
+
       </View>
     </View>
   );
@@ -92,7 +134,7 @@ const styles = StyleSheet.create({
     fontFamily: theme.typography.fontFamily.bold,
     fontSize: theme.typography.sizes.xl,
   },
-  gameShot: {
+  gameShotBtnText: {
     color: theme.colors.keyTextSecondary,
     fontFamily: theme.typography.fontFamily.bold,
     fontSize: theme.typography.sizes.lg,

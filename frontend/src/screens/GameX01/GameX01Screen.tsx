@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useGameX01 } from './hooks/useGameX01';
 import { GameTable } from './components/GameTable';
-import { Keypad } from '../../components/Keypad';
+import { Keypad } from './components/Keypad';
 import { Toast } from '../../components/Toast';
 import { styles } from './styles/GameX01.styles';
 import { Button } from '../../components/Button';
@@ -112,6 +112,7 @@ export const GameX01Screen = ({ navigation, route }: any) => {
           onBackspace={handleBackspace}
           onEnter={handleEnter}
           onFastScore={submitScore}
+          remainingScore={activePlayer.remainingScore}
         />
       </View>
     </View>
