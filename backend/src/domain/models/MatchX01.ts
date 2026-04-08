@@ -29,7 +29,6 @@ export class MatchX01 {
         this._config = config;
         this._players = [...players];
         this._activePlayerIndex = activePlayerIndex || 0;
-        console.log('_startingPlayerIndexForLeg en constructor():', startingLegIndex);
         this._startingPlayerIndexForLeg = startingLegIndex || 0;
         this._startingPlayerIndexForSet = startingSetIndex || 0;
         this._status = status || 'PLAYING';
@@ -101,7 +100,6 @@ export class MatchX01 {
         winner.winLeg();
 
         const legsToWinSet = this.calculateTarget(this._config.numLegs);
-        console.log('legsToWinSet', legsToWinSet);
 
         // Ha ganado el set
         if (winner.numLegsWon === legsToWinSet) {
@@ -128,20 +126,14 @@ export class MatchX01 {
     }
 
     private rotateStartingPlayerForLeg(): void {
-        console.log('anterior _activePlayerIndex:', this._activePlayerIndex);
-        console.log('players:', this._players);
-        console.log('_startingPlayerIndexForLeg en rotateStartingPlayerForLeg():', this._startingPlayerIndexForLeg);
         this._startingPlayerIndexForLeg = (this._startingPlayerIndexForLeg + 1) % this._players.length;
         this._activePlayerIndex = this._startingPlayerIndexForLeg;
-        console.log('nuevo _activePlayerIndex:', this._activePlayerIndex);
     }
 
     private rotateStartingPlayerForSet(): void {
         this._startingPlayerIndexForSet = (this._startingPlayerIndexForSet + 1) % this._players.length;
-        console.log('_startingPlayerIndexForLeg en rotateStartingPlayerForSet():', this._startingPlayerIndexForLeg);
         this._startingPlayerIndexForLeg = this._startingPlayerIndexForSet;
         this._activePlayerIndex = this._startingPlayerIndexForSet;
-        console.log('nuevo _activePlayerIndex:', this._activePlayerIndex);
     }
 
     private resetPlayersForNextLeg(): void {
