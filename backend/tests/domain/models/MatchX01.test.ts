@@ -27,7 +27,7 @@ describe('MatchX01 Entity', () => {
             const p1 = PlayerX01.create('id1', 'Alice', 301);
             const p2 = PlayerX01.create('id2', 'Bob', 301);
 
-            const match = MatchX01.restore(MATCH_ID, config, [p1, p2], 1, 'PLAYING');
+            const match = MatchX01.restore(MATCH_ID, config, [p1, p2], 1, 0, 0, 'PLAYING');
 
             expect(match.activePlayerIndex).toBe(1);
             expect(match.activePlayer.name).toBe('Bob');
