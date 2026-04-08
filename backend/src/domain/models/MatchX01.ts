@@ -56,6 +56,8 @@ export class MatchX01 {
     public addThrow(score: number): void {
         if (this._status === 'FINISHED') return;
 
+        if (score < 0 || score > 180) return;
+
         const currentPlayer = this._players[this._activePlayerIndex];
         currentPlayer.addThrow(score);
 
@@ -100,7 +102,7 @@ export class MatchX01 {
         return this._status;
     }
     public get config() {
-        return { ...this._config };
+        return this._config.clone();
     }
     public get activePlayerIndex() {
         return this._activePlayerIndex;

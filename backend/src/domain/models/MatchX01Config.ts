@@ -24,6 +24,16 @@ export class MatchX01Config {
         this._playerNames = [...playerNames];
     }
 
+    public clone(): MatchX01Config {
+        return new MatchX01Config(
+            this._game,
+            this._typeOfGame,
+            this._numSets,
+            this._numLegs,
+            [...this._playerNames],
+        );
+    }
+
     public get playerNames() {
         return [...this._playerNames];
     }
