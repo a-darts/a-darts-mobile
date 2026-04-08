@@ -35,6 +35,10 @@ export const GameX01Screen = ({ navigation, route }: any) => {
   const p1 = players[0];
   const p2 = players.length > 1 ? players[1] : null;
 
+  const hasAnyMove =
+    p1.throws.some(t => t.dartCount > 0) ||
+    (p2?.throws.some(t => t.dartCount > 0) ?? false);
+
   return (
     <View style={[styles.container]}>
       <Toast
@@ -108,15 +112,13 @@ export const GameX01Screen = ({ navigation, route }: any) => {
             variant='tertiary'
             onPress={handleEnterRemaining}
             disabled={isLeftScoreButtonDisabled}
-            style={[
-              styles.topControlBtn,
-              { opacity: isLeftScoreButtonDisabled ? 0.2 : 1 }
-            ]}
+            style={styles.topControlBtn}
           />
           <Button
             title='DESHACER'
             variant='tertiary'
             onPress={handleUndo}
+            disabled={!hasAnyMove}
             style={styles.topControlBtn}
           />
         </View>
