@@ -8,4 +8,5 @@ module.exports = {
   transform: {
     ...tsJestTransformCfg,
   },
+  coverageDirectory: './backend/tests/coverage',
 };
