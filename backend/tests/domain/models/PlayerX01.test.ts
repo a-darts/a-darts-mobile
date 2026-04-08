@@ -88,6 +88,65 @@ describe('PlayerX01 Entity', () => {
             expect(player.remainingScore).toBe(INITIAL_SCORE);
         });
     });
+
+    describe('Win Logic (Legs and Sets)', () => {
+        it('debería incrementar el contador de legs ganados', () => {
+            const player = PlayerX01.create(PLAYER_ID, PLAYER_NAME, INITIAL_SCORE);
+            player.winLeg();
+            expect(player.numLegsWon).toBe(1);
+        });
+
+        it('debería incrementar sets ganados y resetear legs a cero', () => {
+            const player = PlayerX01.create(PLAYER_ID, PLAYER_NAME, INITIAL_SCORE);
+            player.winLeg();
+            player.winLeg();
+
+            player.winSet();
+
+            expect(player.numSetsWon).toBe(1);
+            expect(player.numLegsWon).toBe(0); // Regla de negocio: reset legs al ganar set
+        });
+    });
+
+    describe('Reset Logic (New Leg/Set)', () => {
+        it('debería resetear la puntuación y los tiros para un nuevo Leg', () => {
+            const player = PlayerX01.create(PLAYER_ID, PLAYER_NAME, INITIAL_SCORE);
+            player.addThrow(100);
+            player.winLeg();
+
+            player.resetForNewLeg(301); // Cambiamos a un juego de 301
+
+            expect(player.remainingScore).toBe(301);
+            expect(player.throws).toHaveLength(1);
+            expect(player.throws[0].score).toBe(0);
+            expect(player.numLegsWon).toBe(1); // El contador de legs no debe tocarse aquí
+        });
+
+        it('debería resetear legs, puntuación y tiros para un nuevo Set', () => {
+            const player = PlayerX01.create(PLAYER_ID, PLAYER_NAME, INITIAL_SCORE);
+            player.winLeg();
+            player.winLeg();
+
+            player.resetForNewSet(501);
+
+            expect(player.numLegsWon).toBe(0);
+            expect(player.remainingScore).toBe(501);
+            expect(player.throws).toHaveLength(1);
+        });
+    });
+
+    describe('Dart Count Calculation', () => {
+        it('debería calcular correctamente el número de dardos acumulados (múltiplos de 3)', () => {
+            const player = PlayerX01.create(PLAYER_ID, PLAYER_NAME, INITIAL_SCORE);
+
+            player.addThrow(60); // 1º tiro real -> index 1 -> 1 * 3 = 3 dardos
+            player.addThrow(40); // 2º tiro real -> index 2 -> 2 * 3 = 6 dardos
+
+            const throws = player.throws;
+            expect(throws[1].dartCount).toBe(3);
+            expect(throws[2].dartCount).toBe(6);
+        });
+    });
 });
 
 describe('ThrowX01 Value Object', () => {
