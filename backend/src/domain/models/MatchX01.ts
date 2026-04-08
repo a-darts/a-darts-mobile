@@ -32,8 +32,8 @@ export class MatchX01 {
 
     ): MatchX01 {
         const players = config.playerNames.map(name =>
-            new PlayerX01(
-                Math.random().toString(36).substr(2, 9),
+            PlayerX01.create(
+                Math.random().toString(36).substring(2, 9),
                 name,
                 config.game,
             )

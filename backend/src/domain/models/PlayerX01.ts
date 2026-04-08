@@ -18,23 +18,35 @@ export class PlayerX01 {
     id: string,
     name: string,
     remainingScore: number,
-    numSets?: number,
-    numLegs?: number,
-    throws?: ThrowX01[],
+    numSets: number,
+    numLegs: number,
+    throws: ThrowX01[],
   ) {
     this.id = id;
-    this.name = name || 'Jugador';
+    this.name = name;
     this._remainingScore = remainingScore;
-    this._numSetsWon = numSets ? numSets : 0;
-    this._numLegsWon = numLegs ? numLegs : 0;
+    this._numSetsWon = numSets;
+    this._numLegsWon = numLegs;
+    this._throws = [...throws];
 
-    if (throws && throws.length > 0) {
-      this._throws = [...throws];
-    } else {
-      // Initial score
-      this._throws = [new ThrowX01(0, remainingScore, 0)];
-    }
     // this.history = [];
+  }
+
+  // Factory method
+  public static create(
+    id: string,
+    name: string,
+    initialScore: number,
+  ): PlayerX01 {
+    const initialThrow = new ThrowX01(0, initialScore, 0);
+    return new PlayerX01(
+      id,
+      name,
+      initialScore,
+      0,
+      0,
+      [initialThrow],
+    );
   }
 
   // Rehidratación: Para el Mapper del Repositorio
@@ -52,7 +64,7 @@ export class PlayerX01 {
       remainingScore,
       numSetsWon,
       numLegsWon,
-      throws,
+      [...throws],
     );
   }
 
