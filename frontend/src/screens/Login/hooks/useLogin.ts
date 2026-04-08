@@ -5,9 +5,18 @@ const userService = UserServiceFactory.getInstance();
 
 export const useLogin = (navigation: any) => {
     const [name, setName] = useState('');
+    const [error, setError] = useState<string | null>(null);
+
+    const handleNameChange = (text: string) => {
+        setName(text);
+        if (error) setError(null);
+    };
 
     const handleEntrar = async () => {
-        if (!name.trim()) return; // Validación básica
+        if (!name.trim()) {
+            setError("* El nombre no puede estar vacío. Si no desea identificarse, pulse ENTRAR COMO INVITADO");
+            return;
+        }
 
         try {
             await userService.login(name.trim());
@@ -24,7 +33,7 @@ export const useLogin = (navigation: any) => {
             });
         } catch (error) {
             console.error("Error en el login:", error);
-            // MIRAR: disparar un Toast si lo tienes implementado
+            setError("Error al iniciar sesión");
         }
     };
 
@@ -34,8 +43,9 @@ export const useLogin = (navigation: any) => {
 
     return {
         name,
-        setName,
+        setName: handleNameChange,
+        error,
         handleEntrar,
-        handleEntrarComoInvitado
+        handleEntrarComoInvitado,
     };
 };

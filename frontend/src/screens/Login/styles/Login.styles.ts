@@ -28,4 +28,26 @@ export const styles = StyleSheet.create({
         marginTop: theme.spacing.md,
         gap: theme.spacing.xl,
     },
+    separatorContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginVertical: theme.spacing.sm,
+    },
+    line: {
+        flex: 1,
+        height: 1,
+        backgroundColor: theme.colors.line,
+    },
+    separatorText: {
+        color: theme.colors.textSecondary,
+        paddingHorizontal: theme.spacing.md,
+        fontFamily: theme.typography.fontFamily.regular,
+    },
+    errorText: {
+        color: theme.colors.textError,
+        fontSize: theme.typography.sizes.sm,
+        fontFamily: theme.typography.fontFamily.regular,
+        marginTop: theme.spacing.xs,
+        textAlign: 'center',
+    },
 });

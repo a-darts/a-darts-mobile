@@ -6,7 +6,7 @@ import { useLogin } from './hooks/useLogin';
 import { styles } from './styles/Login.styles';
 
 export const LoginScreen = ({ navigation }) => {
-  const { name, setName, handleEntrar, handleEntrarComoInvitado } = useLogin(navigation);
+  const { name, setName, error, handleEntrar, handleEntrarComoInvitado } = useLogin(navigation);
 
   return (
     <View style={styles.container}>
@@ -29,12 +29,21 @@ export const LoginScreen = ({ navigation }) => {
           autoCapitalize="words"
         />
 
+        {error && (
+          <Text style={styles.errorText}>{error}</Text>
+        )}
+
         <View style={styles.buttonContainer}>
           <Button
             title="ENTRAR"
             variant='primary'
             onPress={handleEntrar}
           />
+          <View style={styles.separatorContainer}>
+            <View style={styles.line} />
+            <Text style={styles.separatorText}>o</Text>
+            <View style={styles.line} />
+          </View>
           <Button
             title="ENTRAR COMO INVITADO"
             variant='secondary'

@@ -2,6 +2,7 @@ export const colors = {
   background: '#0E0E0E',
   text: '#FFFFFF',
   textSecondary: '#B3B3B3',
+  textError: '#FF4C4C',
 
   activityIndicator: '#BFE55F',
   line: '#4C4C4C',
