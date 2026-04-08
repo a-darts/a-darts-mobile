@@ -73,8 +73,10 @@ export class MatchX01Mapper {
             raw.id,
             config,
             players,
-            raw._activePlayerIndex ?? raw.activePlayerIndex ?? 0,
-            raw._status ?? raw.status ?? 'PLAYING'
+            raw.activePlayerIndex ?? 0,
+            raw.startingPlayerIndexForLeg ?? 0,
+            raw.startingPlayerIndexForSet ?? 0,
+            raw.status ?? 'PLAYING'
         );
     }
 
@@ -101,6 +103,8 @@ export class MatchX01Mapper {
                 })),
             })),
             activePlayerIndex: (domain as any).activePlayerIndex,
+            startingPlayerIndexForLeg: (domain as any)._startingPlayerIndexForLeg ?? 0,
+            startingPlayerIndexForSet: (domain as any)._startingPlayerIndexForSet ?? 0,
             status: domain.status,
         };
     }

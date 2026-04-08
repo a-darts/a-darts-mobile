@@ -20,5 +20,7 @@ export interface MatchX01DTO {
         }>;
     }>;
     activePlayerIndex: number;
+    startingPlayerIndexForLeg: number;
+    startingPlayerIndexForSet: number;
     status: 'PLAYING' | 'FINISHED';
 }

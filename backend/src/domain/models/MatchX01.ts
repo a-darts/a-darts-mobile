@@ -9,7 +9,11 @@ export class MatchX01 {
     public readonly id: string;
     private _config: MatchX01Config;
     private _players: PlayerX01[];
+
     private _activePlayerIndex: number = 0;
+    private _startingPlayerIndexForLeg: number = 0;
+    private _startingPlayerIndexForSet: number = 0;
+
     private _status: 'PLAYING' | 'FINISHED' = 'PLAYING';
 
     private constructor(
@@ -17,12 +21,17 @@ export class MatchX01 {
         config: MatchX01Config,
         players: PlayerX01[],
         activePlayerIndex?: number,
+        startingLegIndex?: number,
+        startingSetIndex?: number,
         status?: 'PLAYING' | 'FINISHED',
     ) {
         this.id = id;
         this._config = config;
         this._players = [...players];
         this._activePlayerIndex = activePlayerIndex || 0;
+        console.log('_startingPlayerIndexForLeg en constructor():', startingLegIndex);
+        this._startingPlayerIndexForLeg = startingLegIndex || 0;
+        this._startingPlayerIndexForSet = startingSetIndex || 0;
         this._status = status || 'PLAYING';
     }
 
@@ -30,7 +39,6 @@ export class MatchX01 {
     public static create(
         id: string,
         config: MatchX01Config,
-
     ): MatchX01 {
         const players = config.playerNames.map(name =>
             PlayerX01.create(
@@ -39,7 +47,7 @@ export class MatchX01 {
                 config.game,
             )
         );
-        return new MatchX01(id, config, players);
+        return new MatchX01(id, config, players, 0, 0, 0, 'PLAYING');
     }
 
     // Rehidratación: Para el Mapper del Repositorio
@@ -47,10 +55,20 @@ export class MatchX01 {
         id: string,
         config: MatchX01Config,
         players: PlayerX01[],
-        activeIndex: number,
+        activePlayerIndex: number,
+        startingLegIndex: number,
+        startingSetIndex: number,
         status: 'PLAYING' | 'FINISHED',
     ): MatchX01 {
-        return new MatchX01(id, config, players, activeIndex, status);
+        return new MatchX01(
+            id,
+            config,
+            players,
+            activePlayerIndex,
+            startingLegIndex,
+            startingSetIndex,
+            status,
+        );
     }
 
     private calculateTarget(total: number): number {
@@ -83,18 +101,15 @@ export class MatchX01 {
         winner.winLeg();
 
         const legsToWinSet = this.calculateTarget(this._config.numLegs);
+        console.log('legsToWinSet', legsToWinSet);
 
-        // ¿Ha ganado el Set? (Ej: Si es al mejor de 3 legs, necesita 2)
-        // Usamos la config: config.legsPerSet
+        // Ha ganado el set
         if (winner.numLegsWon === legsToWinSet) {
             this.handleSetWon(winner);
         } else {
             // Solo ha ganado un Leg, reseteamos a todos para el siguiente Leg
             this.resetPlayersForNextLeg();
-            // MIRAR: cambiar esto
-            // El que gana el leg suele empezar el siguiente (o rotar, según reglas)
-            // Aquí simplemente reiniciamos el turno
-            this._activePlayerIndex = 0;
+            this.rotateStartingPlayerForLeg();
         }
     }
 
@@ -103,16 +118,30 @@ export class MatchX01 {
 
         const setsToWinMatch = this.calculateTarget(this._config.numSets);
 
-        // ¿Ha ganado la partida (Match)?
-        // Usamos la config: config.setsToWin
+        // Ha ganado la partida
         if (winner.numSetsWon === setsToWinMatch) {
             this._status = 'FINISHED';
         } else {
-            // MIRAR: cambiar esta lógica de salida
-            // Resetear para el próximo Set
             this.resetPlayersForNextSet();
-            this._activePlayerIndex = 0;
+            this.rotateStartingPlayerForSet();
         }
+    }
+
+    private rotateStartingPlayerForLeg(): void {
+        console.log('anterior _activePlayerIndex:', this._activePlayerIndex);
+        console.log('players:', this._players);
+        console.log('_startingPlayerIndexForLeg en rotateStartingPlayerForLeg():', this._startingPlayerIndexForLeg);
+        this._startingPlayerIndexForLeg = (this._startingPlayerIndexForLeg + 1) % this._players.length;
+        this._activePlayerIndex = this._startingPlayerIndexForLeg;
+        console.log('nuevo _activePlayerIndex:', this._activePlayerIndex);
+    }
+
+    private rotateStartingPlayerForSet(): void {
+        this._startingPlayerIndexForSet = (this._startingPlayerIndexForSet + 1) % this._players.length;
+        console.log('_startingPlayerIndexForLeg en rotateStartingPlayerForSet():', this._startingPlayerIndexForLeg);
+        this._startingPlayerIndexForLeg = this._startingPlayerIndexForSet;
+        this._activePlayerIndex = this._startingPlayerIndexForSet;
+        console.log('nuevo _activePlayerIndex:', this._activePlayerIndex);
     }
 
     private resetPlayersForNextLeg(): void {
@@ -159,5 +188,11 @@ export class MatchX01 {
     }
     public get activePlayerIndex() {
         return this._activePlayerIndex;
+    }
+    public get startingPlayerIndexForLeg() {
+        return this._startingPlayerIndexForLeg;
+    }
+    public get startingPlayerIndexForSet() {
+        return this._startingPlayerIndexForSet;
     }
 }
