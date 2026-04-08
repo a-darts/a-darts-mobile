@@ -17,44 +17,49 @@ export const GameTable = ({ p1, p2, scrollViewRef }: any) => {
                 showsVerticalScrollIndicator={false}
                 onContentSizeChange={() => scrollViewRef.current?.scrollToEnd({ animated: true })}
             >
-                {throwRows.map((row, index) => (
-                    <View style={styles.tableRow} key={index}>
-                        <View style={styles.spacer} />
+                {throwRows.map((row, index) => {
+                    const showP1Score = row.dartCount > 0;
+                    const showP2Score = row.dartCount > 0;
 
-                        <View style={styles.tableRowSecondary}>
-                            <Text style={[styles.tableCol, styles.tableScore, styles.textRight]}>
-                                {row.p1?.score ?? ''}
-                            </Text>
-                            <Text style={[styles.tableCol, styles.tableRemaining, styles.textRight]}>
-                                {row.p1?.remainingScore ?? ''}
-                            </Text>
-                        </View>
+                    return (
+                        <View style={styles.tableRow} key={index}>
+                            <View style={styles.spacer} />
 
-                        <View style={styles.spacer} />
-
-                        <View style={{ flex: 2, alignItems: 'center' }}>
-                            <Text style={styles.tableDartCount}>
-                                {row.dartCount}
-                            </Text>
-                        </View>
-
-                        {p2 && <View style={styles.spacer} />}
-
-                        {p2 ? (
                             <View style={styles.tableRowSecondary}>
-                                <Text style={[styles.tableCol, styles.tableRemaining, styles.textLeft]}>
-                                    {row.p2?.remainingScore ?? ''}
+                                <Text style={[styles.tableCol, styles.tableScore, styles.textRight]}>
+                                    {showP1Score ? row.p1?.score : ''}
                                 </Text>
-                                <Text style={[styles.tableCol, styles.tableScore, styles.textLeft]}>
-                                    {row.p2?.score ?? ''}
+                                <Text style={[styles.tableCol, styles.tableRemaining, styles.textRight]}>
+                                    {row.p1?.remainingScore ?? ''}
                                 </Text>
                             </View>
-                        ) : (
+
                             <View style={styles.spacer} />
-                        )}
-                        {p2 && <View style={styles.spacer} />}
-                    </View>
-                ))}
+
+                            <View style={{ flex: 2, alignItems: 'center' }}>
+                                <Text style={styles.tableDartCount}>
+                                    {row.dartCount}
+                                </Text>
+                            </View>
+
+                            {p2 && <View style={styles.spacer} />}
+
+                            {p2 ? (
+                                <View style={styles.tableRowSecondary}>
+                                    <Text style={[styles.tableCol, styles.tableRemaining, styles.textLeft]}>
+                                        {row.p2?.remainingScore ?? ''}
+                                    </Text>
+                                    <Text style={[styles.tableCol, styles.tableScore, styles.textLeft]}>
+                                        {showP2Score ? row.p2?.score : ''}
+                                    </Text>
+                                </View>
+                            ) : (
+                                <View style={styles.spacer} />
+                            )}
+                            {p2 && <View style={styles.spacer} />}
+                        </View>
+                    );
+                })}
             </ScrollView>
         </View>
     );
