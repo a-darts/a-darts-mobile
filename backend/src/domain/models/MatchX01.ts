@@ -116,13 +116,12 @@ export class MatchX01 {
 
         const setsToWinMatch = this.calculateTarget(this._config.numSets);
 
-        this.resetPlayersForNextSet();
-
         // Ha ganado la partida
         if (winner.numSetsWon === setsToWinMatch) {
+            this.resetPlayersForNextSet();
             this._status = 'FINISHED';
         } else {
-            // this.resetPlayersForNextSet();
+            this.resetPlayersForNextSet();
             this.rotateStartingPlayerForSet();
         }
     }
@@ -147,25 +146,51 @@ export class MatchX01 {
     }
 
     public undoLastThrow(): void {
-        // BORRAR
-        // Caso A: Si la partida terminó, el índice NO se movió en el addThrow.
-        // Simplemente borramos el tiro del jugador actual y reseteamos el estado.
+        // Caso A: Partida finalizada
         if (this._status === 'FINISHED') {
-            // this._status = 'PLAYING';
-            // this.activePlayer.removeLastThrow();
-            // MIRAR porque esto no es como dice el Caso A
+            this._status = 'PLAYING';
+            this.handleUndoVictory();
             return;
         }
 
-        // Caso B: Partida en curso. 
-        // Debemos retroceder el turno antes de borrar.
-        const newIndex = (this._activePlayerIndex - 1 + this._players.length) % this._players.length;
-
-        // Verificamos si ese jugador tiene algo que borrar
-        if (this._players[newIndex].throws.length > 1) {
-            this._players[newIndex].removeLastThrow();
-            this._activePlayerIndex = newIndex;
+        // Caso B: Partida en curso
+        const currentPlayer = this._players[this._activePlayerIndex];
+        if (currentPlayer.throws.length <= 1) {
+            this.handleUndoVictory();
+        } else {
+            // Caso C: Undo normal de un dardo dentro del mismo leg
+            currentPlayer.removeLastThrow();
+            // MIRAR: Aquí podrías necesitar retroceder el activePlayerIndex 
+            // si usas turnos individuales por dardo.
         }
+    }
+
+    private handleUndoVictory(): void {
+        // 1. Encontrar quién fue el último en tirar (el que ganó)
+        // En dardos, el que gana es el que tiró justo antes del reset
+        // console.log('activePlayerIndex:', this._activePlayerIndex);
+        // const winnerIndex = (this._activePlayerIndex - 1 + this._players.length) % this._players.length;
+        const winner = this._players[this._activePlayerIndex];
+        console.log('winner:', winner);
+        console.log('config:', this.config);
+        winner.undoWinSet(this.config.numLegs);
+        winner.removeLastThrowFromLastLeg();
+
+
+        // // 2. Si el ganador acaba de ganar un SET
+        // if (winner.numLegsWon === 0 && winner.numSetsWon > 0) {
+        //     winner.undoWinSet(this._config.numLegs - 1); // Simplificación lógica
+        // }
+
+        // // 3. Restaurar el Leg anterior del ganador
+        // winner.removeLastThrowFromLastLeg();
+
+        // // 4. Restaurar el estado de los demás jugadores (su puntuación antes del reset)
+        // // Para un Undo perfecto, necesitarías guardar también los dardos de los "perdedores"
+        // // o simplemente no resetear sus dardos hasta que empiece el nuevo leg.
+
+        // // 5. Devolver el turno al ganador
+        // this._activePlayerIndex = winnerIndex;
     }
 
     // Getters

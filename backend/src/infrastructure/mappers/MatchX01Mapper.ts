@@ -58,13 +58,23 @@ export class MatchX01Mapper {
                 )
             );
 
+            const historyData = p._history ?? p.history ?? [];
+            const history = historyData.map((leg: any[]) =>
+                leg.map((t: any) => new ThrowX01(
+                    t._score ?? t.score,
+                    t._remainingScore ?? t.remainingScore,
+                    t._dartCount ?? t.dartCount
+                ))
+            );
+
             return PlayerX01.restore(
                 p.id,
                 p.name,
                 p.remainingScore,
                 p.numSetsWon,
                 p.numLegsWon,
-                throws
+                throws,
+                history,
             );
         });
 
@@ -101,6 +111,11 @@ export class MatchX01Mapper {
                     remainingScore: (t as any).remainingScore,
                     dartCount: (t as any).dartCount,
                 })),
+                history: p.history.map(leg => leg.map(t => ({
+                    score: (t as any).score,
+                    remainingScore: (t as any).remainingScore,
+                    dartCount: (t as any).dartCount,
+                }))),
             })),
             activePlayerIndex: (domain as any).activePlayerIndex,
             startingPlayerIndexForLeg: (domain as any)._startingPlayerIndexForLeg ?? 0,

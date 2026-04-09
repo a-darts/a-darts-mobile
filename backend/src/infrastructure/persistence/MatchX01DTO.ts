@@ -18,6 +18,11 @@ export interface MatchX01DTO {
             remainingScore: number;
             dartCount: number;
         }>;
+        history: Array<Array<{
+            score: number;
+            remainingScore: number;
+            dartCount: number;
+        }>>;
     }>;
     activePlayerIndex: number;
     startingPlayerIndexForLeg: number;

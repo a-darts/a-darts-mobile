@@ -119,7 +119,7 @@ export const GameX01Screen = ({ navigation, route }: any) => {
             title='DESHACER'
             variant='tertiary'
             onPress={handleUndo}
-            disabled={!hasAnyMove}
+            // disabled={!hasAnyMove}
             style={styles.topControlBtn}
           />
         </View>
