@@ -139,6 +139,7 @@ export class MatchX01 {
         const setsToWinMatch = this.calculateTarget(this._config.numSets);
         if (winner.numSetsWon >= setsToWinMatch) {
             // Ha ganado la partida
+            this._players.forEach(p => p.resetLegsForMatchEnd());
             this._status = 'FINISHED';
         } else {
             // Ha ganado un set

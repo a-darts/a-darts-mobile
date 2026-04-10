@@ -141,6 +141,10 @@ export class PlayerX01 {
     this.resetForNewLeg(initialScore);
   }
 
+  public resetLegsForMatchEnd(): void {
+    this._numLegsWon = 0;
+  }
+
   // -------------------------------------------------------------------------
   // Getters
   // -------------------------------------------------------------------------
