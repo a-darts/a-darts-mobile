@@ -70,11 +70,17 @@ export const GameX01Screen = ({ navigation, route }: any) => {
         {/* Marcador central  */}
         <View style={styles.statsCard}>
           <Text style={styles.statsRowText}>
-            {p1.numSetsWon} - {p2?.numSetsWon ?? 0}
+            {p1.numSetsWon}
+            {p2 && (
+              <Text> - {p2?.numSetsWon ?? 0}</Text>
+            )}
           </Text>
           <Text style={styles.statsLabel}>S E T S</Text>
           <Text style={[styles.statsRowText, { marginTop: 12 }]}>
-            {p1.numLegsWon} - {p2?.numLegsWon ?? 0}
+            {p1.numLegsWon}
+            {p2 && (
+              <Text> - {p2?.numLegsWon ?? 0}</Text>
+            )}
           </Text>
           <Text style={styles.statsLabel}>L E G S</Text>
         </View>
