@@ -39,6 +39,8 @@ export const GameX01Screen = ({ navigation, route }: any) => {
   const canSwapStartingPlayer =
     players.length > 1 && match.history.length === 0;
 
+  const canUndoLastThrow = match.history.length !== 0;
+
   return (
     <View style={[styles.container]}>
       <Toast
@@ -130,7 +132,7 @@ export const GameX01Screen = ({ navigation, route }: any) => {
             title='DESHACER'
             variant='tertiary'
             onPress={handleUndo}
-            // disabled={!hasAnyMove}
+            disabled={!canUndoLastThrow}
             style={styles.topControlBtn}
           />
         </View>
