@@ -167,4 +167,17 @@ export const styles = StyleSheet.create({
         fontFamily: theme.typography.fontFamily.bold,
         fontSize: theme.typography.sizes.sm,
     },
+
+    swapButton: {
+        padding: 8,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: theme.colors.buttonTertiaryBackground,
+        borderRadius: theme.borderRadius.md,
+        borderWidth: 1,
+        borderColor: theme.colors.buttonTertiaryBorder,
+    },
+    swapButtonIcon: {
+        color: theme.colors.buttonTertiaryIcon,
+    },
 });

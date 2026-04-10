@@ -115,6 +115,15 @@ export class MatchX01 {
         this.restoreSnapshot(previous);
     }
 
+    public swapStartingPlayer(): void {
+        // Solo permitido antes de la primera tirada
+        if (this._history.length > 0) return;
+
+        this._startingPlayerIndexForLeg = (this._startingPlayerIndexForLeg + 1) % this._players.length;
+        this._startingPlayerIndexForSet = this._startingPlayerIndexForLeg;
+        this._activePlayerIndex = this._startingPlayerIndexForLeg;
+    }
+
     // -------------------------------------------------------------------------
     // Lógica de legs y sets
     // -------------------------------------------------------------------------

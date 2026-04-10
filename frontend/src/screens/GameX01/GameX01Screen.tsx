@@ -8,6 +8,7 @@ import { Keypad } from './components/Keypad';
 import { Toast } from '../../components/Toast';
 import { styles } from './styles/GameX01.styles';
 import { Button } from '../../components/Button';
+import { MaterialIcons } from '@expo/vector-icons';
 
 export const GameX01Screen = ({ navigation, route }: any) => {
   const insets = useSafeAreaInsets();
@@ -15,7 +16,7 @@ export const GameX01Screen = ({ navigation, route }: any) => {
   const {
     match, inputValue, toast, setToast, scrollViewRef,
     handleKeyPress, handleBackspace, handleUndo, submitScore,
-    handleEnter, handleEnterRemaining
+    handleEnter, handleEnterRemaining, handleSwapStartingPlayer,
   } = useGameX01(navigation, route);
 
   const {
@@ -35,10 +36,8 @@ export const GameX01Screen = ({ navigation, route }: any) => {
   const p1 = players[0];
   const p2 = players.length > 1 ? players[1] : null;
 
-  // MIRAR: cambiar por el histórico, no por el throws actual
-  const hasAnyMove =
-    p1.throws.some(t => t.dartCount > 0) ||
-    (p2?.throws.some(t => t.dartCount > 0) ?? false);
+  const canSwapStartingPlayer =
+    players.length > 1 && match.history.length === 0;
 
   return (
     <View style={[styles.container]}>
@@ -108,6 +107,18 @@ export const GameX01Screen = ({ navigation, route }: any) => {
             </Text>
           </View>
           <View style={styles.spacer} />
+          {canSwapStartingPlayer && (
+            <TouchableOpacity
+              onPress={handleSwapStartingPlayer}
+              style={styles.swapButton}
+            >
+              <MaterialIcons
+                name="swap-horiz"
+                size={28}
+                style={styles.swapButtonIcon}
+              />
+            </TouchableOpacity>
+          )}
           <Button
             title='RESTO'
             variant='tertiary'

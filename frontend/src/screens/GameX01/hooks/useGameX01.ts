@@ -8,6 +8,7 @@ import MatchX01ServiceFactory from '../../../../../backend/src/infrastructure/fa
 const matchRepo = MatchX01ServiceFactory.getRepository();
 const addScoreService = MatchX01ServiceFactory.getAddScoreService();
 const undoScoreService = MatchX01ServiceFactory.getUndoScoreService();
+const swapStartingPlayerService = MatchX01ServiceFactory.getSwapStartingPlayerService();
 
 export const useGameX01 = (navigation: any, route: any) => {
     const { matchId } = route.params;
@@ -88,6 +89,16 @@ export const useGameX01 = (navigation: any, route: any) => {
         await submitScore(score);
     };
 
+    const handleSwapStartingPlayer = async () => {
+        if (!match) return;
+        try {
+            const updatedMatch = await swapStartingPlayerService.execute(match.id);
+            setMatch(updatedMatch);
+        } catch (error: any) {
+            setToast({ visible: true, title: 'Error', description: error.message, type: 'error' });
+        }
+    };
+
     return {
         match,
         inputValue,
@@ -100,5 +111,6 @@ export const useGameX01 = (navigation: any, route: any) => {
         submitScore,
         handleEnter,
         handleEnterRemaining,
+        handleSwapStartingPlayer,
     };
 };
