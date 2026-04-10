@@ -1,5 +1,14 @@
 import { ThrowX01 } from './ThrowX01';
 
+export interface PlayerX01Snapshot {
+  id: string;
+  name: string;
+  remainingScore: number;
+  numSetsWon: number;
+  numLegsWon: number;
+  throws: { score: number; remainingScore: number; dartCount: number }[];
+}
+
 /*
  * Entity: PlayerX01
  */
@@ -10,7 +19,6 @@ export class PlayerX01 {
   private _numSetsWon: number;
   private _numLegsWon: number;
   private _throws: ThrowX01[];
-  private _history: ThrowX01[][];
 
   // --------------------------------------------------------------------------
   // Constructor
@@ -21,7 +29,6 @@ export class PlayerX01 {
     numSets: number,
     numLegs: number,
     throws: ThrowX01[],
-    history: ThrowX01[][],
   ) {
     this.id = id;
     this.name = name;
@@ -29,7 +36,6 @@ export class PlayerX01 {
     this._numSetsWon = numSets;
     this._numLegsWon = numLegs;
     this._throws = [...throws];
-    this._history = [...history];
   }
 
   // Factory method
@@ -46,7 +52,6 @@ export class PlayerX01 {
       0,
       0,
       [initialThrow],
-      [],
     );
   }
 
@@ -58,7 +63,6 @@ export class PlayerX01 {
     numSetsWon: number,
     numLegsWon: number,
     throws: ThrowX01[],
-    history: ThrowX01[][],
   ): PlayerX01 {
     return new PlayerX01(
       id,
@@ -67,11 +71,39 @@ export class PlayerX01 {
       numSetsWon,
       numLegsWon,
       [...throws],
-      history.map(legThrows => [...legThrows]),
     );
   }
 
+  // -------------------------------------------------------------------------
+  // Snapshots
+  // -------------------------------------------------------------------------
+
+  public snapshot(): PlayerX01Snapshot {
+    return {
+      id: this.id,
+      name: this.name,
+      remainingScore: this._remainingScore,
+      numSetsWon: this._numSetsWon,
+      numLegsWon: this._numLegsWon,
+      throws: this._throws.map(t => ({
+        score: t.score,
+        remainingScore: t.remainingScore,
+        dartCount: t.dartCount,
+      })),
+    };
+  }
+
+  public static fromSnapshot(s: PlayerX01Snapshot): PlayerX01 {
+    const throws = s.throws.map(
+      t => new ThrowX01(t.score, t.remainingScore, t.dartCount)
+    );
+    return new PlayerX01(s.id, s.name, s.remainingScore, s.numSetsWon, s.numLegsWon, throws);
+  }
+
+  // -------------------------------------------------------------------------
   // Lógica de negocio
+  // -------------------------------------------------------------------------
+
   public addThrow(score: number): void {
     const newRemaining = this._remainingScore - score;
 
@@ -89,36 +121,8 @@ export class PlayerX01 {
     );
   }
 
-  public removeLastThrow(): void {
-    if (this._throws.length <= 1) return;
-
-    this._throws.pop();
-    const lastRemaining = this._throws[this._throws.length - 1].remainingScore;
-    this._remainingScore = lastRemaining;
-  }
-
-  public removeLastThrowFromLastLeg(): void {
-    console.log('history:', this._history);
-    if (this._history.length === 0) return;
-
-    // Recuperamos los dardos del leg anterior
-    const lastLegThrows = this._history.pop()!;
-    this._throws = lastLegThrows;
-    const lastThrow = this._throws.pop();
-    this._remainingScore = lastThrow.score;
-
-    this._numLegsWon--;
-  }
-
-  public undoWinSet(previousLegsCount: number): void {
-    console.log('previousLegsCount:', previousLegsCount);
-    this._numSetsWon--;
-    this._numLegsWon = previousLegsCount;
-  }
-
   public winLeg(): void {
     this._numLegsWon++;
-    this._history.push([...this._throws]);
   }
 
   public winSet(): void {
@@ -137,7 +141,10 @@ export class PlayerX01 {
     this.resetForNewLeg(initialScore);
   }
 
+  // -------------------------------------------------------------------------
   // Getters
+  // -------------------------------------------------------------------------
+
   public get remainingScore() {
     return this._remainingScore;
   }
@@ -152,9 +159,5 @@ export class PlayerX01 {
 
   public get throws() {
     return [...this._throws];
-  }
-
-  public get history() {
-    return [...this._history];
   }
 }

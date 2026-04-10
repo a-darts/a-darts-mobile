@@ -2,6 +2,14 @@ import { GameTypes } from "../enums/GameTypes";
 import { MatchX01Config } from "./MatchX01Config";
 import { PlayerX01 } from "./PlayerX01";
 
+interface MatchX01Snapshot {
+    players: ReturnType<PlayerX01['snapshot']>[];
+    activePlayerIndex: number;
+    startingPlayerIndexForLeg: number;
+    startingPlayerIndexForSet: number;
+    status: 'PLAYING' | 'FINISHED';
+}
+
 /*
  * Entity: MatchX01
  */
@@ -16,6 +24,8 @@ export class MatchX01 {
 
     private _status: 'PLAYING' | 'FINISHED' = 'PLAYING';
 
+    private _history: MatchX01Snapshot[] = [];
+
     private constructor(
         id: string,
         config: MatchX01Config,
@@ -24,6 +34,7 @@ export class MatchX01 {
         startingLegIndex: number,
         startingSetIndex: number,
         status: 'PLAYING' | 'FINISHED',
+        history: MatchX01Snapshot[] = [],
     ) {
         this.id = id;
         this._config = config;
@@ -32,6 +43,7 @@ export class MatchX01 {
         this._startingPlayerIndexForLeg = startingLegIndex;
         this._startingPlayerIndexForSet = startingSetIndex;
         this._status = status;
+        this._history = [...history];
     }
 
     // Factory Method: Único punto de entrada para crear partidas nuevas
@@ -58,6 +70,7 @@ export class MatchX01 {
         startingLegIndex: number,
         startingSetIndex: number,
         status: 'PLAYING' | 'FINISHED',
+        history: MatchX01Snapshot[] = [],
     ): MatchX01 {
         return new MatchX01(
             id,
@@ -67,7 +80,80 @@ export class MatchX01 {
             startingLegIndex,
             startingSetIndex,
             status,
+            history,
         );
+    }
+
+    // -------------------------------------------------------------------------
+    // Lógica principal
+    // -------------------------------------------------------------------------
+
+    public addThrow(score: number): void {
+        if (this._status === 'FINISHED') return;
+        if (score < 0 || score > 180) return;
+
+        this._history.push(this.takeSnapshot());
+
+        const currentPlayer = this._players[this._activePlayerIndex];
+        try {
+            currentPlayer.addThrow(score);
+        } catch {
+            this.nextTurn(); // MIRAR: lógica de Bust
+            return;
+        }
+
+        if (currentPlayer.remainingScore === 0) {
+            this.handleLegWon(currentPlayer);
+        } else {
+            this.nextTurn();
+        }
+    }
+
+    public undoLastThrow(): void {
+        const previous = this._history.pop();
+        if (!previous) return;
+        this.restoreSnapshot(previous);
+    }
+
+    // -------------------------------------------------------------------------
+    // Lógica de legs y sets
+    // -------------------------------------------------------------------------
+
+    private handleLegWon(winner: PlayerX01): void {
+        winner.winLeg();
+
+        const legsToWinSet = this.calculateTarget(this._config.numLegs);
+        if (winner.numLegsWon >= legsToWinSet) {
+            // Ha ganado un set
+            this.handleSetWon(winner);
+        } else {
+            // Ha ganado un leg
+            this._players.forEach(p => p.resetForNewLeg(this._config.game));
+            this.rotateStartingPlayerForLeg();
+        }
+    }
+
+    private handleSetWon(winner: PlayerX01): void {
+        winner.winSet();
+
+        const setsToWinMatch = this.calculateTarget(this._config.numSets);
+        if (winner.numSetsWon >= setsToWinMatch) {
+            // Ha ganado la partida
+            this._status = 'FINISHED';
+        } else {
+            // Ha ganado un set
+            this._players.forEach(p => p.resetForNewSet(this._config.game));
+            this.rotateStartingPlayerForSet();
+        }
+    }
+
+    // -------------------------------------------------------------------------
+    // Helpers
+    // -------------------------------------------------------------------------
+
+    private nextTurn(): void {
+        this._activePlayerIndex =
+            (this._activePlayerIndex + 1) % this._players.length;
     }
 
     private calculateTarget(total: number): number {
@@ -77,123 +163,45 @@ export class MatchX01 {
         return total; // FirstTo
     }
 
-    // Lógica de Negocio
-    public addThrow(score: number): void {
-        if (this._status === 'FINISHED') return;
-        if (score < 0 || score > 180) return;
-
-        const currentPlayer = this._players[this._activePlayerIndex];
-        currentPlayer.addThrow(score);
-
-        if (currentPlayer.remainingScore === 0) {
-            this.handleLegWon(currentPlayer);
-        } else {
-            this.nextTurn();
-        }
-    }
-
-    private nextTurn(): void {
-        this._activePlayerIndex = (this._activePlayerIndex + 1) % this._players.length;
-    }
-
-    private handleLegWon(winner: PlayerX01): void {
-        winner.winLeg();
-
-        const legsToWinSet = this.calculateTarget(this._config.numLegs);
-
-        // Ha ganado el set
-        if (winner.numLegsWon === legsToWinSet) {
-            this.handleSetWon(winner);
-        } else {
-            // Solo ha ganado un Leg, reseteamos a todos para el siguiente Leg
-            this.resetPlayersForNextLeg();
-            this.rotateStartingPlayerForLeg();
-        }
-    }
-
-    private handleSetWon(winner: PlayerX01): void {
-        winner.winSet();
-
-        const setsToWinMatch = this.calculateTarget(this._config.numSets);
-
-        // Ha ganado la partida
-        if (winner.numSetsWon === setsToWinMatch) {
-            this.resetPlayersForNextSet();
-            this._status = 'FINISHED';
-        } else {
-            this.resetPlayersForNextSet();
-            this.rotateStartingPlayerForSet();
-        }
-    }
-
     private rotateStartingPlayerForLeg(): void {
-        this._startingPlayerIndexForLeg = (this._startingPlayerIndexForLeg + 1) % this._players.length;
+        this._startingPlayerIndexForLeg =
+            (this._startingPlayerIndexForLeg + 1) % this._players.length;
         this._activePlayerIndex = this._startingPlayerIndexForLeg;
     }
 
     private rotateStartingPlayerForSet(): void {
-        this._startingPlayerIndexForSet = (this._startingPlayerIndexForSet + 1) % this._players.length;
+        this._startingPlayerIndexForSet =
+            (this._startingPlayerIndexForSet + 1) % this._players.length;
         this._startingPlayerIndexForLeg = this._startingPlayerIndexForSet;
         this._activePlayerIndex = this._startingPlayerIndexForSet;
     }
 
-    private resetPlayersForNextLeg(): void {
-        this._players.forEach(p => p.resetForNewLeg(this._config.game));
+    // -------------------------------------------------------------------------
+    // Snapshots
+    // -------------------------------------------------------------------------
+
+    private takeSnapshot(): MatchX01Snapshot {
+        return {
+            players: this._players.map(p => p.snapshot()),
+            activePlayerIndex: this._activePlayerIndex,
+            startingPlayerIndexForLeg: this._startingPlayerIndexForLeg,
+            startingPlayerIndexForSet: this._startingPlayerIndexForSet,
+            status: this._status,
+        };
     }
 
-    private resetPlayersForNextSet(): void {
-        this._players.forEach(p => p.resetForNewSet(this._config.game));
+    private restoreSnapshot(snap: MatchX01Snapshot): void {
+        this._activePlayerIndex = snap.activePlayerIndex;
+        this._startingPlayerIndexForLeg = snap.startingPlayerIndexForLeg;
+        this._startingPlayerIndexForSet = snap.startingPlayerIndexForSet;
+        this._status = snap.status;
+        this._players = snap.players.map(s => PlayerX01.fromSnapshot(s));
     }
 
-    public undoLastThrow(): void {
-        // Caso A: Partida finalizada
-        if (this._status === 'FINISHED') {
-            this._status = 'PLAYING';
-            this.handleUndoVictory();
-            return;
-        }
-
-        // Caso B: Partida en curso
-        const currentPlayer = this._players[this._activePlayerIndex];
-        if (currentPlayer.throws.length <= 1) {
-            this.handleUndoVictory();
-        } else {
-            // Caso C: Undo normal de un dardo dentro del mismo leg
-            currentPlayer.removeLastThrow();
-            // MIRAR: Aquí podrías necesitar retroceder el activePlayerIndex 
-            // si usas turnos individuales por dardo.
-        }
-    }
-
-    private handleUndoVictory(): void {
-        // 1. Encontrar quién fue el último en tirar (el que ganó)
-        // En dardos, el que gana es el que tiró justo antes del reset
-        // console.log('activePlayerIndex:', this._activePlayerIndex);
-        // const winnerIndex = (this._activePlayerIndex - 1 + this._players.length) % this._players.length;
-        const winner = this._players[this._activePlayerIndex];
-        console.log('winner:', winner);
-        console.log('config:', this.config);
-        winner.undoWinSet(this.config.numLegs);
-        winner.removeLastThrowFromLastLeg();
-
-
-        // // 2. Si el ganador acaba de ganar un SET
-        // if (winner.numLegsWon === 0 && winner.numSetsWon > 0) {
-        //     winner.undoWinSet(this._config.numLegs - 1); // Simplificación lógica
-        // }
-
-        // // 3. Restaurar el Leg anterior del ganador
-        // winner.removeLastThrowFromLastLeg();
-
-        // // 4. Restaurar el estado de los demás jugadores (su puntuación antes del reset)
-        // // Para un Undo perfecto, necesitarías guardar también los dardos de los "perdedores"
-        // // o simplemente no resetear sus dardos hasta que empiece el nuevo leg.
-
-        // // 5. Devolver el turno al ganador
-        // this._activePlayerIndex = winnerIndex;
-    }
-
+    // -------------------------------------------------------------------------
     // Getters
+    // -------------------------------------------------------------------------
+
     public get activePlayer() {
         return this._players[this._activePlayerIndex];
     }
@@ -214,5 +222,8 @@ export class MatchX01 {
     }
     public get startingPlayerIndexForSet() {
         return this._startingPlayerIndexForSet;
+    }
+    public get history() {
+        return [...this._history];
     }
 }
