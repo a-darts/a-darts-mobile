@@ -4,7 +4,6 @@ import { Feather } from '@expo/vector-icons';
 import { theme } from '../../../theme/theme';
 import { useKeypad } from '../hooks/useKeypad';
 
-
 export const Keypad = ({
   onKeyPress,
   onBackspace,
@@ -37,7 +36,7 @@ export const Keypad = ({
     const { isDisabled, style } = getGameShotStatus(remainingScore);
     return (
       <TouchableOpacity
-        style={[styles.fastBtn, { flex: 2 }, style]}
+        style={[styles.fastBtn, style]}
         onPress={() => onFastScore(remainingScore)}
         disabled={isDisabled}
         activeOpacity={0.7}
@@ -50,7 +49,9 @@ export const Keypad = ({
   return (
     <View style={styles.container}>
       <View style={styles.keypadRow}>
-        <GameShotButton />
+        <View style={styles.doubleKeyBtn}>
+          <GameShotButton />
+        </View>
         <View style={styles.separator} />
         <TouchableOpacity style={styles.keyBtn} onPress={() => onKeyPress('1')}>
           <Text style={styles.keyNum}>1</Text>
@@ -64,8 +65,10 @@ export const Keypad = ({
       </View>
 
       <View style={styles.keypadRow}>
-        <FastButton score={26} />
-        <FastButton score={45} />
+        <View style={styles.doubleKeyBtn}>
+          <FastButton score={26} />
+          <FastButton score={45} />
+        </View>
         <View style={styles.separator} />
         <TouchableOpacity style={styles.keyBtn} onPress={() => onKeyPress('4')}>
           <Text style={styles.keyNum}>4</Text>
@@ -79,8 +82,10 @@ export const Keypad = ({
       </View>
 
       <View style={styles.keypadRow}>
-        <FastButton score={60} />
-        <FastButton score={85} />
+        <View style={styles.doubleKeyBtn}>
+          <FastButton score={60} />
+          <FastButton score={85} />
+        </View>
         <View style={styles.separator} />
         <TouchableOpacity style={styles.keyBtn} onPress={() => onKeyPress('7')}>
           <Text style={styles.keyNum}>7</Text>
@@ -94,8 +99,10 @@ export const Keypad = ({
       </View>
 
       <View style={styles.keypadRow}>
-        <FastButton score={100} />
-        <FastButton score={140} />
+        <View style={styles.doubleKeyBtn}>
+          <FastButton score={100} />
+          <FastButton score={140} />
+        </View>
         <View style={styles.separator} />
         <TouchableOpacity style={styles.keyBtn} onPress={onBackspace}>
           <Feather name="delete" size={20} color={theme.colors.keyIcon} />
@@ -130,6 +137,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  doubleKeyBtn: {
+    flex: 2,
+    flexDirection: 'row',
+    gap: theme.spacing.sm,
+  },
   fastBtn: {
     flex: 1,
     paddingVertical: theme.spacing.md,
@@ -157,5 +169,5 @@ const styles = StyleSheet.create({
     color: theme.colors.keyTextSecondary,
     fontFamily: theme.typography.fontFamily.bold,
     fontSize: theme.typography.sizes.md,
-  }
+  },
 });
