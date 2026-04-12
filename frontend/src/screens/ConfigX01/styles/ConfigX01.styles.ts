@@ -52,12 +52,6 @@ export const styles = StyleSheet.create({
     addPlayerBtn: {
         alignSelf: 'flex-start',
     },
-    addPlayerText: {
-        fontFamily: theme.typography.fontFamily.semiBold,
-        fontSize: theme.typography.sizes.sm,
-        color: theme.colors.buttonPrimaryBackground,
-        marginLeft: theme.spacing.sm,
-    },
     footer: {
         padding: theme.spacing.lg,
         paddingBottom: theme.spacing.xl,

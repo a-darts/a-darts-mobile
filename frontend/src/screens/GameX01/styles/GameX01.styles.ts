@@ -26,6 +26,7 @@ export const styles = StyleSheet.create({
         borderColor: theme.colors.cardInactiveBorder,
         borderRadius: theme.borderRadius.lg,
         backgroundColor: theme.colors.cardInactiveBackground,
+        paddingHorizontal: theme.typography.sizes.xs,
     },
     playerCardActive: {
         borderColor: theme.colors.cardActiveBorder,

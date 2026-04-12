@@ -53,7 +53,11 @@ export const GameX01Screen = ({ navigation, route }: any) => {
       <View style={styles.headerRow}>
         {/* Jugador 1 */}
         <View style={[styles.playerCard, activeIndex === 0 && styles.playerCardActive]}>
-          <Text style={styles.playerName}>
+          <Text
+            style={styles.playerName}
+            numberOfLines={1}
+            ellipsizeMode="tail"
+          >
             {p1.name}
           </Text>
           <Text style={[styles.scoreLeftText, activeIndex === 0 && styles.scoreActiveText]}>
@@ -82,7 +86,11 @@ export const GameX01Screen = ({ navigation, route }: any) => {
         {/* Jugador 2 */}
         {p2 && (
           <View style={[styles.playerCard, activeIndex === 1 && styles.playerCardActive]}>
-            <Text style={styles.playerName}>
+            <Text
+              style={styles.playerName}
+              numberOfLines={1}
+              ellipsizeMode="tail"
+            >
               {p2.name}
             </Text>
             <Text style={[styles.scoreLeftText, activeIndex === 1 && styles.scoreActiveText]}>
@@ -94,21 +102,6 @@ export const GameX01Screen = ({ navigation, route }: any) => {
 
       <GameTable p1={p1} p2={p2} scrollViewRef={scrollViewRef} />
 
-      {/* {canSwapStartingPlayer && (
-        <TouchableOpacity
-          onPress={handleSwapStartingPlayer}
-          style={styles.swapButton}
-        >
-          <MaterialIcons
-            name="swap-horiz"
-            size={28}
-            style={styles.swapButtonIcon}
-          />
-          <Text style={styles.swapButtonText}>
-            Intercambiar jugador
-          </Text>
-        </TouchableOpacity>
-      )} */}
       {canSwapStartingPlayer && (
         <Button
           title='Jugador inicial'
@@ -123,18 +116,6 @@ export const GameX01Screen = ({ navigation, route }: any) => {
       {/* Controls Area */}
       <View style={[styles.controlsArea]}>
         <View style={styles.controlBarRow}>
-          {/* {canSwapStartingPlayer && (
-            <TouchableOpacity
-              onPress={handleSwapStartingPlayer}
-              style={styles.swapButton}
-            >
-              <MaterialIcons
-                name="swap-horiz"
-                size={28}
-                style={styles.swapButtonIcon}
-              />
-            </TouchableOpacity>
-          )} */}
           <View style={styles.buttonsRow}>
             <Button
               title='RESTO'
