@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useGameX01 } from './hooks/useGameX01';
 import { useKeypad } from './hooks/useKeypad';
 import { GameTable } from './components/GameTable';
@@ -11,8 +11,6 @@ import { Button } from '../../components/Button';
 import { MaterialIcons } from '@expo/vector-icons';
 
 export const GameX01Screen = ({ navigation, route }: any) => {
-  const insets = useSafeAreaInsets();
-
   const {
     match, inputValue, toast, setToast, scrollViewRef,
     handleKeyPress, handleBackspace, handleUndo, submitScore,
@@ -42,7 +40,7 @@ export const GameX01Screen = ({ navigation, route }: any) => {
   const canUndoLastThrow = match.history.length !== 0;
 
   return (
-    <View style={[styles.container]}>
+    <SafeAreaView style={[styles.container]} edges={['bottom']}>
       <Toast
         visible={toast.visible}
         title={toast.title}
@@ -53,8 +51,6 @@ export const GameX01Screen = ({ navigation, route }: any) => {
 
       {/* Header */}
       <View style={styles.headerRow}>
-        <View style={styles.spacer} />
-
         {/* Jugador 1 */}
         <View style={[styles.playerCard, activeIndex === 0 && styles.playerCardActive]}>
           <Text style={styles.playerName}>
@@ -65,29 +61,23 @@ export const GameX01Screen = ({ navigation, route }: any) => {
           </Text>
         </View>
 
-        <View style={styles.spacer} />
-
         {/* Marcador central  */}
         <View style={styles.statsCard}>
           <Text style={styles.statsRowText}>
-            {p1.numSetsWon}
-            {p2 && (
-              <Text> - {p2?.numSetsWon ?? 0}</Text>
-            )}
-          </Text>
-          <Text style={styles.statsLabel}>S E T S</Text>
-          <Text style={[styles.statsRowText, { marginTop: 12 }]}>
             {p1.numLegsWon}
             {p2 && (
               <Text> - {p2?.numLegsWon ?? 0}</Text>
             )}
           </Text>
-          <Text style={styles.statsLabel}>L E G S</Text>
+          <Text style={styles.statsLabel}>LEGS</Text>
+          <Text style={[styles.statsRowText, { marginTop: 10 }]}>
+            {p1.numSetsWon}
+            {p2 && (
+              <Text> - {p2?.numSetsWon ?? 0}</Text>
+            )}
+          </Text>
+          <Text style={styles.statsLabel}>SETS</Text>
         </View>
-
-        {p2 && (
-          <View style={styles.spacer} />
-        )}
 
         {/* Jugador 2 */}
         {p2 && (
@@ -100,21 +90,13 @@ export const GameX01Screen = ({ navigation, route }: any) => {
             </Text>
           </View>
         )}
-
-        <View style={styles.spacer} />
       </View>
 
       <GameTable p1={p1} p2={p2} scrollViewRef={scrollViewRef} />
 
       {/* Controls Area */}
-      <View style={[styles.controlsArea, { paddingBottom: Math.max(insets.bottom, 16) }]}>
+      <View style={[styles.controlsArea]}>
         <View style={styles.controlBarRow}>
-          <View style={styles.inputBox}>
-            <Text style={styles.inputText}>
-              {inputValue}
-            </Text>
-          </View>
-          <View style={styles.spacer} />
           {canSwapStartingPlayer && (
             <TouchableOpacity
               onPress={handleSwapStartingPlayer}
@@ -127,20 +109,30 @@ export const GameX01Screen = ({ navigation, route }: any) => {
               />
             </TouchableOpacity>
           )}
-          <Button
-            title='RESTO'
-            variant='tertiary'
-            onPress={handleEnterRemaining}
-            disabled={isLeftScoreButtonDisabled}
-            style={styles.topControlBtn}
-          />
-          <Button
-            title='DESHACER'
-            variant='tertiary'
-            onPress={handleUndo}
-            disabled={!canUndoLastThrow}
-            style={styles.topControlBtn}
-          />
+          <View style={styles.buttonsRow}>
+            <Button
+              title='RESTO'
+              variant='tertiary'
+              size='small'
+              onPress={handleEnterRemaining}
+              disabled={isLeftScoreButtonDisabled}
+              style={styles.topControlBtn}
+            />
+            <Button
+              title='DESHACER'
+              variant='tertiary'
+              size='small'
+              onPress={handleUndo}
+              disabled={!canUndoLastThrow}
+              style={styles.topControlBtn}
+            />
+          </View>
+          <View style={styles.spacer} />
+          <View style={styles.inputBox}>
+            <Text style={styles.inputText}>
+              {inputValue}
+            </Text>
+          </View>
         </View>
 
         <Keypad
@@ -151,6 +143,6 @@ export const GameX01Screen = ({ navigation, route }: any) => {
           remainingScore={activePlayer.remainingScore}
         />
       </View>
-    </View>
+    </SafeAreaView>
   );
 };

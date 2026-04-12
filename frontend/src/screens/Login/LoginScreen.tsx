@@ -48,6 +48,7 @@ export const LoginScreen = ({ navigation }) => {
           <Button
             title="ENTRAR"
             variant='primary'
+            size='large'
             onPress={handleEntrar}
           />
           <View style={styles.separatorContainer}>
@@ -58,6 +59,7 @@ export const LoginScreen = ({ navigation }) => {
           <Button
             title="ENTRAR COMO INVITADO"
             variant='secondary'
+            size='large'
             onPress={handleEntrarComoInvitado}
           />
         </View>

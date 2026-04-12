@@ -7,6 +7,7 @@ interface ButtonProps {
   title: string;
   onPress: () => void;
   variant?: 'primary' | 'secondary' | 'tertiary';
+  size?: 'small' | 'normal' | 'large';
   style?: any;
   iconName?: any;
   disabled?: boolean;
@@ -30,10 +31,29 @@ const variantIconColors = {
   tertiary: theme.colors.buttonTertiaryIcon,
 };
 
+const sizeButtonStyles = {
+  small: 'smallButton' as const,
+  normal: 'normalButton' as const,
+  large: 'largeButton' as const,
+};
+
+const sizeTextStyles = {
+  small: 'smallText' as const,
+  normal: 'normalText' as const,
+  large: 'largeText' as const,
+};
+
+const sizeIconSizes = {
+  small: 16,
+  normal: 20,
+  large: 24,
+};
+
 export const Button = ({
   title,
   onPress,
   variant = 'primary',
+  size = 'large',
   style,
   iconName,
   disabled = false
@@ -43,6 +63,7 @@ export const Button = ({
       style={[
         styles.button,
         styles[variantButtonStyles[variant]],
+        styles[sizeButtonStyles[size]],
         style,
         disabled && { opacity: 0.2 }
       ]}
@@ -52,8 +73,8 @@ export const Button = ({
     >
       <View style={styles.contentContainer}>
         <Text style={[
-          styles.text,
           styles[variantTextStyles[variant]],
+          styles[sizeTextStyles[size]],
           iconName && { marginRight: theme.spacing.sm }
         ]}>
           {title.toUpperCase()}
@@ -61,7 +82,7 @@ export const Button = ({
         {iconName && (
           <Feather
             name={iconName}
-            size={20}
+            size={sizeIconSizes[size]}
             color={variantIconColors[variant]}
           />
         )}
@@ -72,11 +93,22 @@ export const Button = ({
 
 const styles = StyleSheet.create({
   button: {
-    paddingVertical: 16,
-    paddingHorizontal: theme.spacing.lg,
-    borderRadius: 14,
-    width: '100%',
+    borderRadius: theme.borderRadius.xl,
   },
+
+  smallButton: {
+    paddingVertical: theme.spacing.xs,
+    paddingHorizontal: theme.spacing.sm,
+  },
+  normalButton: {
+    paddingVertical: theme.spacing.sm,
+    paddingHorizontal: theme.spacing.md,
+  },
+  largeButton: {
+    paddingVertical: theme.spacing.md,
+    paddingHorizontal: theme.spacing.lg,
+  },
+
   contentContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -101,11 +133,19 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: theme.colors.buttonTertiaryBorder,
   },
-  text: {
+
+  smallText: {
+    fontSize: theme.typography.sizes.xs,
+  },
+  normalText: {
     fontFamily: theme.typography.fontFamily.bold,
     fontSize: theme.typography.sizes.sm,
-    letterSpacing: 0.5,
   },
+  largeText: {
+    fontFamily: theme.typography.fontFamily.bold,
+    fontSize: theme.typography.sizes.md,
+  },
+
   primaryText: {
     color: theme.colors.buttonPrimaryText,
   },

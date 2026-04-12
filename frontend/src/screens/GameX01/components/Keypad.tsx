@@ -50,43 +50,62 @@ export const Keypad = ({
   return (
     <View style={styles.container}>
       <View style={styles.keypadRow}>
-        <TouchableOpacity style={styles.keyBtn} onPress={() => onKeyPress('1')}><Text style={styles.keyNum}>1</Text></TouchableOpacity>
-        <TouchableOpacity style={styles.keyBtn} onPress={() => onKeyPress('2')}><Text style={styles.keyNum}>2</Text></TouchableOpacity>
-        <TouchableOpacity style={styles.keyBtn} onPress={() => onKeyPress('3')}><Text style={styles.keyNum}>3</Text></TouchableOpacity>
+        <GameShotButton />
         <View style={styles.separator} />
+        <TouchableOpacity style={styles.keyBtn} onPress={() => onKeyPress('1')}>
+          <Text style={styles.keyNum}>1</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.keyBtn} onPress={() => onKeyPress('2')}>
+          <Text style={styles.keyNum}>2</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.keyBtn} onPress={() => onKeyPress('3')}>
+          <Text style={styles.keyNum}>3</Text>
+        </TouchableOpacity>
+      </View>
+
+      <View style={styles.keypadRow}>
         <FastButton score={26} />
         <FastButton score={45} />
+        <View style={styles.separator} />
+        <TouchableOpacity style={styles.keyBtn} onPress={() => onKeyPress('4')}>
+          <Text style={styles.keyNum}>4</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.keyBtn} onPress={() => onKeyPress('5')}>
+          <Text style={styles.keyNum}>5</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.keyBtn} onPress={() => onKeyPress('6')}>
+          <Text style={styles.keyNum}>6</Text>
+        </TouchableOpacity>
       </View>
 
       <View style={styles.keypadRow}>
-        <TouchableOpacity style={styles.keyBtn} onPress={() => onKeyPress('4')}><Text style={styles.keyNum}>4</Text></TouchableOpacity>
-        <TouchableOpacity style={styles.keyBtn} onPress={() => onKeyPress('5')}><Text style={styles.keyNum}>5</Text></TouchableOpacity>
-        <TouchableOpacity style={styles.keyBtn} onPress={() => onKeyPress('6')}><Text style={styles.keyNum}>6</Text></TouchableOpacity>
-        <View style={styles.separator} />
         <FastButton score={60} />
         <FastButton score={85} />
+        <View style={styles.separator} />
+        <TouchableOpacity style={styles.keyBtn} onPress={() => onKeyPress('7')}>
+          <Text style={styles.keyNum}>7</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.keyBtn} onPress={() => onKeyPress('8')}>
+          <Text style={styles.keyNum}>8</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.keyBtn} onPress={() => onKeyPress('9')}>
+          <Text style={styles.keyNum}>9</Text>
+        </TouchableOpacity>
       </View>
 
       <View style={styles.keypadRow}>
-        <TouchableOpacity style={styles.keyBtn} onPress={() => onKeyPress('7')}><Text style={styles.keyNum}>7</Text></TouchableOpacity>
-        <TouchableOpacity style={styles.keyBtn} onPress={() => onKeyPress('8')}><Text style={styles.keyNum}>8</Text></TouchableOpacity>
-        <TouchableOpacity style={styles.keyBtn} onPress={() => onKeyPress('9')}><Text style={styles.keyNum}>9</Text></TouchableOpacity>
-        <View style={styles.separator} />
         <FastButton score={100} />
         <FastButton score={140} />
-      </View>
-
-      <View style={styles.keypadRow}>
-        <TouchableOpacity style={styles.keyBtn} onPress={onBackspace}>
-          <Feather name="delete" size={24} color={theme.colors.keyIcon} />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.keyBtn} onPress={() => onKeyPress('0')}><Text style={styles.keyNum}>0</Text></TouchableOpacity>
-        <TouchableOpacity style={styles.keyBtn} onPress={onEnter}>
-          <Feather name="corner-down-left" size={24} color={theme.colors.keyIcon} />
-        </TouchableOpacity>
         <View style={styles.separator} />
-        <GameShotButton />
-
+        <TouchableOpacity style={styles.keyBtn} onPress={onBackspace}>
+          <Feather name="delete" size={20} color={theme.colors.keyIcon} />
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.keyBtn} onPress={() => onKeyPress('0')}>
+          <Text style={styles.keyNum}>0</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.keyBtn} onPress={onEnter}>
+          <Feather name="corner-down-left" size={20} color={theme.colors.keyIcon} />
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -127,16 +146,16 @@ const styles = StyleSheet.create({
   keyNum: {
     color: theme.colors.keyText,
     fontFamily: theme.typography.fontFamily.bold,
-    fontSize: theme.typography.sizes.xl,
+    fontSize: theme.typography.sizes.lg,
   },
   fastNum: {
     color: theme.colors.keyTextSecondary,
     fontFamily: theme.typography.fontFamily.bold,
-    fontSize: theme.typography.sizes.xl,
+    fontSize: theme.typography.sizes.lg,
   },
   gameShotBtnText: {
     color: theme.colors.keyTextSecondary,
     fontFamily: theme.typography.fontFamily.bold,
-    fontSize: theme.typography.sizes.lg,
+    fontSize: theme.typography.sizes.md,
   }
 });

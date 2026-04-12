@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, ActivityIndicator } from 'react-native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { AppNavigator } from './frontend/src/navigation/AppNavigator';
 import { theme } from './frontend/src/theme/theme';
 import * as Font from 'expo-font';
@@ -35,6 +36,8 @@ export default function App() {
   }
 
   return (
-    <AppNavigator />
+    <SafeAreaProvider>
+      <AppNavigator />
+    </SafeAreaProvider>
   );
 }

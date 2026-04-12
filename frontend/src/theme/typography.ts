@@ -14,5 +14,6 @@ export const typography = {
     xxl: 24,
     xxxl: 28,
     h1: 32,
+    leftScore: 40,
   },
 };

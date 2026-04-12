@@ -43,6 +43,8 @@ export const HomeScreen = ({ route, navigation }) => {
         <Button
           title="Nueva Partida"
           iconName="target"
+          variant='primary'
+          size='large'
           onPress={() => navigation.navigate('ConfigX01')}
         />
       </View>

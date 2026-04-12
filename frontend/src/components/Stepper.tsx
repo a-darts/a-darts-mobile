@@ -17,21 +17,21 @@ export const Stepper = ({ label, value, onChange, min = 1, max = 99 }) => {
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity 
-        style={[styles.button, isMin && styles.disabledButton]} 
+      <TouchableOpacity
+        style={[styles.button, isMin && styles.disabledButton]}
         onPress={handleMinus}
         activeOpacity={0.7}
       >
         <Feather name="minus" size={20} color={isMin ? theme.colors.textSecondary : theme.colors.buttonPrimaryBackground} />
       </TouchableOpacity>
-      
+
       <View style={styles.valueContainer}>
         <Text style={styles.valueText}>{value}</Text>
         <Text style={styles.labelText}>{label}</Text>
       </View>
-      
-      <TouchableOpacity 
-        style={[styles.button, isMax && styles.disabledButton]} 
+
+      <TouchableOpacity
+        style={[styles.button, isMax && styles.disabledButton]}
         onPress={handlePlus}
         activeOpacity={0.7}
       >
@@ -45,7 +45,7 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: theme.spacing.md,
+    gap: theme.spacing.sm,
   },
   button: {
     width: 40,

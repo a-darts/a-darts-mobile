@@ -95,6 +95,8 @@ export const ConfigX01Screen = ({ navigation }) => {
         <Button
           title="Jugar"
           iconName="play"
+          variant='primary'
+          size='large'
           onPress={handlePlay}
         />
       </View>

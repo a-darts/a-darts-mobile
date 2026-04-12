@@ -6,13 +6,11 @@ export const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: theme.colors.background,
         padding: theme.spacing.sm,
-        paddingBottom: theme.spacing.xxl,
     },
     headerRow: {
         flexDirection: 'row',
         paddingHorizontal: theme.spacing.sm,
         paddingVertical: theme.spacing.sm,
-        // gap: theme.spacing.sm,
         marginTop: theme.spacing.xs,
     },
     spacer: {
@@ -27,7 +25,6 @@ export const styles = StyleSheet.create({
         borderWidth: 2,
         borderColor: theme.colors.cardInactiveBorder,
         borderRadius: theme.borderRadius.lg,
-        paddingVertical: theme.spacing.lg,
         backgroundColor: theme.colors.cardInactiveBackground,
     },
     playerCardActive: {
@@ -41,13 +38,12 @@ export const styles = StyleSheet.create({
     playerName: {
         color: theme.colors.text,
         fontFamily: theme.typography.fontFamily.semiBold,
-        marginBottom: 4,
         fontSize: theme.typography.sizes.sm,
     },
     scoreLeftText: {
         color: theme.colors.textSecondary,
         fontFamily: theme.typography.fontFamily.bold,
-        fontSize: 44,
+        fontSize: theme.typography.sizes.leftScore,
     },
     scoreActiveText: {
         color: theme.colors.buttonPrimaryBackground,
@@ -60,7 +56,8 @@ export const styles = StyleSheet.create({
         borderRadius: theme.borderRadius.lg,
         alignItems: 'center',
         justifyContent: 'center',
-        paddingVertical: theme.spacing.md,
+        padding: theme.spacing.sm,
+        marginHorizontal: theme.spacing.md,
     },
     statsRowText: {
         fontFamily: theme.typography.fontFamily.semiBold,
@@ -136,11 +133,16 @@ export const styles = StyleSheet.create({
     },
     controlBarRow: {
         flexDirection: 'row',
+        marginBottom: theme.spacing.sm,
+    },
+    buttonsRow: {
+        flex: 4,
+        flexDirection: 'row',
         gap: theme.spacing.sm,
-        marginBottom: theme.spacing.md,
     },
     inputBox: {
-        flex: 2,
+        flex: 1,
+        height: 50,
         backgroundColor: theme.colors.inputBoxBackground,
         borderRadius: theme.borderRadius.md,
         borderBottomWidth: 1,
@@ -151,16 +153,15 @@ export const styles = StyleSheet.create({
     inputText: {
         color: theme.colors.inputText,
         fontFamily: theme.typography.fontFamily.bold,
-        fontSize: theme.typography.sizes.xl,
+        fontSize: theme.typography.sizes.lg,
     },
     topControlBtn: {
-        flex: 2,
+        flex: 1,
         borderWidth: 1,
         borderColor: theme.colors.buttonPrimaryBackground,
         borderRadius: theme.borderRadius.md,
         alignItems: 'center',
         justifyContent: 'center',
-        height: 50,
     },
     topControlText: {
         color: theme.colors.buttonPrimaryBackground,
@@ -169,7 +170,8 @@ export const styles = StyleSheet.create({
     },
 
     swapButton: {
-        padding: 8,
+        flex: 1,
+        marginRight: theme.spacing.sm,
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: theme.colors.buttonTertiaryBackground,
