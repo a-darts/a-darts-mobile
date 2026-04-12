@@ -170,8 +170,11 @@ export const styles = StyleSheet.create({
     },
 
     swapButton: {
-        flex: 1,
-        marginRight: theme.spacing.sm,
+        flexDirection: 'row',
+        padding: theme.spacing.sm,
+        margin: theme.spacing.sm,
+        gap: theme.spacing.sm,
+        alignSelf: 'center',
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: theme.colors.buttonTertiaryBackground,
@@ -181,5 +184,10 @@ export const styles = StyleSheet.create({
     },
     swapButtonIcon: {
         color: theme.colors.buttonTertiaryIcon,
+    },
+    swapButtonText: {
+        color: theme.colors.buttonTertiaryText,
+        fontFamily: theme.typography.fontFamily.bold,
+        fontSize: theme.typography.sizes.sm,
     },
 });

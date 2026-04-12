@@ -89,18 +89,22 @@ export const ConfigX01Screen = ({ navigation }) => {
           ))}
 
           {!hasSecondPlayer && (
-            <TouchableOpacity style={styles.addPlayerBtn} onPress={handleAddPlayer}>
-              <Feather name="plus" size={18} color={theme.colors.buttonPrimaryBackground} />
-              <Text style={styles.addPlayerText}>Añadir otro jugador</Text>
-            </TouchableOpacity>
+            <Button
+              title="Añadir otro jugador"
+              iconName='add'
+              variant='tertiary'
+              size='normal'
+              onPress={handleAddPlayer}
+              style={styles.addPlayerBtn}
+            />
           )}
         </View>
       </ScrollView>
 
       <View style={styles.footer}>
         <Button
-          title="Jugar"
-          iconName="play"
+          title="JUGAR"
+          iconName="play-arrow"
           variant='primary'
           size='large'
           onPress={handlePlay}

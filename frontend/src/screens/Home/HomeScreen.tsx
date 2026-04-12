@@ -41,8 +41,8 @@ export const HomeScreen = ({ route, navigation }) => {
       {/* New Game Button */}
       <View style={styles.newGameContainer}>
         <Button
-          title="Nueva Partida"
-          iconName="target"
+          title="NUEVA PARTIDA"
+          iconName="gps-fixed"
           variant='primary'
           size='large'
           onPress={() => navigation.navigate('ConfigX01')}

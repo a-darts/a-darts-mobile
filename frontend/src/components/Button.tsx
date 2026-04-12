@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
-import { Feather } from '@expo/vector-icons';
+import { MaterialIcons } from '@expo/vector-icons';
 import { theme } from '../theme/theme';
 
 interface ButtonProps {
@@ -58,6 +58,8 @@ export const Button = ({
   iconName,
   disabled = false
 }: ButtonProps) => {
+  const isPrimary = variant === 'primary';
+
   return (
     <TouchableOpacity
       style={[
@@ -72,15 +74,24 @@ export const Button = ({
       disabled={disabled}
     >
       <View style={styles.contentContainer}>
+        {!isPrimary && iconName && (
+          <MaterialIcons
+            name={iconName}
+            size={sizeIconSizes[size]}
+            color={variantIconColors[variant]}
+          />
+        )}
+
         <Text style={[
           styles[variantTextStyles[variant]],
           styles[sizeTextStyles[size]],
           iconName && { marginRight: theme.spacing.sm }
         ]}>
-          {title.toUpperCase()}
+          {title}
         </Text>
-        {iconName && (
-          <Feather
+
+        {isPrimary && iconName && (
+          <MaterialIcons
             name={iconName}
             size={sizeIconSizes[size]}
             color={variantIconColors[variant]}

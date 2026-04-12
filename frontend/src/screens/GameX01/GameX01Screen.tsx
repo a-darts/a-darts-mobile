@@ -94,10 +94,36 @@ export const GameX01Screen = ({ navigation, route }: any) => {
 
       <GameTable p1={p1} p2={p2} scrollViewRef={scrollViewRef} />
 
+      {/* {canSwapStartingPlayer && (
+        <TouchableOpacity
+          onPress={handleSwapStartingPlayer}
+          style={styles.swapButton}
+        >
+          <MaterialIcons
+            name="swap-horiz"
+            size={28}
+            style={styles.swapButtonIcon}
+          />
+          <Text style={styles.swapButtonText}>
+            Intercambiar jugador
+          </Text>
+        </TouchableOpacity>
+      )} */}
+      {canSwapStartingPlayer && (
+        <Button
+          title='Jugador inicial'
+          iconName='swap-horiz'
+          variant='tertiary'
+          size='normal'
+          onPress={handleSwapStartingPlayer}
+          style={styles.swapButton}
+        />
+      )}
+
       {/* Controls Area */}
       <View style={[styles.controlsArea]}>
         <View style={styles.controlBarRow}>
-          {canSwapStartingPlayer && (
+          {/* {canSwapStartingPlayer && (
             <TouchableOpacity
               onPress={handleSwapStartingPlayer}
               style={styles.swapButton}
@@ -108,7 +134,7 @@ export const GameX01Screen = ({ navigation, route }: any) => {
                 style={styles.swapButtonIcon}
               />
             </TouchableOpacity>
-          )}
+          )} */}
           <View style={styles.buttonsRow}>
             <Button
               title='RESTO'

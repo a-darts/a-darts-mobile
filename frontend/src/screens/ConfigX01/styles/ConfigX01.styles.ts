@@ -50,15 +50,7 @@ export const styles = StyleSheet.create({
         borderRadius: theme.borderRadius.round,
     },
     addPlayerBtn: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
         alignSelf: 'flex-start',
-        paddingVertical: theme.spacing.sm,
-        paddingHorizontal: theme.spacing.md,
-        borderWidth: 1,
-        borderColor: theme.colors.buttonPrimaryBackground,
-        borderRadius: theme.borderRadius.xl,
     },
     addPlayerText: {
         fontFamily: theme.typography.fontFamily.semiBold,
