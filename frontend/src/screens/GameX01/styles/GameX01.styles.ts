@@ -191,4 +191,9 @@ export const styles = StyleSheet.create({
         fontFamily: theme.typography.fontFamily.bold,
         fontSize: theme.typography.sizes.sm,
     },
+
+    toastButtonsContainer: {
+        flexDirection: 'row',
+        gap: theme.spacing.md,
+    }
 });

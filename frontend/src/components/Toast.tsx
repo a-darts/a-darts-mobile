@@ -1,8 +1,26 @@
 import React, { useEffect, useRef } from 'react';
-import { Text, StyleSheet, Animated } from 'react-native';
+import { Text, StyleSheet, Animated, View } from 'react-native';
 import { theme } from '../theme/theme';
 
-export const Toast = ({ visible, title, description, type = 'error', onFinished }) => {
+interface ToastProps {
+    visible: boolean,
+    title: string,
+    description: string,
+    type: 'error' | 'success',
+    mode: 'auto' | 'manual',
+    onFinished: () => void,
+    children?,
+}
+
+export const Toast = ({
+    visible,
+    title,
+    description,
+    type = 'error',
+    mode = 'auto',
+    onFinished,
+    children,
+}: ToastProps) => {
     const fadeAnim = useRef(new Animated.Value(0)).current;
 
     useEffect(() => {
@@ -14,18 +32,20 @@ export const Toast = ({ visible, title, description, type = 'error', onFinished 
                 useNativeDriver: true,
             }).start();
 
-            // Desaparecer automáticamente tras 1.2s
-            const timer = setTimeout(() => {
-                Animated.timing(fadeAnim, {
-                    toValue: 0,
-                    duration: 200,
-                    useNativeDriver: true,
-                }).start(() => onFinished());
-            }, 1200);
+            if (mode === 'auto') {
+                // Desaparecer automáticamente tras 1.2s
+                const timer = setTimeout(() => {
+                    Animated.timing(fadeAnim, {
+                        toValue: 0,
+                        duration: 200,
+                        useNativeDriver: true,
+                    }).start(() => onFinished());
+                }, 1200);
 
-            return () => clearTimeout(timer);
+                return () => clearTimeout(timer);
+            }
         }
-    }, [visible]);
+    }, [visible, mode]);
 
     if (!visible) return null;
 
@@ -34,10 +54,24 @@ export const Toast = ({ visible, title, description, type = 'error', onFinished 
     return (
         <Animated.View style={[
             styles.toastContainer,
-            { opacity: fadeAnim, borderColor: isSuccess ? theme.colors.toastBorderSuccess : theme.colors.toastBorderError }
+            {
+                opacity: fadeAnim,
+                borderColor: isSuccess
+                    ? theme.colors.toastBorderSuccess
+                    : theme.colors.toastBorderError,
+            }
         ]}>
             <Text style={styles.toastText}>{title}</Text>
-            {description && <Text style={styles.toastSubText}>{description}</Text>}
+            {description && (
+                <Text style={styles.toastSubText}>
+                    {description}
+                </Text>
+            )}
+            {children && (
+                <View style={styles.actionsContainer}>
+                    {children}
+                </View>
+            )}
         </Animated.View>
     );
 };
@@ -72,5 +106,11 @@ const styles = StyleSheet.create({
         fontSize: theme.typography.sizes.sm,
         marginTop: 4,
         textAlign: 'center',
+    },
+    actionsContainer: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        gap: theme.spacing.sm,
+        marginTop: theme.spacing.md,
     },
 });

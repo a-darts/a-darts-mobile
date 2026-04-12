@@ -9,6 +9,7 @@ export const Keypad = ({
   onBackspace,
   onEnter,
   onFastScore,
+  onGameShot,
   remainingScore,
 }) => {
 
@@ -37,7 +38,7 @@ export const Keypad = ({
     return (
       <TouchableOpacity
         style={[styles.fastBtn, style]}
-        onPress={() => onFastScore(remainingScore)}
+        onPress={onGameShot}
         disabled={isDisabled}
         activeOpacity={0.7}
       >

@@ -3,7 +3,6 @@ import { ScrollView } from 'react-native';
 import { MatchX01 } from '../../../../../backend/src/domain/models/MatchX01';
 import { TYPE_OPTIONS } from '../constants/GameX01.constants';
 import MatchX01ServiceFactory from '../../../../../backend/src/infrastructure/factories/MatchX01ServiceFactory';
-import { GameTypes } from '../../../../../backend/src/domain/enums/GameTypes';
 
 // Obtenemos los servicios y el repo desde la Factoría (fuera del hook)
 const matchRepo = MatchX01ServiceFactory.getRepository();
@@ -11,19 +10,39 @@ const addScoreService = MatchX01ServiceFactory.getAddScoreService();
 const undoScoreService = MatchX01ServiceFactory.getUndoScoreService();
 const swapStartingPlayerService = MatchX01ServiceFactory.getSwapStartingPlayerService();
 
+type ToastState = {
+    visible: boolean;
+    title: string;
+    description?: string;
+    type: 'error' | 'success';
+    mode: 'auto' | 'manual';
+};
+type ToastInput = Omit<ToastState, 'visible'>;
+
 export const useGameX01 = (navigation: any, route: any) => {
     const { matchId } = route.params;
 
     const [match, setMatch] = useState<MatchX01 | null>(null);
     const [inputValue, setInputValue] = useState('');
-    const [toast, setToast] = useState({ visible: false, title: '', description: '', type: 'error' });
+    const [toast, setToast] = useState<ToastState>({
+        visible: false,
+        title: '',
+        description: '',
+        type: 'error',
+        mode: 'auto',
+    });
     const scrollViewRef = useRef<ScrollView>(null);
 
     useEffect(() => {
         const loadGame = async () => {
             const result = await matchRepo.getById(matchId);
             if (!result) {
-                setToast({ visible: true, title: 'Error', description: 'No se pudo cargar la partida', type: 'error' });
+                openToast({
+                    title: 'Error',
+                    description: 'No se pudo cargar la partida',
+                    type: 'error',
+                    mode: 'auto',
+                });
                 setTimeout(() => navigation.goBack(), 2000);
                 return;
             }
@@ -57,13 +76,8 @@ export const useGameX01 = (navigation: any, route: any) => {
 
     const submitScore = async (scoreNum: number) => {
         if (!match) return;
-        // MIRAR: si usuario introduce un numero, pulsa Enter y la operación
-        // tarda 200ms, el número se queda ahí congelado -> Optimistic UI
-        // const previousValue = inputValue;
-        // setInputValue('');
 
         try {
-            // Llamamos al servicio de aplicación
             const updatedMatch = await addScoreService.execute(match.id, scoreNum);
 
             // Actualizamos el estado con la nueva instancia (esto dispara el re-render)
@@ -71,10 +85,20 @@ export const useGameX01 = (navigation: any, route: any) => {
             setInputValue('');
 
             if (updatedMatch.status === 'FINISHED') {
-                setToast({ visible: true, title: '¡Victoria!', description: 'Partida finalizada', type: 'success' });
+                openToast({
+                    title: '¡Victoria!',
+                    description: 'Partida finalizada',
+                    type: 'success',
+                    mode: 'auto',
+                });
             }
         } catch (error: any) {
-            setToast({ visible: true, title: 'Puntuación inválida', description: error.message, type: 'error' });
+            openToast({
+                title: 'Puntuación inválida',
+                description: error.message,
+                type: 'error',
+                mode: 'auto',
+            });
             setInputValue('');
         }
     };
@@ -85,7 +109,12 @@ export const useGameX01 = (navigation: any, route: any) => {
             const updatedMatch = await undoScoreService.execute(match.id);
             setMatch(updatedMatch);
         } catch (error: any) {
-            setToast({ visible: true, title: 'Error', description: error.message, type: 'error' });
+            openToast({
+                title: 'Error',
+                description: error.message,
+                type: 'error',
+                mode: 'auto',
+            });
         }
     };
 
@@ -94,7 +123,16 @@ export const useGameX01 = (navigation: any, route: any) => {
         const score = parseInt(inputValue, 10);
         if (isNaN(score)) return;
 
-        await submitScore(score);
+        if (isLegFinished(score)) {
+            openToast({
+                title: '¿Con cuántos dardos has cerrado?',
+                description: '',
+                type: 'success',
+                mode: 'manual',
+            });
+        } else {
+            await submitScore(score);
+        }
     };
 
     const handleEnterRemaining = async () => {
@@ -103,7 +141,30 @@ export const useGameX01 = (navigation: any, route: any) => {
         if (isNaN(remaining)) return;
 
         const score = match.activePlayer.remainingScore - remaining;
-        await submitScore(score);
+        if (isLegFinished(score)) {
+            openToast({
+                title: '¿Con cuántos dardos has cerrado?',
+                description: '',
+                type: 'success',
+                mode: 'manual',
+            });
+        } else {
+            await submitScore(score);
+        }
+    };
+
+    const handleGameShot = async () => {
+        openToast({
+            title: '¿Con cuántos dardos has cerrado?',
+            description: '',
+            type: 'success',
+            mode: 'manual',
+        });
+    };
+
+    const handleGameShotNumDarts = async (scoreNum: number, numDarts: number) => {
+        await submitScore(scoreNum);
+        closeToast();
     };
 
     const handleSwapStartingPlayer = async () => {
@@ -112,9 +173,26 @@ export const useGameX01 = (navigation: any, route: any) => {
             const updatedMatch = await swapStartingPlayerService.execute(match.id);
             setMatch(updatedMatch);
         } catch (error: any) {
-            setToast({ visible: true, title: 'Error', description: error.message, type: 'error' });
+            openToast({
+                title: 'Error',
+                description: error.message,
+                type: 'error',
+                mode: 'auto',
+            });
         }
     };
+
+    const isLegFinished = (scoreNum: number) => {
+        if (scoreNum == match?.activePlayer.remainingScore) return true;
+        return false;
+    }
+
+    const openToast = (toast: ToastInput) => {
+        setToast({ ...toast, visible: true });
+    }
+    const closeToast = () => {
+        setToast(prev => ({ ...prev, visible: false }));
+    }
 
     return {
         match,
@@ -128,6 +206,8 @@ export const useGameX01 = (navigation: any, route: any) => {
         submitScore,
         handleEnter,
         handleEnterRemaining,
+        handleGameShot,
+        handleGameShotNumDarts,
         handleSwapStartingPlayer,
     };
 };

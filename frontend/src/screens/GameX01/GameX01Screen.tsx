@@ -8,13 +8,13 @@ import { Keypad } from './components/Keypad';
 import { Toast } from '../../components/Toast';
 import { styles } from './styles/GameX01.styles';
 import { Button } from '../../components/Button';
-import { MaterialIcons } from '@expo/vector-icons';
 
 export const GameX01Screen = ({ navigation, route }: any) => {
   const {
     match, inputValue, toast, setToast, scrollViewRef,
     handleKeyPress, handleBackspace, handleUndo, submitScore,
-    handleEnter, handleEnterRemaining, handleSwapStartingPlayer,
+    handleEnter, handleEnterRemaining, handleGameShot, handleGameShotNumDarts,
+    handleSwapStartingPlayer,
   } = useGameX01(navigation, route);
 
   const {
@@ -46,8 +46,41 @@ export const GameX01Screen = ({ navigation, route }: any) => {
         title={toast.title}
         description={toast.description}
         type={toast.type}
+        mode={toast.mode}
         onFinished={() => setToast(prev => ({ ...prev, visible: false }))}
-      />
+      >
+        {toast.title === '¿Con cuántos dardos has cerrado?' && (
+          <View style={styles.toastButtonsContainer}>
+            <Button
+              title="1 dardo"
+              variant='secondary'
+              size="normal"
+              onPress={() => {
+                submitScore(activePlayer.remainingScore);
+                setToast(prev => ({ ...prev, visible: false }));
+              }}
+            />
+            <Button
+              title="2 dardos"
+              variant='secondary'
+              size="normal"
+              onPress={() => {
+                submitScore(activePlayer.remainingScore);
+                setToast(prev => ({ ...prev, visible: false }));
+              }}
+            />
+            <Button
+              title="3 dardos"
+              variant='secondary'
+              size="normal"
+              onPress={() => {
+                submitScore(activePlayer.remainingScore);
+                setToast(prev => ({ ...prev, visible: false }));
+              }}
+            />
+          </View>
+        )}
+      </Toast>
 
       {/* Header */}
       <View style={styles.headerRow}>
@@ -147,6 +180,7 @@ export const GameX01Screen = ({ navigation, route }: any) => {
           onBackspace={handleBackspace}
           onEnter={handleEnter}
           onFastScore={submitScore}
+          onGameShot={handleGameShot}
           remainingScore={activePlayer.remainingScore}
         />
       </View>
