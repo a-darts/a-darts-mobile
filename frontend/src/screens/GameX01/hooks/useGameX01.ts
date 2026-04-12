@@ -1,8 +1,9 @@
 import { useState, useEffect, useRef } from 'react';
 import { ScrollView } from 'react-native';
 import { MatchX01 } from '../../../../../backend/src/domain/models/MatchX01';
-
+import { TYPE_OPTIONS } from '../constants/GameX01.constants';
 import MatchX01ServiceFactory from '../../../../../backend/src/infrastructure/factories/MatchX01ServiceFactory';
+import { GameTypes } from '../../../../../backend/src/domain/enums/GameTypes';
 
 // Obtenemos los servicios y el repo desde la Factoría (fuera del hook)
 const matchRepo = MatchX01ServiceFactory.getRepository();
@@ -32,8 +33,24 @@ export const useGameX01 = (navigation: any, route: any) => {
     }, [matchId]);
 
     const handleKeyPress = (char: string) => {
-        if (inputValue.length > 3) return;
-        setInputValue(prev => prev + char);
+        setInputValue(prev => {
+            if (prev.length >= 3) return prev;
+            return prev + char;
+        });
+    };
+
+    useEffect(() => {
+        if (!match) return;
+
+        navigation.setParams({
+            game: match.config?.game,
+            typeOfGame: getGameTypeLabel(match.config?.typeOfGame),
+            numLegs: match.config?.numLegs,
+        });
+    }, [match]);
+
+    const getGameTypeLabel = (type?: string) => {
+        return TYPE_OPTIONS.find(t => t.value === type)?.label ?? '';
     };
 
     const handleBackspace = () => setInputValue(prev => prev.slice(0, -1));

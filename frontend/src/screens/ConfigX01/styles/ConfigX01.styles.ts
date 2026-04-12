@@ -24,6 +24,13 @@ export const styles = StyleSheet.create({
         alignItems: 'center',
         gap: theme.spacing.xl,
     },
+    errorText: {
+        marginTop: theme.spacing.sm,
+        color: theme.colors.textError,
+        fontSize: theme.typography.sizes.sm,
+        fontFamily: theme.typography.fontFamily.semiBold,
+    },
+
     player2Row: {
         flexDirection: 'row',
         alignItems: 'flex-start',

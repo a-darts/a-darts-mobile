@@ -46,7 +46,7 @@ export const TextInput = ({ description, label, placeholder, error, iconName, ..
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: 24,
+    marginBottom: theme.spacing.md,
   },
   labelContainer: {
     flexDirection: 'row',
@@ -82,9 +82,9 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   errorText: {
-    fontFamily: theme.typography.fontFamily.regular,
     fontSize: theme.typography.sizes.sm,
-    color: theme.colors.inputTextError,
+    fontFamily: theme.typography.fontFamily.semiBold,
+    color: theme.colors.textError,
     marginTop: 6,
   }
 });

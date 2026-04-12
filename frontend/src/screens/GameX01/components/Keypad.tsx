@@ -122,8 +122,8 @@ const styles = StyleSheet.create({
   },
   keyBtn: {
     flex: 1,
+    paddingVertical: theme.spacing.md,
     backgroundColor: theme.colors.keyBackground,
-    height: 65,
     borderRadius: theme.borderRadius.md,
     borderWidth: 1,
     borderColor: theme.colors.keyBorder,
@@ -132,8 +132,8 @@ const styles = StyleSheet.create({
   },
   fastBtn: {
     flex: 1,
+    paddingVertical: theme.spacing.md,
     backgroundColor: theme.colors.keyBackground,
-    height: 65,
     borderRadius: theme.borderRadius.md,
     borderWidth: 1,
     borderColor: theme.colors.keyBorder,

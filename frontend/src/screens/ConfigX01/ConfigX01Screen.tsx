@@ -13,11 +13,12 @@ import { GameTypes } from '../../../../backend/src/domain/enums/GameTypes';
 import { styles } from './styles/ConfigX01.styles';
 import { GAME_OPTIONS, TYPE_OPTIONS } from './constants/ConfigX01.constants';
 import { useConfigX01 } from './hooks/useConfigX01';
+import { error } from 'console';
 
 export const ConfigX01Screen = ({ navigation }) => {
   const {
     config, handlePlay, updateConfig, hasSecondPlayer,
-    handlePlayerNameChange, handleAddPlayer, handleRemovePlayer
+    handlePlayerNameChange, handleAddPlayer, handleRemovePlayer, error
   } = useConfigX01(navigation);
 
   return (
@@ -47,16 +48,21 @@ export const ConfigX01Screen = ({ navigation }) => {
               value={config.numLegs}
               onChange={(val: number) => updateConfig({ numLegs: val })}
               min={1}
-              max={99}
+              max={19}
             />
             <Stepper
               label="Sets"
               value={config.numSets}
               onChange={(val: number) => updateConfig({ numSets: val })}
               min={1}
-              max={99}
+              max={19}
             />
           </View>
+          {error && (
+            <Text style={styles.errorText}>
+              * {error}
+            </Text>
+          )}
         </View>
 
         <View style={styles.section}>

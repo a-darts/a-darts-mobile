@@ -44,10 +44,9 @@ export const styles = StyleSheet.create({
         fontFamily: theme.typography.fontFamily.regular,
     },
     errorText: {
-        color: theme.colors.textError,
         fontSize: theme.typography.sizes.sm,
-        fontFamily: theme.typography.fontFamily.regular,
-        marginTop: theme.spacing.xs,
+        fontFamily: theme.typography.fontFamily.semiBold,
+        color: theme.colors.textError,
         textAlign: 'center',
     },
 });

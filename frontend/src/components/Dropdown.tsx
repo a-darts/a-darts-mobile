@@ -57,7 +57,7 @@ export const Dropdown = ({ options, selectedValue, onSelect, placeholder = 'Sele
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: theme.spacing.lg,
+    marginBottom: theme.spacing.md,
   },
   dropdownButton: {
     flexDirection: 'row',

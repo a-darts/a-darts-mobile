@@ -7,7 +7,18 @@ import { ConfigX01Screen } from '../screens/ConfigX01/ConfigX01Screen';
 import { GameX01Screen } from '../screens/GameX01/GameX01Screen';
 import { theme } from '../theme/theme';
 
-const Stack = createNativeStackNavigator();
+export type AppStackParamList = {
+  Home: undefined;
+  HomeScreen: undefined;
+  ConfigX01: undefined;
+  GameX01Screen: {
+    game?: string;
+    typeOfGame?: string;
+    numLegs?: number;
+  };
+};
+
+const Stack = createNativeStackNavigator<AppStackParamList>();
 
 export const AppNavigator = () => {
   return (
@@ -22,6 +33,7 @@ export const AppNavigator = () => {
           headerTintColor: theme.colors.headerText,
           headerTitleStyle: {
             fontFamily: theme.typography.fontFamily.semiBold,
+            fontSize: theme.typography.sizes.md,
           },
         }}
       >
@@ -38,12 +50,16 @@ export const AppNavigator = () => {
         <Stack.Screen
           name="ConfigX01"
           component={ConfigX01Screen}
-          options={{ title: 'Nueva partida - x01' }}
+          options={{ title: 'Nueva partida x01' }}
         />
         <Stack.Screen
           name="GameX01Screen"
           component={GameX01Screen}
-          options={{ title: 'Partida - x01' }}
+          options={({ route }) => ({
+            title: route.params?.game
+              ? `Partida ${route.params.game} (${route.params.typeOfGame} ${route.params.numLegs})`
+              : 'Partida - x01',
+          })}
         />
       </Stack.Navigator>
     </NavigationContainer>

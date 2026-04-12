@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { GameTypes } from '../../../../../backend/src/domain/enums/GameTypes';
 import { CreateMatchX01Request } from '../../../../../backend/src/application/dtos/CreateMatchX01Request';
+import { normalizeOdd } from '../utils/normalizeOdd';
 
 import UserServiceFactory from '../../../../../backend/src/infrastructure/factories/UserServiceFactory';
 import MatchX01ServiceFactory from '../../../../../backend/src/infrastructure/factories/MatchX01ServiceFactory';
@@ -17,6 +18,8 @@ export const useConfigX01 = (navigation: any) => {
         playerNames: ['']
     });
 
+    const [error, setError] = useState<string | null>(null);
+
     useEffect(() => {
         const loadDefaultPlayerName = async () => {
             const user = await userService.getCurrentUser();
@@ -26,6 +29,7 @@ export const useConfigX01 = (navigation: any) => {
     }, []);
 
     const updateConfig = (changes: Partial<typeof config>) => {
+        setError(null);
         setConfig(prev => ({ ...prev, ...changes }));
     };
 
@@ -49,13 +53,22 @@ export const useConfigX01 = (navigation: any) => {
 
     const handlePlay = async () => {
         try {
-            // 1. Validar que los nombres no estén vacíos
+            setError(null);
+
+            // 1. Validar que si es BestOf deben ser numLegs y numSets impares
+            const isBestOf = config.typeOfGame === GameTypes.BestOf;
+            if (isBestOf && (config.numLegs % 2 === 0 || config.numSets % 2 === 0)) {
+                setError('El número de legs y sets debe ser impar');
+                return;
+            }
+
+            // 2. Validar que los nombres no estén vacíos
             const sanitizedNames = config.playerNames.map((name, index) => {
                 const trimmedName = name.trim();
                 return trimmedName === '' ? `Jugador ${index + 1}` : trimmedName;
             });
 
-            // 2. Ejecutar el servicio con el DTO (request)
+            // 3. Ejecutar el servicio con el DTO (request)
             const request: CreateMatchX01Request = {
                 game: config.game,
                 typeOfGame: config.typeOfGame,
@@ -65,7 +78,7 @@ export const useConfigX01 = (navigation: any) => {
             };
             const match = await createMatchService.execute(request);
 
-            // 3. Navegar a la partida pasando el ID generado
+            // 4. Navegar a la partida pasando el ID generado
             navigation.navigate('GameX01Screen', { matchId: match.id });
 
         } catch (error: any) {
@@ -81,5 +94,7 @@ export const useConfigX01 = (navigation: any) => {
         handleRemovePlayer,
         handlePlay,
         hasSecondPlayer: config.playerNames.length > 1,
+        error,
+        setError,
     };
 };
