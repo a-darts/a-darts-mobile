@@ -11,6 +11,10 @@ export class UserService {
         return newUser;
     }
 
+    async logout(): Promise<void> {
+        await this.userRepository.deleteUser();
+    }
+
     async getCurrentUser(): Promise<User | null> {
         return await this.userRepository.getUser();
     }

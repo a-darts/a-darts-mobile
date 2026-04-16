@@ -19,12 +19,13 @@ export const useLogin = (navigation: any) => {
                 // Si existe, redirigimos automáticamente
                 navigation.reset({
                     index: 0,
-                    routes: [{ name: 'HomeScreen', params: { name: user.name } }],
+                    routes: [{ name: 'HomeScreen' }],
                 });
+            } else {
+                setIsLoading(false);
             }
         } catch (e) {
             console.error("Error comprobando usuario persistido:", e);
-        } finally {
             setIsLoading(false);
         }
     };
@@ -46,12 +47,7 @@ export const useLogin = (navigation: any) => {
             // Reiniciamos el stack para que el usuario no pueda volver atrás al login
             navigation.reset({
                 index: 0,
-                routes: [
-                    {
-                        name: 'HomeScreen',
-                        params: { name: name.trim() }
-                    }
-                ],
+                routes: [{ name: 'HomeScreen' }],
             });
         } catch (error) {
             console.error("Error en el login:", error);
@@ -60,6 +56,7 @@ export const useLogin = (navigation: any) => {
     };
 
     const handleEntrarComoInvitado = async () => {
+        await userService.logout();
         navigation.navigate('HomeScreen');
     };
 
