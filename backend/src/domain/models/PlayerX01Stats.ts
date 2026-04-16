@@ -42,7 +42,8 @@ export class PlayerX01Stats {
     const newTotalScore = this._totalScore + score;
     // MIRAR: en caso de cierre, no siempre van a ser 3 dardos
     const newTotalDarts = this._totalDarts + 3;
-    const newAverage = newTotalScore / newTotalDarts * 3;
+    const rawAverage = newTotalScore / newTotalDarts * 3;
+    const newAverage = Math.round((rawAverage + Number.EPSILON) * 100) / 100;
 
     // 2. Calcular número +100s, +140s, 180s
     const newHundredPlus = this._hundredPlus + (score >= 100 ? 1 : 0);

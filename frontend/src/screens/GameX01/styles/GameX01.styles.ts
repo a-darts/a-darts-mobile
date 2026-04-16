@@ -49,6 +49,10 @@ export const styles = StyleSheet.create({
     scoreActiveText: {
         color: theme.colors.buttonPrimaryBackground,
     },
+    averageText: {
+        color: theme.colors.textSecondary,
+        fontSize: theme.typography.sizes.xs,
+    },
 
     // Stats card (centre)
     statsCard: {

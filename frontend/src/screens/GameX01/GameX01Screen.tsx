@@ -101,6 +101,9 @@ export const GameX01Screen = ({ navigation, route }: any) => {
           <Text style={[styles.scoreLeftText, activeIndex === 0 && styles.scoreActiveText]}>
             {p1.remainingScore}
           </Text>
+          <Text style={styles.averageText}>
+            MEDIA: {p1.stats.average}
+          </Text>
         </View>
 
         {/* Marcador central  */}
@@ -133,6 +136,9 @@ export const GameX01Screen = ({ navigation, route }: any) => {
             </Text>
             <Text style={[styles.scoreLeftText, activeIndex === 1 && styles.scoreActiveText]}>
               {p2.remainingScore}
+            </Text>
+            <Text style={styles.averageText}>
+              MEDIA: {p2.stats.average}
             </Text>
           </View>
         )}
