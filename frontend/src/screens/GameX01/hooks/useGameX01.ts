@@ -8,9 +8,7 @@ import { GameStatus } from '../../../../../backend/src/domain/enums/GameStatus';
 
 // Obtenemos los servicios y el repo desde la Factoría (fuera del hook)
 const matchRepo = MatchX01ServiceFactory.getRepository();
-const addScoreService = MatchX01ServiceFactory.getAddScoreService();
-const undoScoreService = MatchX01ServiceFactory.getUndoScoreService();
-const swapStartingPlayerService = MatchX01ServiceFactory.getSwapStartingPlayerService();
+const matchX01Service = MatchX01ServiceFactory.getMatchX01Service();
 
 type ToastState = {
     visible: boolean;
@@ -80,7 +78,7 @@ export const useGameX01 = (navigation: any, route: any) => {
         if (!match) return;
 
         try {
-            const updatedMatch = await addScoreService.execute(match.id, scoreNum);
+            const updatedMatch = await matchX01Service.addThrow(match.id, scoreNum);
 
             // Actualizamos el estado con la nueva instancia (esto dispara el re-render)
             setMatch(updatedMatch);
@@ -119,7 +117,7 @@ export const useGameX01 = (navigation: any, route: any) => {
     const handleUndo = async () => {
         if (!match) return;
         try {
-            const updatedMatch = await undoScoreService.execute(match.id);
+            const updatedMatch = await matchX01Service.undoLastThrow(match.id);
             setMatch(updatedMatch);
         } catch (error: any) {
             openToast({
@@ -183,7 +181,7 @@ export const useGameX01 = (navigation: any, route: any) => {
     const handleSwapStartingPlayer = async () => {
         if (!match) return;
         try {
-            const updatedMatch = await swapStartingPlayerService.execute(match.id);
+            const updatedMatch = await matchX01Service.swapStartingPlayer(match.id);
             setMatch(updatedMatch);
         } catch (error: any) {
             openToast({

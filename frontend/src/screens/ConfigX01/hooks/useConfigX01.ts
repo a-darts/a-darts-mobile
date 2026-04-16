@@ -7,7 +7,7 @@ import UserServiceFactory from '../../../../../backend/src/infrastructure/factor
 import MatchX01ServiceFactory from '../../../../../backend/src/infrastructure/factories/MatchX01ServiceFactory';
 
 const userService = UserServiceFactory.getInstance();
-const createMatchService = MatchX01ServiceFactory.getCreateMatchService();
+const matchX01Service = MatchX01ServiceFactory.getMatchX01Service();
 
 export const useConfigX01 = (navigation: any) => {
     const [config, setConfig] = useState({
@@ -76,7 +76,7 @@ export const useConfigX01 = (navigation: any) => {
                 numLegs: config.numLegs,
                 playerNames: sanitizedNames,
             };
-            const match = await createMatchService.execute(request);
+            const match = await matchX01Service.createMatchX01(request);
 
             // 4. Navegar a la partida pasando el ID generado
             navigation.navigate('GameX01Screen', { matchId: match.id });

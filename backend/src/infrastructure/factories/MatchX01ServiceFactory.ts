@@ -1,16 +1,10 @@
 import { IMatchX01Repository } from '../../domain/repositories/IMatchX01Repository';
 import { AsyncStorageMatchX01Repository } from '../repositories/AsyncStorageMatchX01Repository';
-import { CreateMatchX01Service } from '../../application/services/CreateMatchX01Service';
-import { AddScoreService } from '../../application/services/AddScoreService';
-import { UndoScoreService } from '../../application/services/UndoScoreService';
-import { SwapStartingPlayerX01Service } from '../../application/services/SwapStartingPlayerX01Service';
+import { MatchX01Service } from '../../application/services/MatchX01Service';
 
 export default class MatchX01ServiceFactory {
     private static repository: IMatchX01Repository | null = null;
-    private static createService: CreateMatchX01Service | null = null;
-    private static addScoreService: AddScoreService | null = null;
-    private static undoScoreService: UndoScoreService | null = null;
-    private static swapStartingPlayerService: SwapStartingPlayerX01Service | null = null;
+    private static matchX01Service: MatchX01Service | null = null;
 
     // Obtenemos el repositorio (Singleton)
     public static getRepository(): IMatchX01Repository {
@@ -20,35 +14,11 @@ export default class MatchX01ServiceFactory {
         return this.repository;
     }
 
-    // Servicio para CREAR partidas
-    public static getCreateMatchService(): CreateMatchX01Service {
-        if (!this.createService) {
-            this.createService = new CreateMatchX01Service(this.getRepository());
+    // Obtenemos el servicio (Singleton)
+    public static getMatchX01Service(): MatchX01Service {
+        if (!this.matchX01Service) {
+            this.matchX01Service = new MatchX01Service(this.getRepository());
         }
-        return this.createService;
-    }
-
-    // Servicio para AÑADIR puntuación
-    public static getAddScoreService(): AddScoreService {
-        if (!this.addScoreService) {
-            this.addScoreService = new AddScoreService(this.getRepository());
-        }
-        return this.addScoreService;
-    }
-
-    // Servicio para DESHACER puntuación
-    public static getUndoScoreService(): UndoScoreService {
-        if (!this.undoScoreService) {
-            this.undoScoreService = new UndoScoreService(this.getRepository());
-        }
-        return this.undoScoreService;
-    }
-
-    // Servicio para CAMBIAR el jugador que empieza la partida
-    public static getSwapStartingPlayerService(): SwapStartingPlayerX01Service {
-        if (!this.swapStartingPlayerService) {
-            this.swapStartingPlayerService = new SwapStartingPlayerX01Service(this.getRepository());
-        }
-        return this.swapStartingPlayerService;
+        return this.matchX01Service;
     }
 }
