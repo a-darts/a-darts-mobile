@@ -22,7 +22,7 @@ export class MatchX01Mapper {
         );
 
         const players = (raw.players || []).map((p: any) =>
-            this.playerDTOtoPlayerX01(p as PlayerDTO)
+            MatchX01Mapper.playerDTOtoPlayerX01(p as PlayerDTO)
         );
 
         const history = (raw.history ?? []).map(
@@ -109,11 +109,11 @@ export class MatchX01Mapper {
 
     private static playerDTOtoPlayerX01(p: PlayerDTO): PlayerX01 {
         const throwData = p.throws ?? [];
-        const throws = throwData.map((t: any) => this.throwDTOtoThrowX01(t));
+        const throws = throwData.map((t: any) => MatchX01Mapper.throwDTOtoThrowX01(t));
 
         const statsData = p.stats;
         const stats = statsData
-            ? this.playerX01StatsDTOtoPlayerX01Stats(statsData)
+            ? MatchX01Mapper.playerX01StatsDTOtoPlayerX01Stats(statsData)
             : new PlayerX01Stats();
 
         return PlayerX01.restore(
@@ -134,14 +134,14 @@ export class MatchX01Mapper {
             remainingScore: p.remainingScore,
             numSetsWon: p.numSetsWon,
             numLegsWon: p.numLegsWon,
-            throws: p.throws.map(t => this.throwX01toDTO(t)),
-            stats: this.playerX01StatstoPlayerX01StatsDTO(p.stats),
+            throws: p.throws.map(t => MatchX01Mapper.throwX01toDTO(t)),
+            stats: MatchX01Mapper.playerX01StatstoPlayerX01StatsDTO(p.stats),
         };
     }
 
     private static snapshotDTOtoSnapshot(s: MatchX01SnapshotDTO) {
         return {
-            players: s.players.map(p => this.playerDTOtoPlayerX01(p).snapshot()),
+            players: s.players.map(p => MatchX01Mapper.playerDTOtoPlayerX01(p).snapshot()),
             activePlayerIndex: s.activePlayerIndex,
             startingPlayerIndexForLeg: s.startingPlayerIndexForLeg,
             startingPlayerIndexForSet: s.startingPlayerIndexForSet,
@@ -159,7 +159,7 @@ export class MatchX01Mapper {
         return {
             players: s.players.map((pSnapshot: any) => {
                 const player = PlayerX01.fromSnapshot(pSnapshot);
-                return this.playerX01toDTO(player);
+                return MatchX01Mapper.playerX01toDTO(player);
             }),
             activePlayerIndex: s.activePlayerIndex,
             startingPlayerIndexForLeg: s.startingPlayerIndexForLeg,
