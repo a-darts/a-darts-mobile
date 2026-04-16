@@ -11,12 +11,13 @@ export const styles = StyleSheet.create({
     },
     statsColumnsContainer: {
         flexDirection: 'row',
-        justifyContent: 'space-between',
+        justifyContent: 'center',
         gap: theme.spacing.lg,
     },
     playerColumn: {
         flex: 1,
         alignItems: 'stretch',
+        maxWidth: 240,
     },
     playerNameTitle: {
         color: theme.colors.text,

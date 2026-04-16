@@ -19,7 +19,8 @@ export const colors = {
   cardInactiveBackground: '#1A1A1A',
 
   // StatsCard
-  statsCardBorder: '#BFE55F',
+  statsCardSuccessBorder: '#BFE55F',
+  statsCardErrorBorder: '#FF4C4C',
   statsCardText: '#FFFFFF',
   statsCardTextSecondary: '#B0B0B0',
 

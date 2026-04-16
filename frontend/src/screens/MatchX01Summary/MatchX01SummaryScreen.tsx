@@ -33,6 +33,22 @@ export const MatchX01SummaryScreen = ({ route, navigation }) => {
 
   if (loading) return <ActivityIndicator style={{ flex: 1 }} />;
 
+  if (!match) return null;
+
+  const getBestValueColor = (currentValue, allPlayersValues) => {
+    const max = Math.max(...allPlayersValues);
+    const allSame = allPlayersValues.every(v => v === allPlayersValues[0]);
+    if (max === 0 || allSame) return theme.colors.statsCardSuccessBorder;
+
+    return currentValue === max ? theme.colors.statsCardSuccessBorder : theme.colors.statsCardErrorBorder;
+  };
+
+  const averages = match.players.map(p => p.stats.average);
+  const hundreds = match.players.map(p => p.stats.hundredPlus);
+  const hundredForties = match.players.map(p => p.stats.hundredFortyPlus);
+  const oneEighties = match.players.map(p => p.stats.oneEighties);
+
+
   return (
     <ScrollView
       style={styles.container}
@@ -49,21 +65,25 @@ export const MatchX01SummaryScreen = ({ route, navigation }) => {
             <StatsCard
               title="Media"
               content={player.stats.average.toFixed(2)}
+              borderColor={getBestValueColor(player.stats.average, averages)}
               style={styles.card}
             />
             <StatsCard
               title="+100"
               content={player.stats.hundredPlus}
+              borderColor={getBestValueColor(player.stats.hundredPlus, hundreds)}
               style={styles.card}
             />
             <StatsCard
               title="+140"
               content={player.stats.hundredFortyPlus}
+              borderColor={getBestValueColor(player.stats.hundredFortyPlus, hundredForties)}
               style={styles.card}
             />
             <StatsCard
               title="180s"
               content={player.stats.oneEighties}
+              borderColor={getBestValueColor(player.stats.oneEighties, oneEighties)}
               style={styles.card}
             />
           </View>

@@ -3,9 +3,13 @@ import { Text, StyleSheet } from 'react-native';
 import { theme } from '../theme/theme';
 import { Card } from './Card';
 
-export const StatsCard = ({ title, content, style }) => {
+export const StatsCard = ({ title, content, style, borderColor }) => {
   return (
-    <Card style={[styles.statsCard, style]}>
+    <Card style={[
+      styles.statsCard,
+      borderColor ? { borderLeftColor: borderColor } : null,
+      style
+    ]}>
       <Text style={styles.title}>{title}</Text>
       <Text style={styles.content}>{content}</Text>
     </Card>
@@ -15,7 +19,6 @@ export const StatsCard = ({ title, content, style }) => {
 const styles = StyleSheet.create({
   statsCard: {
     borderLeftWidth: 2,
-    borderLeftColor: theme.colors.statsCardBorder,
     paddingVertical: theme.spacing.md,
     paddingHorizontal: theme.spacing.md,
   },
