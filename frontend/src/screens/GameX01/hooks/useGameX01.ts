@@ -4,6 +4,7 @@ import { MatchX01 } from '../../../../../backend/src/domain/models/MatchX01';
 import { TYPE_OPTIONS } from '../constants/GameX01.constants';
 import MatchX01ServiceFactory from '../../../../../backend/src/infrastructure/factories/MatchX01ServiceFactory';
 import { BustException } from '../../../../../backend/src/domain/exceptions/Exceptions';
+import { GameStatus } from '../../../../../backend/src/domain/enums/GameStatus';
 
 // Obtenemos los servicios y el repo desde la Factoría (fuera del hook)
 const matchRepo = MatchX01ServiceFactory.getRepository();
@@ -85,7 +86,7 @@ export const useGameX01 = (navigation: any, route: any) => {
             setMatch(updatedMatch);
             setInputValue('');
 
-            if (updatedMatch.status === 'FINISHED') {
+            if (updatedMatch.status === GameStatus.FINISHED) {
                 openToast({
                     title: '¡Victoria!',
                     description: 'Partida finalizada',

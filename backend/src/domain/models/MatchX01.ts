@@ -1,3 +1,4 @@
+import { GameStatus } from "../enums/GameStatus";
 import { GameTypes } from "../enums/GameTypes";
 import { BustException, EndedMatchException } from "../exceptions/Exceptions";
 import { MatchX01Config } from "./MatchX01Config";
@@ -8,7 +9,7 @@ interface MatchX01Snapshot {
     activePlayerIndex: number;
     startingPlayerIndexForLeg: number;
     startingPlayerIndexForSet: number;
-    status: 'PLAYING' | 'FINISHED';
+    status: GameStatus;
 }
 
 /*
@@ -23,7 +24,7 @@ export class MatchX01 {
     private _startingPlayerIndexForLeg: number = 0;
     private _startingPlayerIndexForSet: number = 0;
 
-    private _status: 'PLAYING' | 'FINISHED' = 'PLAYING';
+    private _status: GameStatus = GameStatus.PLAYING;
 
     private _history: MatchX01Snapshot[] = [];
 
@@ -39,7 +40,7 @@ export class MatchX01 {
         activePlayerIndex: number,
         startingLegIndex: number,
         startingSetIndex: number,
-        status: 'PLAYING' | 'FINISHED',
+        status: GameStatus,
         history: MatchX01Snapshot[] = [],
     ) {
         this.id = id;
@@ -67,7 +68,15 @@ export class MatchX01 {
                 config.game,
             )
         );
-        return new MatchX01(id, config, players, 0, 0, 0, 'PLAYING');
+        return new MatchX01(
+            id,
+            config,
+            players,
+            0,
+            0,
+            0,
+            GameStatus.PLAYING,
+        );
     }
 
 
@@ -78,7 +87,7 @@ export class MatchX01 {
     // Pre: status === 'PLAYING'
     // Post: snapshot saved && score added
     public addThrow(score: number): void {
-        if (this._status === 'FINISHED') {
+        if (this._status === GameStatus.FINISHED) {
             throw new EndedMatchException('La partida ya ha finalizado');
         }
 
@@ -135,7 +144,7 @@ export class MatchX01 {
         if (winner.numSetsWon >= setsToWinMatch) {
             // Win the match
             this._players.forEach(p => p.resetLegsForMatchEnd());
-            this._status = 'FINISHED';
+            this._status = GameStatus.FINISHED;
         } else {
             // Win 1 set
             this._players.forEach(p => p.resetForNewSet(this._config.game));
@@ -222,7 +231,7 @@ export class MatchX01 {
         activePlayerIndex: number,
         startingLegIndex: number,
         startingSetIndex: number,
-        status: 'PLAYING' | 'FINISHED',
+        status: GameStatus,
         history: MatchX01Snapshot[] = [],
     ): MatchX01 {
         return new MatchX01(

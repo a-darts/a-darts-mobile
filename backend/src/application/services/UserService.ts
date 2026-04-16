@@ -6,7 +6,7 @@ export class UserService {
     constructor(private userRepository: IUserRepository) { }
 
     async login(name: string): Promise<User> {
-        const newUser = new User(name.trim() || 'Jugador');
+        const newUser = User.create(name.trim() || 'Jugador');
         await this.userRepository.saveUser(newUser);
         return newUser;
     }

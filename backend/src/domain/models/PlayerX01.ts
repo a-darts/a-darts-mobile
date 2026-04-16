@@ -112,6 +112,10 @@ export class PlayerX01 {
   // Getters
   // -------------------------------------------------------------------------
 
+  public get name() {
+    return this._name;
+  }
+
   public get remainingScore() {
     return this._remainingScore;
   }

@@ -21,11 +21,14 @@ export class ThrowX01 {
         remainingScore: number,
         dartCount: number,
     ) {
-        if (score > 180 || remainingScore < 0) {
+        if (score > 180) {
+            throw new BustException('Puntuación inválida');
+        }
+        if (remainingScore < 0) {
             throw new BustException('Puntuación inválida');
         }
         if (score < 0) {
-            throw new InvalidThrowException('El resto no puede ser 0');
+            throw new InvalidThrowException('La puntuación no puede ser menor que 0');
         }
         if (remainingScore === 1) {
             throw new InvalidThrowException('El resto no puede ser 1');

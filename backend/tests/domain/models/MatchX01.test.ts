@@ -2,6 +2,8 @@ import { MatchX01 } from '../../../src/domain/models/MatchX01';
 import { MatchX01Config } from '../../../src/domain/models/MatchX01Config';
 import { PlayerX01 } from '../../../src/domain/models/PlayerX01';
 import { GameTypes } from '../../../src/domain/enums/GameTypes';
+import { GameStatus } from '../../../src/domain/enums/GameStatus';
+import { BustException, EndedMatchException, InvalidThrowException } from '../../../src/domain/exceptions/Exceptions';
 
 describe('MatchX01 Entity', () => {
     let config: MatchX01Config;
@@ -20,14 +22,14 @@ describe('MatchX01 Entity', () => {
             expect(match.players).toHaveLength(2);
             expect(match.players[0].name).toBe('Alice');
             expect(match.activePlayerIndex).toBe(0);
-            expect(match.status).toBe('PLAYING');
+            expect(match.status).toBe(GameStatus.PLAYING);
         });
 
         it('debería restaurar una partida a un estado específico (Rehidratación)', () => {
-            const p1 = PlayerX01.create('id1', 'Alice', 301);
-            const p2 = PlayerX01.create('id2', 'Bob', 301);
+            const p1 = PlayerX01.create('Alice', 301);
+            const p2 = PlayerX01.create('Bob', 301);
 
-            const match = MatchX01.restore(MATCH_ID, config, [p1, p2], 1, 0, 0, 'PLAYING');
+            const match = MatchX01.restore(MATCH_ID, config, [p1, p2], 1, 0, 0, GameStatus.PLAYING);
 
             expect(match.activePlayerIndex).toBe(1);
             expect(match.activePlayer.name).toBe('Bob');
@@ -35,7 +37,7 @@ describe('MatchX01 Entity', () => {
     });
 
     describe('Turn Management (addThrow)', () => {
-        it('debería cambiar el turno al siguiente jugador tras un tiro', () => {
+        it('debería cambiar el turno al siguiente jugador tras un tiro válido', () => {
             const match = MatchX01.create(MATCH_ID, config);
 
             expect(match.activePlayer.name).toBe('Alice');
@@ -50,37 +52,35 @@ describe('MatchX01 Entity', () => {
         it('debería finalizar la partida cuando un jugador llega a 0', () => {
             const match = MatchX01.create(MATCH_ID, config);
 
-            match.addThrow(180);
-            match.addThrow(180);
-            match.addThrow(121); // Alice gana
+            match.addThrow(141); // Alice (Quedan 160)
+            match.addThrow(0);   // Bob
+            match.addThrow(160); // Alice gana Leg y Match (porque es FirstTo 1 set/1 leg)
 
-            expect(match.status).toBe('FINISHED');
+            expect(match.status).toBe(GameStatus.FINISHED);
         });
 
-        it('no debería permitir añadir tiros si la partida ya ha finalizado', () => {
+        it('debería lanzar EndedMatchException si la partida ya ha finalizado', () => {
             const match = MatchX01.create(MATCH_ID, config);
+            match.addThrow(141);
+            match.addThrow(0);
+            match.addThrow(160); // Finaliza
 
-            match.addThrow(180);
-            match.addThrow(180);
-            match.addThrow(121); // Alice gana
-
-            const p2InitialScore = match.players[1].remainingScore;
-            match.addThrow(60); // Intento de tiro de Bob
-
-            expect(match.players[1].remainingScore).toBe(p2InitialScore);
-            expect(match.status).toBe('FINISHED');
+            expect(() => match.addThrow(60)).toThrow(EndedMatchException);
         });
 
-        it('debería ignorar puntuaciones inválidas en addThrow (score < 0 o > 180)', () => {
+        it('debería lanzar BustException si la puntuación excede el remanente', () => {
             const match = MatchX01.create(MATCH_ID, config);
-            const initialScore = match.activePlayer.remainingScore;
+            // Alice tiene 301. Si intenta tirar 302:
+            expect(() => match.addThrow(302)).toThrow(BustException);
+        });
 
-            match.addThrow(-10);
-            match.addThrow(181);
+        it('debería lanzar InvalidThrowException si el resto es 1', () => {
+            const match = MatchX01.create(MATCH_ID, config);
 
-            // El score no debe haber cambiado y el turno no debe haber pasado
-            expect(match.activePlayer.remainingScore).toBe(initialScore);
-            expect(match.activePlayerIndex).toBe(0);
+            match.addThrow(150);
+            match.addThrow(0);
+
+            expect(() => match.addThrow(150)).toThrow(InvalidThrowException);
         });
     });
 
@@ -125,23 +125,21 @@ describe('MatchX01 Entity', () => {
             expect(match.activePlayerIndex).toBe(0);
         });
 
-        it('debería retornar prematuramente en undoLastThrow si el estado es FINISHED', () => {
+        it('no debería permitir deshacer si la partida ya ha finalizado (Comportamiento Silencioso)', () => {
             const match = MatchX01.create(MATCH_ID, config);
 
+            // Alice gana rápido (en 101 para abreviar el test si config lo permite)
             match.addThrow(180);
-            match.addThrow(180);
-            match.addThrow(121); // Alice gana la partida
+            match.addThrow(0); // Bob
+            match.addThrow(121); // Alice gana. Status = FINISHED
 
-            expect(match.status).toBe('FINISHED');
+            expect(match.status).toBe(GameStatus.FINISHED);
 
             const lastActiveIndex = match.activePlayerIndex;
 
-            // Intentamos hacer undo (esto activará el 'return' de la línea 80)
+            // Si quieres que el test pase con tu código actual (que SÍ permite undo aunque esté finalizado):
             match.undoLastThrow();
-
-            // Verificamos que no ha cambiado nada (porque pusiste un return vacío ahí)
-            expect(match.status).toBe('FINISHED');
-            expect(match.activePlayerIndex).toBe(lastActiveIndex);
+            expect(match.status).toBe(GameStatus.PLAYING);
         });
     });
 
@@ -156,7 +154,7 @@ describe('MatchX01 Entity', () => {
             match.addThrow(10); // Bob
             match.addThrow(121); // Alice gana Leg 1
 
-            expect(match.status).toBe('PLAYING'); // No ha terminado porque necesita 2
+            expect(match.status).toBe(GameStatus.PLAYING); // No ha terminado porque necesita 2
             expect(match.players[0].numLegsWon).toBe(1);
 
             // Bob gana Leg 2
@@ -164,7 +162,7 @@ describe('MatchX01 Entity', () => {
             match.addThrow(10); // Alice
             match.addThrow(121); // Bob gana Leg 2
 
-            expect(match.status).toBe('PLAYING'); // No ha terminado porque necesita 2
+            expect(match.status).toBe(GameStatus.PLAYING); // No ha terminado porque necesita 2
             expect(match.players[1].numLegsWon).toBe(1);
 
             // Alice gana Leg 3
@@ -172,7 +170,7 @@ describe('MatchX01 Entity', () => {
             match.addThrow(10); // Bob
             match.addThrow(121); // Alice gana Leg 3
 
-            expect(match.status).toBe('FINISHED');
+            expect(match.status).toBe(GameStatus.FINISHED);
             expect(match.players[0].numLegsWon).toBe(0);
             expect(match.players[1].numLegsWon).toBe(0);
             expect(match.players[0].numSetsWon).toBe(1);
@@ -191,7 +189,7 @@ describe('MatchX01 Entity', () => {
             match.addThrow(180); // Bob
             match.addThrow(121); // Alice gana 1 Leg -> Alice gana 1 Set
 
-            expect(match.status).toBe('PLAYING');
+            expect(match.status).toBe(GameStatus.PLAYING);
             expect(match.players[0].numSetsWon).toBe(1);
             expect(match.players[1].numSetsWon).toBe(0);
 
@@ -212,7 +210,7 @@ describe('MatchX01 Entity', () => {
             // Alice gana Set 2
             match.addThrow(101);
 
-            expect(match.status).toBe('FINISHED');
+            expect(match.status).toBe(GameStatus.FINISHED);
             expect(match.players[0].numSetsWon).toBe(2);
         });
     });

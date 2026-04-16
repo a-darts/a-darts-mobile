@@ -10,7 +10,7 @@ export class User {
   // Constructor
   // --------------------------------------------------------------------------
 
-  constructor(
+  private constructor(
     id: string,
     name: string,
   ) {
@@ -28,5 +28,14 @@ export class User {
   ): User {
     const id = Math.random().toString(36).substring(2, 9);
     return new User(id, name);
+  }
+
+
+  // --------------------------------------------------------------------------
+  // Getters
+  // --------------------------------------------------------------------------
+
+  public get name(): string {
+    return this._name;
   }
 }

@@ -2,7 +2,8 @@ import { MatchX01 } from '../../domain/models/MatchX01';
 import { PlayerX01 } from '../../domain/models/PlayerX01';
 import { ThrowX01 } from '../../domain/models/ThrowX01';
 import { MatchX01Config } from '../../domain/models/MatchX01Config';
-import { MatchX01DTO, MatchX01SnapshotDTO, PlayerDTO, ThrowDTO } from '../persistence/MatchX01DTO';
+import { MatchX01DTO, MatchX01ConfigDTO, MatchX01SnapshotDTO, PlayerDTO, ThrowDTO } from '../persistence/MatchX01DTO';
+import { GameStatus } from '../../domain/enums/GameStatus';
 
 export class MatchX01Mapper {
     // -------------------------------------------------------------------------
@@ -73,7 +74,7 @@ export class MatchX01Mapper {
             activePlayerIndex: domain.activePlayerIndex,
             startingPlayerIndexForLeg: domain.startingPlayerIndexForLeg,
             startingPlayerIndexForSet: domain.startingPlayerIndexForSet,
-            status: domain.status,
+            status: domain.status.toString(),
             history: domain.history.map(MatchX01Mapper.snapshotToDTO),
         };
     }
@@ -127,13 +128,12 @@ export class MatchX01Mapper {
         };
     }
 
-    private static snapshotToDTO(s: ReturnType<MatchX01['history'][number] extends infer T ? () => T : never>): MatchX01SnapshotDTO;
     private static snapshotToDTO(s: {
         players: ReturnType<PlayerX01['snapshot']>[];
         activePlayerIndex: number;
         startingPlayerIndexForLeg: number;
         startingPlayerIndexForSet: number;
-        status: 'PLAYING' | 'FINISHED';
+        status: GameStatus;
     }): MatchX01SnapshotDTO {
         return {
             players: s.players.map(p => ({
@@ -151,7 +151,7 @@ export class MatchX01Mapper {
             activePlayerIndex: s.activePlayerIndex,
             startingPlayerIndexForLeg: s.startingPlayerIndexForLeg,
             startingPlayerIndexForSet: s.startingPlayerIndexForSet,
-            status: s.status,
+            status: s.status.toString(),
         };
     }
 }
