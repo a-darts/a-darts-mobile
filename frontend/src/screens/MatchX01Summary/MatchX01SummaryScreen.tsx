@@ -6,9 +6,16 @@ import { styles } from './styles/MatchX01Summary.styles';
 import { StatsCard } from '../../components/StatsCard';
 
 import MatchX01ServiceFactory from '../../../../backend/src/infrastructure/factories/MatchX01ServiceFactory';
+import { Button } from '../../components/Button';
+import { CreateMatchX01Request } from '../../../../backend/src/application/dtos/CreateMatchX01Request';
 
-// Obtenemos los servicios y el repo desde la Factoría (fuera del hook)
+import UserServiceFactory from '../../../../backend/src/infrastructure/factories/UserServiceFactory';
+
+
+// Obtenemos los servicios y el repo desde la Factoría
 const matchRepo = MatchX01ServiceFactory.getRepository();
+const userService = UserServiceFactory.getInstance();
+const matchX01Service = MatchX01ServiceFactory.getMatchX01Service();
 
 export const MatchX01SummaryScreen = ({ route, navigation }) => {
   const { matchId } = route.params;
@@ -31,9 +38,11 @@ export const MatchX01SummaryScreen = ({ route, navigation }) => {
     fetchMatchData();
   }, [matchId]);
 
+
   if (loading) return <ActivityIndicator style={{ flex: 1 }} />;
 
   if (!match) return null;
+
 
   const getBestValueColor = (currentValue, allPlayersValues) => {
     const max = Math.max(...allPlayersValues);
@@ -47,6 +56,22 @@ export const MatchX01SummaryScreen = ({ route, navigation }) => {
   const hundreds = match.players.map(p => p.stats.hundredPlus);
   const hundredForties = match.players.map(p => p.stats.hundredFortyPlus);
   const oneEighties = match.players.map(p => p.stats.oneEighties);
+
+
+  const handleReplay = async () => {
+    // 3. Ejecutar el servicio con el DTO (request)
+    const request: CreateMatchX01Request = {
+      game: match.config.game,
+      typeOfGame: match.config.typeOfGame,
+      numSets: match.config.numSets,
+      numLegs: match.config.numLegs,
+      playerNames: match.config.playerNames,
+    };
+    const newMatch = await matchX01Service.createMatchX01(request);
+
+    // 4. Navegar a la partida pasando el ID generado
+    navigation.navigate('GameX01Screen', { matchId: newMatch.id });
+  };
 
 
   return (
@@ -88,6 +113,23 @@ export const MatchX01SummaryScreen = ({ route, navigation }) => {
             />
           </View>
         ))}
+      </View>
+
+      <View style={styles.buttonsContainer}>
+        <Button
+          title="VOLVER A JUGAR"
+          iconName="gps-fixed"
+          variant='primary'
+          size='large'
+          onPress={handleReplay}
+        />
+        <Button
+          title="SALIR"
+          iconName="home"
+          variant='secondary'
+          size='large'
+          onPress={() => navigation.navigate('HomeScreen')}
+        />
       </View>
     </ScrollView>
   );

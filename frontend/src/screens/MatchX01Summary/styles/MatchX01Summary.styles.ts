@@ -34,5 +34,10 @@ export const styles = StyleSheet.create({
     },
     card: {
         marginVertical: theme.spacing.xs,
-    }
+    },
+    buttonsContainer: {
+        marginBottom: theme.spacing.xl,
+        marginTop: theme.spacing.md,
+        gap: theme.spacing.md,
+    },
 });
