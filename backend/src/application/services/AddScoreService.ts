@@ -14,13 +14,7 @@ export class AddScoreService {
         }
 
         // 2. Ejecutamos la lógica de negocio (cambia el estado interno de las entidades)
-        // Aquí se lanza el Error('Bust')
-        try {
-            match.addThrow(score);
-        } catch (error: any) {
-            // MIRAR: Manejar el 'Bust' aquí o relanzarlo para que la UI lo pinte
-            throw error;
-        }
+        match.addThrow(score);
 
         // 3. Guardamos el estado actualizado
         await this.matchRepository.save(match);

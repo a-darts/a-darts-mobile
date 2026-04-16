@@ -1,4 +1,5 @@
 import { GameTypes } from "../enums/GameTypes";
+import { BustException, EndedMatchException } from "../exceptions/Exceptions";
 import { MatchX01Config } from "./MatchX01Config";
 import { PlayerX01 } from "./PlayerX01";
 
@@ -26,6 +27,11 @@ export class MatchX01 {
 
     private _history: MatchX01Snapshot[] = [];
 
+
+    // --------------------------------------------------------------------------
+    // Constructor
+    // --------------------------------------------------------------------------
+
     private constructor(
         id: string,
         config: MatchX01Config,
@@ -46,14 +52,17 @@ export class MatchX01 {
         this._history = [...history];
     }
 
-    // Factory Method: Único punto de entrada para crear partidas nuevas
+
+    // --------------------------------------------------------------------------
+    // Factory Method: Only way to create new matches
+    // --------------------------------------------------------------------------
+
     public static create(
         id: string,
         config: MatchX01Config,
     ): MatchX01 {
         const players = config.playerNames.map(name =>
             PlayerX01.create(
-                Math.random().toString(36).substring(2, 9),
                 name,
                 config.game,
             )
@@ -61,48 +70,25 @@ export class MatchX01 {
         return new MatchX01(id, config, players, 0, 0, 0, 'PLAYING');
     }
 
-    // Rehidratación: Para el Mapper del Repositorio
-    public static restore(
-        id: string,
-        config: MatchX01Config,
-        players: PlayerX01[],
-        activePlayerIndex: number,
-        startingLegIndex: number,
-        startingSetIndex: number,
-        status: 'PLAYING' | 'FINISHED',
-        history: MatchX01Snapshot[] = [],
-    ): MatchX01 {
-        return new MatchX01(
-            id,
-            config,
-            players,
-            activePlayerIndex,
-            startingLegIndex,
-            startingSetIndex,
-            status,
-            history,
-        );
-    }
 
     // -------------------------------------------------------------------------
-    // Lógica principal
+    // Domain methods
     // -------------------------------------------------------------------------
 
+    // Pre: status === 'PLAYING'
+    // Post: snapshot saved && score added
     public addThrow(score: number): void {
-        if (this._status === 'FINISHED') return;
-        if (score < 0 || score > 180) return;
+        if (this._status === 'FINISHED') {
+            throw new EndedMatchException('La partida ya ha finalizado');
+        }
 
         this._history.push(this.takeSnapshot());
 
         const currentPlayer = this._players[this._activePlayerIndex];
-        try {
-            currentPlayer.addThrow(score);
-        } catch {
-            this.nextTurn(); // MIRAR: lógica de Bust
-            return;
-        }
+        currentPlayer.addThrow(score);
 
         if (currentPlayer.remainingScore === 0) {
+            // Win 1 leg
             this.handleLegWon(currentPlayer);
         } else {
             this.nextTurn();
@@ -125,7 +111,7 @@ export class MatchX01 {
     }
 
     // -------------------------------------------------------------------------
-    // Lógica de legs y sets
+    // Sets and Legs Logic
     // -------------------------------------------------------------------------
 
     private handleLegWon(winner: PlayerX01): void {
@@ -133,10 +119,10 @@ export class MatchX01 {
 
         const legsToWinSet = this.calculateTarget(this._config.numLegs);
         if (winner.numLegsWon >= legsToWinSet) {
-            // Ha ganado un set
+            // Win 1 set
             this.handleSetWon(winner);
         } else {
-            // Ha ganado un leg
+            // Win 1 leg
             this._players.forEach(p => p.resetForNewLeg(this._config.game));
             this.rotateStartingPlayerForLeg();
         }
@@ -147,15 +133,16 @@ export class MatchX01 {
 
         const setsToWinMatch = this.calculateTarget(this._config.numSets);
         if (winner.numSetsWon >= setsToWinMatch) {
-            // Ha ganado la partida
+            // Win the match
             this._players.forEach(p => p.resetLegsForMatchEnd());
             this._status = 'FINISHED';
         } else {
-            // Ha ganado un set
+            // Win 1 set
             this._players.forEach(p => p.resetForNewSet(this._config.game));
             this.rotateStartingPlayerForSet();
         }
     }
+
 
     // -------------------------------------------------------------------------
     // Helpers
@@ -186,6 +173,71 @@ export class MatchX01 {
         this._activePlayerIndex = this._startingPlayerIndexForSet;
     }
 
+
+    // -------------------------------------------------------------------------
+    // Getters
+    // -------------------------------------------------------------------------
+
+    public get activePlayer() {
+        return this._players[this._activePlayerIndex];
+    }
+
+    public get players() {
+        return [...this._players];
+    }
+
+    public get status() {
+        return this._status;
+    }
+
+    public get config() {
+        return this._config.clone();
+    }
+
+    public get activePlayerIndex() {
+        return this._activePlayerIndex;
+    }
+
+    public get startingPlayerIndexForLeg() {
+        return this._startingPlayerIndexForLeg;
+    }
+
+    public get startingPlayerIndexForSet() {
+        return this._startingPlayerIndexForSet;
+    }
+
+    public get history() {
+        return [...this._history];
+    }
+
+
+    // --------------------------------------------------------------------------
+    // Restore: For repository mapper
+    // --------------------------------------------------------------------------
+
+    public static restore(
+        id: string,
+        config: MatchX01Config,
+        players: PlayerX01[],
+        activePlayerIndex: number,
+        startingLegIndex: number,
+        startingSetIndex: number,
+        status: 'PLAYING' | 'FINISHED',
+        history: MatchX01Snapshot[] = [],
+    ): MatchX01 {
+        return new MatchX01(
+            id,
+            config,
+            players,
+            activePlayerIndex,
+            startingLegIndex,
+            startingSetIndex,
+            status,
+            history,
+        );
+    }
+
+
     // -------------------------------------------------------------------------
     // Snapshots
     // -------------------------------------------------------------------------
@@ -206,34 +258,5 @@ export class MatchX01 {
         this._startingPlayerIndexForSet = snap.startingPlayerIndexForSet;
         this._status = snap.status;
         this._players = snap.players.map(s => PlayerX01.fromSnapshot(s));
-    }
-
-    // -------------------------------------------------------------------------
-    // Getters
-    // -------------------------------------------------------------------------
-
-    public get activePlayer() {
-        return this._players[this._activePlayerIndex];
-    }
-    public get players() {
-        return [...this._players];
-    }
-    public get status() {
-        return this._status;
-    }
-    public get config() {
-        return this._config.clone();
-    }
-    public get activePlayerIndex() {
-        return this._activePlayerIndex;
-    }
-    public get startingPlayerIndexForLeg() {
-        return this._startingPlayerIndexForLeg;
-    }
-    public get startingPlayerIndexForSet() {
-        return this._startingPlayerIndexForSet;
-    }
-    public get history() {
-        return [...this._history];
     }
 }

@@ -10,6 +10,11 @@ export class MatchX01Config {
     private readonly _numLegs: number;
     private readonly _playerNames: string[];
 
+
+    // --------------------------------------------------------------------------
+    // Constructor
+    // --------------------------------------------------------------------------
+
     constructor(
         game: number,
         typeOfGame: GameTypes,
@@ -24,6 +29,11 @@ export class MatchX01Config {
         this._playerNames = [...playerNames];
     }
 
+
+    // --------------------------------------------------------------------------
+    // Clone
+    // --------------------------------------------------------------------------
+
     public clone(): MatchX01Config {
         return new MatchX01Config(
             this._game,
@@ -34,8 +44,13 @@ export class MatchX01Config {
         );
     }
 
-    public get playerNames() {
-        return [...this._playerNames];
+
+    // -------------------------------------------------------------------------
+    // Getters
+    // -------------------------------------------------------------------------
+
+    public get game() {
+        return this._game;
     }
 
     public get typeOfGame() {
@@ -50,8 +65,7 @@ export class MatchX01Config {
         return this._numLegs;
     }
 
-    public get game() {
-        return this._game;
+    public get playerNames() {
+        return [...this._playerNames];
     }
 }
-

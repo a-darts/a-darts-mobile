@@ -3,6 +3,7 @@ import { ScrollView } from 'react-native';
 import { MatchX01 } from '../../../../../backend/src/domain/models/MatchX01';
 import { TYPE_OPTIONS } from '../constants/GameX01.constants';
 import MatchX01ServiceFactory from '../../../../../backend/src/infrastructure/factories/MatchX01ServiceFactory';
+import { BustException } from '../../../../../backend/src/domain/exceptions/Exceptions';
 
 // Obtenemos los servicios y el repo desde la Factoría (fuera del hook)
 const matchRepo = MatchX01ServiceFactory.getRepository();
@@ -93,13 +94,23 @@ export const useGameX01 = (navigation: any, route: any) => {
                     onCloseAction: () => navigation.navigate('MatchX01SummaryScreen', { matchId: match.id }),
                 });
             }
-        } catch (error: any) {
-            openToast({
-                title: 'Puntuación inválida',
-                description: error.message,
-                type: 'error',
-                mode: 'auto',
-            });
+        } catch (error) {
+            if (error instanceof BustException) {
+                openToast({
+                    title: 'EXCESO',
+                    description: error.message,
+                    type: 'error',
+                    mode: 'auto',
+                });
+            } else {
+                openToast({
+                    title: 'ERROR',
+                    description: error.message,
+                    type: 'error',
+                    mode: 'auto',
+                });
+            }
+
             setInputValue('');
         }
     };

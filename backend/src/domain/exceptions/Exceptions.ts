@@ -11,3 +11,10 @@ export class InvalidThrowException extends Error {
         this.name = "InvalidThrowException";
     }
 }
+
+export class EndedMatchException extends Error {
+    constructor(message: string) {
+        super(message);
+        this.name = "EndedMatchException";
+    }
+}

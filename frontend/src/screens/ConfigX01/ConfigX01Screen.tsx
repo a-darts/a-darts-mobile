@@ -8,12 +8,19 @@ import { ButtonGroup } from '../../components/ButtonGroup';
 import { Stepper } from '../../components/Stepper';
 import { Dropdown } from '../../components/Dropdown';
 import { theme } from '../../theme/theme';
-import { GamesX01 } from '../../../../backend/src/domain/enums/GamesX01';
-import { GameTypes } from '../../../../backend/src/domain/enums/GameTypes';
 import { styles } from './styles/ConfigX01.styles';
 import { GAME_OPTIONS, TYPE_OPTIONS } from './constants/ConfigX01.constants';
 import { useConfigX01 } from './hooks/useConfigX01';
 import { error } from 'console';
+
+
+type GamesX01 = 170 | 301 | 501;
+
+enum GameTypes {
+  BestOf = 'bestOf',
+  FirstTo = 'firstTo',
+}
+
 
 export const ConfigX01Screen = ({ navigation }) => {
   const {
