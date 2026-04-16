@@ -13,7 +13,7 @@ export const GameX01Screen = ({ navigation, route }: any) => {
   const {
     match, inputValue, toast, setToast, scrollViewRef,
     handleKeyPress, handleBackspace, handleUndo, submitScore,
-    handleEnter, handleEnterRemaining, handleGameShot, handleGameShotNumDarts,
+    handleEnter, handleEnterRemaining, handleGameShot,
     handleSwapStartingPlayer,
   } = useGameX01(navigation, route);
 
@@ -56,33 +56,18 @@ export const GameX01Screen = ({ navigation, route }: any) => {
       >
         {toast.title === '¿Con cuántos dardos has cerrado?' && (
           <View style={styles.toastButtonsContainer}>
-            <Button
-              title="1 dardo"
-              variant='secondary'
-              size="normal"
-              onPress={() => {
-                submitScore(activePlayer.remainingScore);
-                setToast(prev => ({ ...prev, visible: false }));
-              }}
-            />
-            <Button
-              title="2 dardos"
-              variant='secondary'
-              size="normal"
-              onPress={() => {
-                submitScore(activePlayer.remainingScore);
-                setToast(prev => ({ ...prev, visible: false }));
-              }}
-            />
-            <Button
-              title="3 dardos"
-              variant='secondary'
-              size="normal"
-              onPress={() => {
-                submitScore(activePlayer.remainingScore);
-                setToast(prev => ({ ...prev, visible: false }));
-              }}
-            />
+            {[1, 2, 3].map((num) => (
+              <Button
+                key={num}
+                title={num.toString()}
+                variant='secondary'
+                size="normal"
+                onPress={() => {
+                  submitScore(activePlayer.remainingScore, num);
+                  setToast(prev => ({ ...prev, visible: false }));
+                }}
+              />
+            ))}
           </View>
         )}
       </Toast>

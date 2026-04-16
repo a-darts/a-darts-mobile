@@ -81,7 +81,7 @@ export class PlayerX01 {
   // Lógica de negocio
   // -------------------------------------------------------------------------
 
-  public addThrow(score: number): void {
+  public addThrow(score: number, dartsUsed: number = 3): void {
     const newRemaining = this._remainingScore - score;
     const newDartCount = (this._throws.length) * 3;
     const newThrow = new ThrowX01(
@@ -91,7 +91,7 @@ export class PlayerX01 {
     );
 
     // Update Stats
-    this._stats = this._stats.updateWithNewScore(score);
+    this._stats = this._stats.updateWithNewScore(score, dartsUsed);
 
     // Update (just if newThrow is valid)
     this._remainingScore = newRemaining;

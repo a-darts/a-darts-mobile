@@ -97,7 +97,7 @@ const styles = StyleSheet.create({
     toastText: {
         color: theme.colors.toastText,
         fontFamily: theme.typography.fontFamily.bold,
-        fontSize: theme.typography.sizes.lg,
+        fontSize: theme.typography.sizes.md,
         textAlign: 'center',
     },
     toastSubText: {

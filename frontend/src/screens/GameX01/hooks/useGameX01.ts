@@ -74,11 +74,11 @@ export const useGameX01 = (navigation: any, route: any) => {
 
     const handleBackspace = () => setInputValue(prev => prev.slice(0, -1));
 
-    const submitScore = async (scoreNum: number) => {
+    const submitScore = async (scoreNum: number, dartsUsed: number = 3) => {
         if (!match) return;
 
         try {
-            const updatedMatch = await matchX01Service.addThrow(match.id, scoreNum);
+            const updatedMatch = await matchX01Service.addThrow(match.id, scoreNum, dartsUsed);
 
             // Actualizamos el estado con la nueva instancia (esto dispara el re-render)
             setMatch(updatedMatch);
@@ -173,11 +173,6 @@ export const useGameX01 = (navigation: any, route: any) => {
         });
     };
 
-    const handleGameShotNumDarts = async (scoreNum: number, numDarts: number) => {
-        await submitScore(scoreNum);
-        closeToast();
-    };
-
     const handleSwapStartingPlayer = async () => {
         if (!match) return;
         try {
@@ -218,7 +213,6 @@ export const useGameX01 = (navigation: any, route: any) => {
         handleEnter,
         handleEnterRemaining,
         handleGameShot,
-        handleGameShotNumDarts,
         handleSwapStartingPlayer,
     };
 };

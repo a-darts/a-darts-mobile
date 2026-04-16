@@ -81,12 +81,13 @@ export const MatchX01SummaryScreen = ({ route, navigation }) => {
       style={styles.container}
       contentContainerStyle={styles.contentContainer}
     >
-      {/* Top User Profile Section */}
-      <Card style={styles.winnerCard}>
-        <Text style={[styles.winnerText]}>
-          ¡{winnerName} HA GANADO!
-        </Text>
-      </Card>
+      {match.players.length > 1 && (
+        <Card style={styles.winnerCard}>
+          <Text style={[styles.winnerText]}>
+            ¡{winnerName} HA GANADO!
+          </Text>
+        </Card>
+      )}
 
       <View style={styles.statsColumnsContainer}>
         {match.players.map((player, index) => (

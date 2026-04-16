@@ -28,7 +28,7 @@ export class MatchX01Service {
         return match;
     }
 
-    async addThrow(matchId: string, score: number): Promise<MatchX01> {
+    async addThrow(matchId: string, score: number, dartsUsed: number = 3): Promise<MatchX01> {
         // 1. Recuperamos la partida del repositorio
         const match = await this.matchRepository.getById(matchId);
 
@@ -37,7 +37,7 @@ export class MatchX01Service {
         }
 
         // 2. Ejecutamos la lógica de negocio (cambia el estado interno de las entidades)
-        match.addThrow(score);
+        match.addThrow(score, dartsUsed);
 
         // 3. Guardamos el estado actualizado
         await this.matchRepository.save(match);

@@ -86,7 +86,7 @@ export class MatchX01 {
 
     // Pre: status === 'PLAYING'
     // Post: snapshot saved && score added
-    public addThrow(score: number): void {
+    public addThrow(score: number, dartsUsed: number = 3): void {
         if (this._status === GameStatus.FINISHED) {
             throw new EndedMatchException('La partida ya ha finalizado');
         }
@@ -94,7 +94,7 @@ export class MatchX01 {
         this._history.push(this.takeSnapshot());
 
         const currentPlayer = this._players[this._activePlayerIndex];
-        currentPlayer.addThrow(score);
+        currentPlayer.addThrow(score, dartsUsed);
 
         if (currentPlayer.remainingScore === 0) {
             // Win 1 leg

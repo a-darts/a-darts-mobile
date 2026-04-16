@@ -37,11 +37,11 @@ export class PlayerX01Stats {
   // Domain methods
   // -------------------------------------------------------------------------
 
-  public updateWithNewScore(score: number): PlayerX01Stats {
+  public updateWithNewScore(score: number, dartsUsed: number = 3): PlayerX01Stats {
     // 1. Calcular Average
     const newTotalScore = this._totalScore + score;
     // MIRAR: en caso de cierre, no siempre van a ser 3 dardos
-    const newTotalDarts = this._totalDarts + 3;
+    const newTotalDarts = this._totalDarts + dartsUsed;
     const rawAverage = newTotalScore / newTotalDarts * 3;
     const newAverage = Math.round((rawAverage + Number.EPSILON) * 100) / 100;
 
