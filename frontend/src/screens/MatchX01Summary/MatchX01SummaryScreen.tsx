@@ -10,6 +10,7 @@ import { Button } from '../../components/Button';
 import { CreateMatchX01Request } from '../../../../backend/src/application/dtos/CreateMatchX01Request';
 
 import UserServiceFactory from '../../../../backend/src/infrastructure/factories/UserServiceFactory';
+import { Card } from '../../components/Card';
 
 
 // Obtenemos los servicios y el repo desde la Factoría
@@ -43,6 +44,7 @@ export const MatchX01SummaryScreen = ({ route, navigation }) => {
 
   if (!match) return null;
 
+  const winnerName = match.players[match.activePlayerIndex].name;
 
   const getBestValueColor = (currentValue, allPlayersValues) => {
     const max = Math.max(...allPlayersValues);
@@ -79,13 +81,22 @@ export const MatchX01SummaryScreen = ({ route, navigation }) => {
       style={styles.container}
       contentContainerStyle={styles.contentContainer}
     >
+      {/* Top User Profile Section */}
+      <Card style={styles.winnerCard}>
+        <Text style={[styles.winnerText]}>
+          ¡{winnerName} HA GANADO!
+        </Text>
+      </Card>
+
       <View style={styles.statsColumnsContainer}>
         {match.players.map((player, index) => (
           <View key={player.id || index} style={styles.playerColumn}>
-            {/* Nombre del jugador centrado sobre su columna */}
-            <Text style={styles.playerNameTitle} numberOfLines={1}>
-              {player.name}
-            </Text>
+
+            {match.players.length > 1 && (
+              <Text style={styles.playerNameTitle} numberOfLines={1}>
+                {player.name}
+              </Text>
+            )}
 
             <StatsCard
               title="Media"

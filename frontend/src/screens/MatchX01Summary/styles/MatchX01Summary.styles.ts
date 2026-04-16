@@ -9,6 +9,17 @@ export const styles = StyleSheet.create({
     contentContainer: {
         padding: theme.spacing.lg,
     },
+    winnerCard: {
+        alignItems: 'center',
+        paddingVertical: theme.spacing.lg,
+        marginBottom: theme.spacing.md,
+    },
+    winnerText: {
+        fontFamily: theme.typography.fontFamily.bold,
+        fontSize: theme.typography.sizes.lg,
+        color: theme.colors.buttonPrimaryBackground,
+        letterSpacing: 1,
+    },
     statsColumnsContainer: {
         flexDirection: 'row',
         justifyContent: 'center',
@@ -37,7 +48,7 @@ export const styles = StyleSheet.create({
     },
     buttonsContainer: {
         marginBottom: theme.spacing.xl,
-        marginTop: theme.spacing.md,
+        marginTop: theme.spacing.xl,
         gap: theme.spacing.md,
     },
 });
