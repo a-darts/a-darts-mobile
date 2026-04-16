@@ -18,7 +18,8 @@ export const GameX01Screen = ({ navigation, route }: any) => {
   } = useGameX01(navigation, route);
 
   const {
-    isNotPossibleToCheckOut
+    isBogeyNumber,
+    canCheckoutWithDarts,
   } = useKeypad();
 
   if (!match) {
@@ -26,7 +27,7 @@ export const GameX01Screen = ({ navigation, route }: any) => {
   }
 
   const scoreInput = parseInt(inputValue, 10);
-  const isLeftScoreButtonDisabled = inputValue === '' || isNotPossibleToCheckOut(scoreInput);
+  const isLeftScoreButtonDisabled = inputValue === '' || canCheckoutWithDarts(scoreInput, 3);
 
   const { players, activePlayer } = match;
   const activeIndex = (match as any).activePlayerIndex;
@@ -38,6 +39,11 @@ export const GameX01Screen = ({ navigation, route }: any) => {
     players.length > 1 && match.history.length === 0;
 
   const canUndoLastThrow = match.history.length !== 0;
+
+  const handleCheckout = async (numDarts: number) => {
+    setToast(prev => ({ ...prev, visible: false }));
+    await submitScore(activePlayer.remainingScore, numDarts);
+  };
 
   return (
     <SafeAreaView style={[styles.container]} edges={['bottom']}>
@@ -56,18 +62,19 @@ export const GameX01Screen = ({ navigation, route }: any) => {
       >
         {toast.title === '¿Con cuántos dardos has cerrado?' && (
           <View style={styles.toastButtonsContainer}>
-            {[1, 2, 3].map((num) => (
-              <Button
-                key={num}
-                title={num.toString()}
-                variant='secondary'
-                size="normal"
-                onPress={() => {
-                  submitScore(activePlayer.remainingScore, num);
-                  setToast(prev => ({ ...prev, visible: false }));
-                }}
-              />
-            ))}
+            {[1, 2, 3].map((num) => {
+              const isDisabled = !canCheckoutWithDarts(activePlayer.remainingScore, num);
+              return (
+                <Button
+                  key={num}
+                  title={num.toString()}
+                  variant='secondary'
+                  size="normal"
+                  disabled={isDisabled}
+                  onPress={() => { handleCheckout(num) }}
+                />
+              );
+            })}
           </View>
         )}
       </Toast>

@@ -1,21 +1,7 @@
 
-const bogeyNumbers = [169, 168, 166, 165, 163, 162, 159];
+const BOGEY_NUMBERS = [169, 168, 166, 165, 163, 162, 159];
 
 export const useKeypad = () => {
-    const isNotPossibleToCheckOut = (remainingScore: number): boolean => {
-        // 1. Imposible cerrar un número mayor que 170 o menor o igual que 1
-        if (remainingScore > 170 || remainingScore == 1 || remainingScore < 0) {
-            return true;
-        }
-
-        // 2. Imposible cerrar con 3 dardos los números Bogey
-        if (bogeyNumbers.includes(remainingScore)) {
-            return true;
-        }
-
-        return false;
-    };
-
     const getButtonStatus = (buttonScore: number, remainingScore: number) => {
         const isDisabled = buttonScore > remainingScore;
         return {
@@ -25,16 +11,39 @@ export const useKeypad = () => {
     };
 
     const getGameShotStatus = (remainingScore: number) => {
-        const isDisabled = isNotPossibleToCheckOut(remainingScore);
+        const isDisabled = !canCheckoutWithDarts(remainingScore, 3);
         return {
             isDisabled,
             style: { opacity: isDisabled ? 0.2 : 1 }
         };
     };
 
+    const isBogeyNumber = (score: number): boolean => {
+        return BOGEY_NUMBERS.includes(score) || score > 170;
+    };
+
+    const canCheckoutWithDarts = (score: number, darts: number): boolean => {
+        if (score <= 0 || isBogeyNumber(score)) return false;
+
+        if (darts === 1) {
+            // El máximo cierre con 1 dardo es 40 (D20) o 50 (Bullseye)
+            return score <= 40 && score % 2 == 0 || score == 50;
+        }
+        if (darts === 2) {
+            // El máximo cierre con 2 dardos es 110 (T20 + Bullseye)
+            return score <= 98 || score == 100 || score == 101 || score == 104 || score == 107 || score == 110;
+        }
+        if (darts === 3) {
+            // El máximo cierre con 3 dardos es 170
+            return score <= 158 || score == 160 || score == 161 || score == 164 || score == 167 || score == 170;
+        }
+        return false;
+    };
+
     return {
         getButtonStatus,
         getGameShotStatus,
-        isNotPossibleToCheckOut,
+        isBogeyNumber,
+        canCheckoutWithDarts,
     };
 }

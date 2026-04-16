@@ -27,11 +27,14 @@ export class ThrowX01 {
         if (remainingScore < 0) {
             throw new BustException('Puntuación inválida');
         }
+        if (remainingScore === 1) {
+            throw new InvalidThrowException('El resto no puede ser 1');
+        }
         if (score < 0) {
             throw new InvalidThrowException('La puntuación no puede ser menor que 0');
         }
-        if (remainingScore === 1) {
-            throw new InvalidThrowException('El resto no puede ser 1');
+        if (score == 179 || score == 178 || score == 176 || score == 175 || score == 173 || score == 172 || score == 169) {
+            throw new InvalidThrowException('Puntuación inválida');
         }
         if (dartCount % 3 !== 0) {
             throw new InvalidThrowException('Número de dardos de la tirada inválido');

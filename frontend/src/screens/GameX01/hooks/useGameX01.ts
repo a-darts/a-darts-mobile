@@ -5,6 +5,7 @@ import { TYPE_OPTIONS } from '../constants/GameX01.constants';
 import MatchX01ServiceFactory from '../../../../../backend/src/infrastructure/factories/MatchX01ServiceFactory';
 import { BustException } from '../../../../../backend/src/domain/exceptions/Exceptions';
 import { GameStatus } from '../../../../../backend/src/domain/enums/GameStatus';
+import { useKeypad } from './useKeypad';
 
 // Obtenemos los servicios y el repo desde la Factoría (fuera del hook)
 const matchRepo = MatchX01ServiceFactory.getRepository();
@@ -21,6 +22,10 @@ type ToastState = {
 
 export const useGameX01 = (navigation: any, route: any) => {
     const { matchId } = route.params;
+
+    const {
+        canCheckoutWithDarts,
+    } = useKeypad();
 
     const [match, setMatch] = useState<MatchX01 | null>(null);
     const [inputValue, setInputValue] = useState('');
@@ -134,7 +139,7 @@ export const useGameX01 = (navigation: any, route: any) => {
         const score = parseInt(inputValue, 10);
         if (isNaN(score)) return;
 
-        if (isLegFinished(score)) {
+        if (isLegFinished(score) && canCheckoutWithDarts(score, 3)) {
             openToast({
                 title: '¿Con cuántos dardos has cerrado?',
                 description: '',
@@ -152,7 +157,7 @@ export const useGameX01 = (navigation: any, route: any) => {
         if (isNaN(remaining)) return;
 
         const score = match.activePlayer.remainingScore - remaining;
-        if (isLegFinished(score)) {
+        if (isLegFinished(score) && canCheckoutWithDarts(score, 3)) {
             openToast({
                 title: '¿Con cuántos dardos has cerrado?',
                 description: '',
