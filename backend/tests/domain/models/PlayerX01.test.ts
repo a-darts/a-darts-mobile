@@ -1,4 +1,5 @@
 import { PlayerX01 } from '../../../src/domain/models/PlayerX01';
+import { PlayerX01Stats } from '../../../src/domain/models/PlayerX01Stats';
 import { ThrowX01 } from '../../../src/domain/models/ThrowX01';
 
 describe('PlayerX01 Entity', () => {
@@ -23,12 +24,33 @@ describe('PlayerX01 Entity', () => {
                 new ThrowX01(0, 501, 0),
                 new ThrowX01(60, 441, 3)
             ];
-            const player = PlayerX01.restore(PLAYER_ID, PLAYER_NAME, 441, 1, 2, historicThrows);
+            const stats = new PlayerX01Stats(
+                0, 0, 0, 60, 60, 3,
+            );
+
+            const player = PlayerX01.restore(PLAYER_ID, PLAYER_NAME, 441, 1, 2, historicThrows, stats);
 
             expect(player.remainingScore).toBe(441);
             expect(player.numSetsWon).toBe(1);
             expect(player.numLegsWon).toBe(2);
             expect(player.throws).toHaveLength(2);
+        });
+
+        it('debería inicializar stats vacías al crear un jugador nuevo', () => {
+            const player = PlayerX01.create(PLAYER_NAME, INITIAL_SCORE);
+
+            expect(player.stats.average).toBe(0);
+            expect(player.stats.totalDarts).toBe(0);
+            expect(player.stats.oneEighties).toBe(0);
+        });
+
+        it('debería rehidratarse correctamente con sus estadísticas usando restore', () => {
+            const stats = new PlayerX01Stats(1, 1, 0, 100, 200, 6); // 2 tiradas, media 100
+            const player = PlayerX01.restore(PLAYER_ID, PLAYER_NAME, 301, 0, 0, [], stats);
+
+            expect(player.stats.average).toBe(100);
+            expect(player.stats.hundredPlus).toBe(1);
+            expect(player.stats.totalDarts).toBe(6);
         });
     });
 
@@ -63,6 +85,31 @@ describe('PlayerX01 Entity', () => {
             player.addThrow(40);
 
             expect(player.remainingScore).toBe(0);
+        });
+
+        it('debería actualizar las estadísticas al añadir un tiro', () => {
+            const player = PlayerX01.create(PLAYER_NAME, INITIAL_SCORE);
+
+            player.addThrow(180);
+
+            expect(player.stats.oneEighties).toBe(1);
+            expect(player.stats.totalScore).toBe(180);
+            expect(player.stats.average).toBe(180); // (180 / 3) * 3 = 180
+            expect(player.stats.totalDarts).toBe(3);
+        });
+
+        it('debería acumular estadísticas de múltiples tiros correctamente', () => {
+            const player = PlayerX01.create(PLAYER_NAME, INITIAL_SCORE);
+
+            player.addThrow(100); // +100
+            player.addThrow(140); // +140
+            player.addThrow(60);  // nada
+
+            expect(player.stats.hundredPlus).toBe(2);
+            expect(player.stats.hundredFortyPlus).toBe(1);
+            expect(player.stats.totalScore).toBe(300);
+            expect(player.stats.totalDarts).toBe(9);
+            expect(player.stats.average).toBe(100);
         });
     });
 
@@ -124,6 +171,30 @@ describe('PlayerX01 Entity', () => {
             expect(throws[2].dartCount).toBe(6);
         });
     });
+
+    describe('Snapshots with Stats', () => {
+        it('debería incluir las estadísticas en el snapshot', () => {
+            const player = PlayerX01.create(PLAYER_NAME, INITIAL_SCORE);
+            player.addThrow(180);
+
+            const snapshot = player.snapshot();
+
+            expect(snapshot.stats.oneEighties).toBe(1);
+            expect(snapshot.stats.average).toBe(180);
+        });
+
+        it('debería recuperar el estado completo (incluyendo stats) desde un snapshot', () => {
+            const player = PlayerX01.create(PLAYER_NAME, INITIAL_SCORE);
+            player.addThrow(140);
+            const snapshot = player.snapshot();
+
+            const restoredPlayer = PlayerX01.fromSnapshot(snapshot);
+
+            expect(restoredPlayer.stats.hundredFortyPlus).toBe(1);
+            expect(restoredPlayer.stats.totalScore).toBe(140);
+            expect(restoredPlayer.remainingScore).toBe(361);
+        });
+    });
 });
 
 describe('ThrowX01 Value Object', () => {
@@ -152,5 +223,44 @@ describe('ThrowX01 Value Object', () => {
         expect(t.score).toBe(140);
         expect(t.remainingScore).toBe(361);
         expect(t.dartCount).toBe(6);
+    });
+});
+
+describe('PlayerX01Stats Value Object', () => {
+    it('debería inicializarse con valores por defecto (ceros)', () => {
+        const stats = new PlayerX01Stats();
+        expect(stats.average).toBe(0);
+        expect(stats.totalDarts).toBe(0);
+    });
+
+    it('debería calcular correctamente el promedio al actualizar', () => {
+        let stats = new PlayerX01Stats();
+        stats = stats.updateWithNewScore(60);
+        stats = stats.updateWithNewScore(90);
+
+        // (60 + 90) / 6 dardos * 3 = 75 por dardo. 
+        expect(stats.average).toBe(75);
+        expect(stats.totalScore).toBe(150);
+    });
+
+    describe('Score Categories', () => {
+        it('debería identificar correctamente un 180', () => {
+            const stats = new PlayerX01Stats().updateWithNewScore(180);
+            expect(stats.oneEighties).toBe(1);
+            expect(stats.hundredFortyPlus).toBe(1); // 180 es >= 140
+            expect(stats.hundredPlus).toBe(1);      // 180 es >= 100
+        });
+
+        it('debería identificar correctamente un +140', () => {
+            const stats = new PlayerX01Stats().updateWithNewScore(140);
+            expect(stats.hundredFortyPlus).toBe(1);
+            expect(stats.oneEighties).toBe(0);
+        });
+
+        it('debería identificar correctamente un +100', () => {
+            const stats = new PlayerX01Stats().updateWithNewScore(100);
+            expect(stats.hundredPlus).toBe(1);
+            expect(stats.hundredFortyPlus).toBe(0);
+        });
     });
 });

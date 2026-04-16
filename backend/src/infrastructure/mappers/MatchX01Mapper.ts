@@ -2,8 +2,9 @@ import { MatchX01 } from '../../domain/models/MatchX01';
 import { PlayerX01 } from '../../domain/models/PlayerX01';
 import { ThrowX01 } from '../../domain/models/ThrowX01';
 import { MatchX01Config } from '../../domain/models/MatchX01Config';
-import { MatchX01DTO, MatchX01ConfigDTO, MatchX01SnapshotDTO, PlayerDTO, ThrowDTO } from '../persistence/MatchX01DTO';
+import { MatchX01DTO, MatchX01ConfigDTO, MatchX01SnapshotDTO, PlayerDTO, ThrowDTO, PlayerX01StatsDTO } from '../persistence/MatchX01DTO';
 import { GameStatus } from '../../domain/enums/GameStatus';
+import { PlayerX01Stats } from '../../domain/models/PlayerX01Stats';
 
 export class MatchX01Mapper {
     // -------------------------------------------------------------------------
@@ -20,24 +21,9 @@ export class MatchX01Mapper {
             c._playerNames ?? c.playerNames ?? [],
         );
 
-        const players = (raw.players || []).map((p: any) => {
-            const throwData = p._throws ?? p.throws ?? [];
-            const throws = throwData.map((t: any) =>
-                new ThrowX01(
-                    t._score ?? t.score,
-                    t._remainingScore ?? t.remainingScore,
-                    t._dartCount ?? t.dartCount,
-                )
-            );
-            return PlayerX01.restore(
-                p.id,
-                p.name,
-                p._remainingScore ?? p.remainingScore,
-                p._numSetsWon ?? p.numSetsWon,
-                p._numLegsWon ?? p.numLegsWon,
-                throws,
-            );
-        });
+        const players = (raw.players || []).map((p: any) =>
+            this.playerDTOtoPlayerX01(p as PlayerDTO)
+        );
 
         const history = (raw.history ?? []).map(
             (s: MatchX01SnapshotDTO) => MatchX01Mapper.snapshotDTOtoSnapshot(s)
@@ -84,7 +70,11 @@ export class MatchX01Mapper {
     // -------------------------------------------------------------------------
 
     private static throwDTOtoThrowX01(t: ThrowDTO): ThrowX01 {
-        return new ThrowX01(t.score, t.remainingScore, t.dartCount);
+        return new ThrowX01(
+            t.score,
+            t.remainingScore,
+            t.dartCount,
+        );
     }
 
     private static throwX01toDTO(t: ThrowX01): ThrowDTO {
@@ -95,8 +85,37 @@ export class MatchX01Mapper {
         };
     }
 
+    private static playerX01StatsDTOtoPlayerX01Stats(p: PlayerX01StatsDTO): PlayerX01Stats {
+        return new PlayerX01Stats(
+            p.hundredPlus,
+            p.hundredFortyPlus,
+            p.oneEighties,
+            p.average,
+            p.totalScore,
+            p.totalDarts,
+        );
+    }
+
+    private static playerX01StatstoPlayerX01StatsDTO(p: PlayerX01Stats): PlayerX01StatsDTO {
+        return {
+            hundredPlus: p.hundredPlus,
+            hundredFortyPlus: p.hundredFortyPlus,
+            oneEighties: p.oneEighties,
+            average: p.average,
+            totalScore: p.totalScore,
+            totalDarts: p.totalDarts,
+        };
+    }
+
     private static playerDTOtoPlayerX01(p: PlayerDTO): PlayerX01 {
-        const throws = p.throws.map(MatchX01Mapper.throwDTOtoThrowX01);
+        const throwData = p.throws ?? [];
+        const throws = throwData.map((t: any) => this.throwDTOtoThrowX01(t));
+
+        const statsData = p.stats;
+        const stats = statsData
+            ? this.playerX01StatsDTOtoPlayerX01Stats(statsData)
+            : new PlayerX01Stats();
+
         return PlayerX01.restore(
             p.id,
             p.name,
@@ -104,6 +123,7 @@ export class MatchX01Mapper {
             p.numSetsWon,
             p.numLegsWon,
             throws,
+            stats,
         );
     }
 
@@ -114,13 +134,14 @@ export class MatchX01Mapper {
             remainingScore: p.remainingScore,
             numSetsWon: p.numSetsWon,
             numLegsWon: p.numLegsWon,
-            throws: p.throws.map(MatchX01Mapper.throwX01toDTO),
+            throws: p.throws.map(t => this.throwX01toDTO(t)),
+            stats: this.playerX01StatstoPlayerX01StatsDTO(p.stats),
         };
     }
 
     private static snapshotDTOtoSnapshot(s: MatchX01SnapshotDTO) {
         return {
-            players: s.players.map(p => MatchX01Mapper.playerDTOtoPlayerX01(p).snapshot()),
+            players: s.players.map(p => this.playerDTOtoPlayerX01(p).snapshot()),
             activePlayerIndex: s.activePlayerIndex,
             startingPlayerIndexForLeg: s.startingPlayerIndexForLeg,
             startingPlayerIndexForSet: s.startingPlayerIndexForSet,
@@ -136,18 +157,10 @@ export class MatchX01Mapper {
         status: GameStatus;
     }): MatchX01SnapshotDTO {
         return {
-            players: s.players.map(p => ({
-                id: p.id,
-                name: p.name,
-                remainingScore: p.remainingScore,
-                numSetsWon: p.numSetsWon,
-                numLegsWon: p.numLegsWon,
-                throws: p.throws.map(t => ({
-                    score: t.score,
-                    remainingScore: t.remainingScore,
-                    dartCount: t.dartCount,
-                })),
-            })),
+            players: s.players.map((pSnapshot: any) => {
+                const player = PlayerX01.fromSnapshot(pSnapshot);
+                return this.playerX01toDTO(player);
+            }),
             activePlayerIndex: s.activePlayerIndex,
             startingPlayerIndexForLeg: s.startingPlayerIndexForLeg,
             startingPlayerIndexForSet: s.startingPlayerIndexForSet,

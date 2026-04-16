@@ -1,3 +1,4 @@
+import { PlayerX01Stats } from './PlayerX01Stats';
 import { ThrowX01 } from './ThrowX01';
 
 export interface PlayerX01Snapshot {
@@ -11,6 +12,14 @@ export interface PlayerX01Snapshot {
     remainingScore: number;
     dartCount: number;
   }[];
+  stats: {
+    hundredPlus: number,
+    hundredFortyPlus: number,
+    oneEighties: number,
+    average: number,
+    totalScore: number,
+    totalDarts: number,
+  };
 }
 
 /*
@@ -23,7 +32,7 @@ export class PlayerX01 {
   private _numSetsWon: number;
   private _numLegsWon: number;
   private _throws: ThrowX01[];
-
+  private _stats: PlayerX01Stats;
 
   // --------------------------------------------------------------------------
   // Constructor
@@ -36,6 +45,7 @@ export class PlayerX01 {
     numSets: number,
     numLegs: number,
     throws: ThrowX01[],
+    stats: PlayerX01Stats,
   ) {
     this.id = id;
     this._name = name;
@@ -43,6 +53,7 @@ export class PlayerX01 {
     this._numSetsWon = numSets;
     this._numLegsWon = numLegs;
     this._throws = [...throws];
+    this._stats = stats;
   }
 
 
@@ -61,6 +72,7 @@ export class PlayerX01 {
       0,
       0,
       [new ThrowX01(0, initialScore, 0)],
+      new PlayerX01Stats(),
     );
   }
 
@@ -77,6 +89,9 @@ export class PlayerX01 {
       newRemaining,
       newDartCount,
     );
+
+    // Update Stats
+    this._stats = this._stats.updateWithNewScore(score);
 
     // Update (just if newThrow is valid)
     this._remainingScore = newRemaining;
@@ -132,6 +147,10 @@ export class PlayerX01 {
     return [...this._throws];
   }
 
+  public get stats() {
+    return this._stats;
+  }
+
 
   // --------------------------------------------------------------------------
   // Restore: For repository mapper
@@ -144,6 +163,7 @@ export class PlayerX01 {
     numSetsWon: number,
     numLegsWon: number,
     throws: ThrowX01[],
+    stats: PlayerX01Stats,
   ): PlayerX01 {
     return new PlayerX01(
       id,
@@ -152,6 +172,7 @@ export class PlayerX01 {
       numSetsWon,
       numLegsWon,
       [...throws],
+      stats,
     );
   }
 
@@ -172,6 +193,14 @@ export class PlayerX01 {
         remainingScore: t.remainingScore,
         dartCount: t.dartCount,
       })),
+      stats: {
+        hundredPlus: this._stats.hundredPlus,
+        hundredFortyPlus: this._stats.hundredFortyPlus,
+        oneEighties: this._stats.oneEighties,
+        average: this._stats.average,
+        totalScore: this._stats.totalScore,
+        totalDarts: this._stats.totalDarts,
+      },
     };
   }
 
@@ -179,6 +208,23 @@ export class PlayerX01 {
     const throws = s.throws.map(
       t => new ThrowX01(t.score, t.remainingScore, t.dartCount)
     );
-    return new PlayerX01(s.id, s.name, s.remainingScore, s.numSetsWon, s.numLegsWon, throws);
+    const stats = new PlayerX01Stats(
+      s.stats.hundredPlus,
+      s.stats.hundredFortyPlus,
+      s.stats.oneEighties,
+      s.stats.average,
+      s.stats.totalScore,
+      s.stats.totalDarts,
+    );
+
+    return new PlayerX01(
+      s.id,
+      s.name,
+      s.remainingScore,
+      s.numSetsWon,
+      s.numLegsWon,
+      throws,
+      stats,
+    );
   }
 }

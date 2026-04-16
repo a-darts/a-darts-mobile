@@ -32,7 +32,18 @@ export interface PlayerDTO {
     numSetsWon: number;
     numLegsWon: number;
     throws: ThrowDTO[];
+    stats: PlayerX01StatsDTO;
 }
+
+export interface PlayerX01StatsDTO {
+    hundredPlus: number;
+    hundredFortyPlus: number;
+    oneEighties: number;
+    average: number;
+    totalScore: number;
+    totalDarts: number;
+}
+
 
 export interface ThrowDTO {
     score: number;
