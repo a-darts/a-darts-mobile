@@ -5,6 +5,7 @@ import { LoginScreen } from '../screens/Login/LoginScreen';
 import { HomeScreen } from '../screens/Home/HomeScreen';
 import { ConfigX01Screen } from '../screens/ConfigX01/ConfigX01Screen';
 import { GameX01Screen } from '../screens/GameX01/GameX01Screen';
+import { MatchX01SummaryScreen } from '../screens/MatchX01Summary/MatchX01SummaryScreen';
 import { theme } from '../theme/theme';
 
 export type AppStackParamList = {
@@ -16,6 +17,7 @@ export type AppStackParamList = {
     typeOfGame?: string;
     numLegs?: number;
   };
+  MatchX01SummaryScreen: undefined;
 };
 
 const Stack = createNativeStackNavigator<AppStackParamList>();
@@ -60,6 +62,11 @@ export const AppNavigator = () => {
               ? `Partida ${route.params.game} (${route.params.typeOfGame} ${route.params.numLegs})`
               : 'Partida - x01',
           })}
+        />
+        <Stack.Screen
+          name="MatchX01SummaryScreen"
+          component={MatchX01SummaryScreen}
+          options={{ title: 'Resumen de la partida' }}
         />
       </Stack.Navigator>
     </NavigationContainer>

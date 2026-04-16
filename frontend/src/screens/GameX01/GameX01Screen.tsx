@@ -47,7 +47,12 @@ export const GameX01Screen = ({ navigation, route }: any) => {
         description={toast.description}
         type={toast.type}
         mode={toast.mode}
-        onFinished={() => setToast(prev => ({ ...prev, visible: false }))}
+        onFinished={() => {
+          setToast(prev => ({ ...prev, visible: false }))
+          if (toast.onCloseAction) {
+            toast.onCloseAction();
+          }
+        }}
       >
         {toast.title === '¿Con cuántos dardos has cerrado?' && (
           <View style={styles.toastButtonsContainer}>

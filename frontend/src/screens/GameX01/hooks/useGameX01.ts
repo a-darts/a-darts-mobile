@@ -16,8 +16,8 @@ type ToastState = {
     description?: string;
     type: 'error' | 'success';
     mode: 'auto' | 'manual';
+    onCloseAction?: () => void;
 };
-type ToastInput = Omit<ToastState, 'visible'>;
 
 export const useGameX01 = (navigation: any, route: any) => {
     const { matchId } = route.params;
@@ -90,6 +90,7 @@ export const useGameX01 = (navigation: any, route: any) => {
                     description: 'Partida finalizada',
                     type: 'success',
                     mode: 'auto',
+                    onCloseAction: () => navigation.navigate('MatchX01SummaryScreen', { matchId: match.id }),
                 });
             }
         } catch (error: any) {
@@ -187,7 +188,7 @@ export const useGameX01 = (navigation: any, route: any) => {
         return false;
     }
 
-    const openToast = (toast: ToastInput) => {
+    const openToast = (toast: any) => {
         setToast({ ...toast, visible: true });
     }
     const closeToast = () => {
