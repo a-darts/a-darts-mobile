@@ -46,7 +46,7 @@ export const MyProfileScreen = ({ navigation }) => {
             {/* User Info Card */}
             <Card style={styles.profileCard}>
                 <Avatar
-                    imageUri={require('../../../assets/dart_shape.png')}
+                    imageUri={require('../../../assets/dart_shape.gif')}
                 />
                 <Text style={styles.usernameText}>
                     {user?.name || 'Invitado'}

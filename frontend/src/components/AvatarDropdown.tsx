@@ -113,7 +113,7 @@ const styles = StyleSheet.create({
         alignItems: 'flex-end',
     },
     menuContainer: {
-        marginTop: 58,
+        marginTop: 64,
         marginRight: theme.spacing.md,
         backgroundColor: theme.colors.avatarDropdownBackground,
         borderRadius: 12,
