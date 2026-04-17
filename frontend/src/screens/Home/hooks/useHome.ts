@@ -38,10 +38,34 @@ export const useHome = (route: any) => {
         }
     };
 
+    const handlePlayRecentGame = async (config: any) => {
+        try {
+            // Convertimos la config (que puede ser Domain o DTO) a Request
+            // Usamos las propiedades públicas si es instancia, o las del DTO
+            const request = {
+                game: config.game || config._game,
+                typeOfGame: config.typeOfGame || config._typeOfGame,
+                numSets: config.numSets || config._numSets,
+                numLegs: config.numLegs || config._numLegs,
+                playerNames: config.playerNames || config._playerNames,
+            };
+
+            const match = await matchService.createMatchX01(request);
+
+            // Navegamos a la partida
+            // Nota: navigation se recibe desde HomeScreen
+            return match.id;
+        } catch (error) {
+            console.error("Error al reintentar partida:", error);
+            return null;
+        }
+    };
+
     return {
         username,
         isGuest,
         recentGames,
-        loadGames
+        loadGames,
+        handlePlayRecentGame
     };
 };

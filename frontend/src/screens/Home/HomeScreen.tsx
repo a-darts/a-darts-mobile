@@ -10,20 +10,34 @@ import { useHome } from './hooks/useHome';
 import { styles } from './styles/Home.styles';
 
 export const HomeScreen = ({ route, navigation }) => {
-  const { username, isGuest, recentGames } = useHome(route);
+  const { username, isGuest, recentGames, handlePlayRecentGame } = useHome(route);
+
+  const onPressPlayRecent = async (config) => {
+    const matchId = await handlePlayRecentGame(config);
+    if (matchId) {
+      navigation.navigate('GameX01Screen', { matchId });
+    }
+  };
 
   const renderGameItem = ({ item }) => {
-    console.log("ITEM:", item);
     return (
       <Card style={styles.gameCard}>
         <View style={styles.gameIconContainer}>
           <Feather name="rotate-ccw" size={20} color={theme.colors.textSecondary} />
         </View>
         <View style={styles.gameInfo}>
-          <Text style={styles.gameTitle}>{item.title}</Text>
-          <Text style={styles.gamePlayers}>{item.numPlayers} jugadores</Text>
+          <Text style={styles.gameTitle}>
+            {item.title}
+          </Text>
+          <Text style={styles.gamePlayers}>
+            {item.numPlayers} {item.numPlayers > 1 ? 'jugadores' : 'jugador'}
+          </Text>
         </View>
-        <TouchableOpacity style={styles.playButton} activeOpacity={0.7}>
+        <TouchableOpacity
+          style={styles.playButton}
+          activeOpacity={0.7}
+          onPress={() => onPressPlayRecent(item.config)}
+        >
           <Feather name="play" size={20} color={theme.colors.textSecondary} />
         </TouchableOpacity>
       </Card>
