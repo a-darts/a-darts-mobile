@@ -30,11 +30,6 @@ export const AvatarDropdown = () => {
         navigation.navigate('MyProfileScreen');
     };
 
-    const handleSettings = () => {
-        setShowMenu(false);
-        navigation.navigate('SettingsScreen');
-    };
-
     return (
         <View style={styles.container}>
             <TouchableOpacity
@@ -68,14 +63,6 @@ export const AvatarDropdown = () => {
                                 >
                                     <Feather name="user" size={18} color={theme.colors.avatarDropdownIcon} />
                                     <Text style={styles.menuItemText}>Mi perfil</Text>
-                                </TouchableOpacity>
-
-                                <TouchableOpacity
-                                    style={styles.menuItem}
-                                    onPress={handleSettings}
-                                >
-                                    <Feather name="settings" size={18} color={theme.colors.avatarDropdownIcon} />
-                                    <Text style={styles.menuItemText}>Ajustes</Text>
                                 </TouchableOpacity>
 
                                 <View style={styles.divider} />
