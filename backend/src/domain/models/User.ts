@@ -15,7 +15,7 @@ export class User {
     name: string,
   ) {
     this.id = id;
-    this._name = name;
+    this._name = name || 'Jugador';
   }
 
 
