@@ -15,7 +15,7 @@ export class User {
     name: string,
   ) {
     this.id = id;
-    this._name = name || 'Jugador';
+    this._name = name;
   }
 
 
@@ -25,9 +25,12 @@ export class User {
 
   public static create(
     name: string,
+    id?: string,
   ): User {
-    const id = Math.random().toString(36).substring(2, 9);
-    return new User(id, name);
+    return new User(
+      id ? id : Math.random().toString(36).substring(2, 9),
+      name
+    );
   }
 
 
@@ -37,5 +40,14 @@ export class User {
 
   public get name(): string {
     return this._name;
+  }
+
+
+  // --------------------------------------------------------------------------
+  // Setters
+  // --------------------------------------------------------------------------
+
+  public set name(name: string) {
+    this._name = name;
   }
 }

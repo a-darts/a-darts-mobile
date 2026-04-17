@@ -32,9 +32,10 @@ export const HomeScreen = ({ route, navigation }) => {
 
       {/* Top User Profile Section */}
       <Card style={styles.profileCard}>
-        <Text style={[styles.welcomeText]}>
-          HOLA DE NUEVO,
-        </Text>
+        <Avatar
+          isGuest={isGuest}
+          imageUri={require('../../../assets/dart_shape.png')}
+        />
         <Text style={[styles.usernameText, isGuest && styles.usernameTextGuest]}>
           {username.toUpperCase()}
         </Text>

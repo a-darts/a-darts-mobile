@@ -13,7 +13,7 @@ export class AsyncStorageUserRepository implements IUserRepository {
         const data = await AsyncStorage.getItem(this.USER_KEY);
         if (!data) return null;
         const parsed = JSON.parse(data);
-        return User.create(parsed.name);
+        return User.create(parsed._name, parsed.id);
     }
 
     async deleteUser(): Promise<void> {

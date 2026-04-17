@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Image, Text, StyleSheet } from 'react-native';
+import { MaterialIcons } from '@expo/vector-icons';
 import { theme } from '../theme/theme';
 
 interface AvatarProps {
@@ -11,6 +12,7 @@ interface AvatarProps {
 export const Avatar = (
   { isGuest = false, imageUri, size = 100 }: AvatarProps
 ) => {
+
   return (
     <View style={[styles.container, { width: size, height: size, borderRadius: size / 2 }]}>
       {isGuest ? (
@@ -18,10 +20,18 @@ export const Avatar = (
           <Text style={[styles.guestText]}>I</Text>
         </View>
       ) : (
-        <Image
-          source={{ uri: imageUri || 'https://xsgames.co/randomusers/assets/avatars/male/74.jpg' }}
-          style={[styles.image, { borderRadius: size / 2 }]}
-        />
+        imageUri ? (
+          <Image
+            source={imageUri}
+            style={[styles.image, { borderRadius: size / 2 }]}
+          />
+        ) : (
+          <MaterialIcons
+            name="person"
+            size={size * 0.7}
+            color={theme.colors.buttonPrimaryBackground}
+          />
+        )
       )}
     </View>
   );
