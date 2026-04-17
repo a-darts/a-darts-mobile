@@ -14,7 +14,7 @@ export const styles = StyleSheet.create({
         marginBottom: theme.spacing.xl,
     },
     sectionTitle: {
-        fontFamily: theme.typography.fontFamily.bold,
+        fontFamily: theme.typography.fontFamily.title,
         fontSize: theme.typography.sizes.sm,
         color: theme.colors.text,
         marginBottom: theme.spacing.md,

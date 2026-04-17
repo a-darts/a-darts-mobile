@@ -4,6 +4,13 @@ export const typography = {
     medium: 'Manrope_500Medium',
     semiBold: 'Manrope_600SemiBold',
     bold: 'Manrope_700Bold',
+
+    title: 'SpaceGrotesk_700Bold',
+    subTitle: 'SpaceGrotesk_500Medium',
+
+    primaryButtonText: 'SpaceGrotesk_700Bold',
+    secondaryButtonText: 'SpaceGrotesk_500Medium',
+    tertiaryButtonText: 'Manrope_400Regular',
   },
   sizes: {
     xs: 12,

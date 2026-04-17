@@ -146,14 +146,15 @@ const styles = StyleSheet.create({
   },
 
   smallText: {
+    fontFamily: theme.typography.fontFamily.tertiaryButtonText,
     fontSize: theme.typography.sizes.xs,
   },
   normalText: {
-    fontFamily: theme.typography.fontFamily.bold,
+    fontFamily: theme.typography.fontFamily.secondaryButtonText,
     fontSize: theme.typography.sizes.sm,
   },
   largeText: {
-    fontFamily: theme.typography.fontFamily.bold,
+    fontFamily: theme.typography.fontFamily.primaryButtonText,
     fontSize: theme.typography.sizes.md,
   },
 

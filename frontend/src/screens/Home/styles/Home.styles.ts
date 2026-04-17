@@ -14,8 +14,15 @@ export const styles = StyleSheet.create({
         paddingVertical: theme.spacing.xl,
         marginBottom: theme.spacing.md,
     },
+    welcomeText: {
+        fontFamily: theme.typography.fontFamily.title,
+        fontSize: theme.typography.sizes.xl,
+        color: theme.colors.text,
+        marginTop: theme.spacing.sm,
+        letterSpacing: 1,
+    },
     usernameText: {
-        fontFamily: theme.typography.fontFamily.bold,
+        fontFamily: theme.typography.fontFamily.title,
         fontSize: theme.typography.sizes.xl,
         color: theme.colors.buttonPrimaryBackground,
         marginTop: theme.spacing.sm,
@@ -32,8 +39,8 @@ export const styles = StyleSheet.create({
         flex: 1,
     },
     sectionTitle: {
-        fontFamily: theme.typography.fontFamily.bold,
-        fontSize: theme.typography.sizes.sm,
+        fontFamily: theme.typography.fontFamily.title,
+        fontSize: theme.typography.sizes.md,
         color: theme.colors.text,
         marginBottom: theme.spacing.md,
     },

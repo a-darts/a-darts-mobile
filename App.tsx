@@ -10,6 +10,11 @@ import {
   Manrope_600SemiBold,
   Manrope_700Bold
 } from '@expo-google-fonts/manrope';
+import {
+  SpaceGrotesk_400Regular,
+  SpaceGrotesk_500Medium,
+  SpaceGrotesk_700Bold
+} from '@expo-google-fonts/space-grotesk';
 
 export default function App() {
   const [fontsLoaded, setFontsLoaded] = useState(false);
@@ -21,6 +26,9 @@ export default function App() {
         Manrope_500Medium,
         Manrope_600SemiBold,
         Manrope_700Bold,
+        SpaceGrotesk_400Regular,
+        SpaceGrotesk_500Medium,
+        SpaceGrotesk_700Bold,
       });
       setFontsLoaded(true);
     }
