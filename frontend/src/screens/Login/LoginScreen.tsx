@@ -7,7 +7,7 @@ import { styles } from './styles/Login.styles';
 
 export const LoginScreen = ({ navigation }) => {
   const {
-    name, setName, error, isLoading,
+    alias, setAlias, error, isLoading,
     handleEntrar, handleEntrarComoInvitado,
   } = useLogin(navigation);
 
@@ -32,11 +32,11 @@ export const LoginScreen = ({ navigation }) => {
 
       <View style={styles.form}>
         <TextInput
-          description="Nombre"
-          placeholder="Introduce tu nombre"
+          description="Alias"
+          placeholder="Introduce tu alias"
           iconName="user"
-          value={name}
-          onChangeText={setName}
+          value={alias}
+          onChangeText={setAlias}
           autoCapitalize="words"
         />
 

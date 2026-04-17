@@ -4,7 +4,7 @@ import UserServiceFactory from '../../../../../backend/src/infrastructure/factor
 const userService = UserServiceFactory.getInstance();
 
 export const useLogin = (navigation: any) => {
-    const [name, setName] = useState('');
+    const [alias, setAlias] = useState('');
     const [error, setError] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(true);
 
@@ -30,19 +30,19 @@ export const useLogin = (navigation: any) => {
         }
     };
 
-    const handleNameChange = (text: string) => {
-        setName(text);
+    const handleAliasChange = (text: string) => {
+        setAlias(text);
         if (error) setError(null);
     };
 
     const handleEntrar = async () => {
-        if (!name.trim()) {
-            setError("* El nombre no puede estar vacío. Si no desea identificarse, pulse ENTRAR COMO INVITADO");
+        if (!alias.trim()) {
+            setError("* El alias no puede estar vacío. Si no deseas identificarte, pulsa ENTRAR COMO INVITADO");
             return;
         }
 
         try {
-            await userService.login(name.trim());
+            await userService.login(alias.trim());
 
             // Reiniciamos el stack para que el usuario no pueda volver atrás al login
             navigation.reset({
@@ -61,8 +61,8 @@ export const useLogin = (navigation: any) => {
     };
 
     return {
-        name,
-        setName: handleNameChange,
+        alias,
+        setAlias: handleAliasChange,
         error,
         isLoading,
         handleEntrar,
