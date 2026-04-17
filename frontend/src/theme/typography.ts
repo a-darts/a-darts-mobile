@@ -13,6 +13,7 @@ export const typography = {
     tertiaryButtonText: 'Manrope_400Regular',
   },
   sizes: {
+    xxs: 10,
     xs: 12,
     sm: 14,
     md: 16,

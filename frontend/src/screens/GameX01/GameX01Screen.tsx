@@ -27,7 +27,7 @@ export const GameX01Screen = ({ navigation, route }: any) => {
   }
 
   const scoreInput = parseInt(inputValue, 10);
-  const isLeftScoreButtonDisabled = inputValue === '' || canCheckoutWithDarts(scoreInput, 3);
+  const isLeftScoreButtonDisabled = inputValue === '' || !canCheckoutWithDarts(scoreInput, 3);
 
   const { players, activePlayer } = match;
   const activeIndex = (match as any).activePlayerIndex;

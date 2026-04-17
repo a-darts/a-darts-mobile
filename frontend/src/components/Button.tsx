@@ -74,14 +74,6 @@ export const Button = ({
       disabled={disabled}
     >
       <View style={styles.contentContainer}>
-        {!isPrimary && iconName && (
-          <MaterialIcons
-            name={iconName}
-            size={sizeIconSizes[size]}
-            color={variantIconColors[variant]}
-          />
-        )}
-
         <Text style={[
           styles[variantTextStyles[variant]],
           styles[sizeTextStyles[size]],
@@ -90,7 +82,7 @@ export const Button = ({
           {title}
         </Text>
 
-        {isPrimary && iconName && (
+        {iconName && (
           <MaterialIcons
             name={iconName}
             size={sizeIconSizes[size]}

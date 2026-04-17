@@ -104,7 +104,7 @@ const styles = StyleSheet.create({
     avatarText: {
         color: theme.colors.avatarText,
         fontFamily: theme.typography.fontFamily.semiBold,
-        fontSize: 16,
+        fontSize: theme.typography.sizes.sm,
     },
     modalOverlay: {
         flex: 1,

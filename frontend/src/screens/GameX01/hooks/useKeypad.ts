@@ -23,7 +23,7 @@ export const useKeypad = () => {
     };
 
     const canCheckoutWithDarts = (score: number, darts: number): boolean => {
-        if (score <= 0 || isBogeyNumber(score)) return false;
+        if (score < 0 || score == 1 || isBogeyNumber(score)) return false;
 
         if (darts === 1) {
             // El máximo cierre con 1 dardo es 40 (D20) o 50 (Bullseye)

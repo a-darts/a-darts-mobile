@@ -9,13 +9,11 @@ import MatchX01ServiceFactory from '../../../../backend/src/infrastructure/facto
 import { Button } from '../../components/Button';
 import { CreateMatchX01Request } from '../../../../backend/src/application/dtos/CreateMatchX01Request';
 
-import UserServiceFactory from '../../../../backend/src/infrastructure/factories/UserServiceFactory';
 import { Card } from '../../components/Card';
 
 
 // Obtenemos los servicios y el repo desde la Factoría
 const matchRepo = MatchX01ServiceFactory.getRepository();
-const userService = UserServiceFactory.getInstance();
 const matchX01Service = MatchX01ServiceFactory.getMatchX01Service();
 
 export const MatchX01SummaryScreen = ({ route, navigation }) => {
@@ -73,6 +71,13 @@ export const MatchX01SummaryScreen = ({ route, navigation }) => {
 
     // 4. Navegar a la partida pasando el ID generado
     navigation.navigate('GameX01Screen', { matchId: newMatch.id });
+  };
+
+  const handleExit = () => {
+    navigation.reset({
+      index: 0,
+      routes: [{ name: 'HomeScreen' }],
+    });
   };
 
 
@@ -140,7 +145,7 @@ export const MatchX01SummaryScreen = ({ route, navigation }) => {
           iconName="home"
           variant='secondary'
           size='large'
-          onPress={() => navigation.navigate('HomeScreen')}
+          onPress={handleExit}
         />
       </View>
     </ScrollView>

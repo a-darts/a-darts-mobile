@@ -29,7 +29,7 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   content: {
-    fontSize: theme.typography.sizes.xl,
+    fontSize: theme.typography.sizes.lg,
     color: theme.colors.statsCardText,
     fontWeight: 'bold',
   },

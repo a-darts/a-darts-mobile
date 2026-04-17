@@ -122,6 +122,7 @@ export const useGameX01 = (navigation: any, route: any) => {
     const handleUndo = async () => {
         if (!match) return;
         try {
+            setInputValue('');
             const updatedMatch = await matchX01Service.undoLastThrow(match.id);
             setMatch(updatedMatch);
         } catch (error: any) {

@@ -51,7 +51,7 @@ export const styles = StyleSheet.create({
     },
     averageText: {
         color: theme.colors.textSecondary,
-        fontSize: theme.typography.sizes.xs,
+        fontSize: theme.typography.sizes.xxs,
     },
 
     // Stats card (centre)
@@ -78,7 +78,7 @@ export const styles = StyleSheet.create({
     statsLabel: {
         color: theme.colors.textSecondary,
         fontFamily: theme.typography.fontFamily.regular,
-        fontSize: theme.typography.sizes.xs,
+        fontSize: theme.typography.sizes.xxs,
         letterSpacing: 2,
         marginTop: 2,
     },
@@ -141,12 +141,12 @@ export const styles = StyleSheet.create({
         marginBottom: theme.spacing.sm,
     },
     buttonsRow: {
-        flex: 4,
+        flex: 9,
         flexDirection: 'row',
         gap: theme.spacing.sm,
     },
     inputBox: {
-        flex: 1,
+        flex: 2,
         height: 50,
         backgroundColor: theme.colors.inputBoxBackground,
         borderRadius: theme.borderRadius.md,
