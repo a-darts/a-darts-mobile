@@ -81,6 +81,11 @@ export const HomeScreen = ({ route, navigation }) => {
           renderItem={renderGameItem}
           scrollEnabled={false}
           contentContainerStyle={styles.listContainer}
+          ListEmptyComponent={
+            <Text style={styles.emptyText}>
+              No se han encontrado partidas recientes
+            </Text>
+          }
         />
       </View>
 

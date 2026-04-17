@@ -83,5 +83,10 @@ export const styles = StyleSheet.create({
         borderColor: theme.colors.line,
         alignItems: 'center',
         justifyContent: 'center',
-    }
+    },
+    emptyText: {
+        fontFamily: theme.typography.fontFamily.regular,
+        fontSize: theme.typography.sizes.sm,
+        color: theme.colors.textSecondary,
+    },
 });
