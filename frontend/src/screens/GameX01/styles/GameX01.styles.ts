@@ -199,5 +199,10 @@ export const styles = StyleSheet.create({
     toastButtonsContainer: {
         flexDirection: 'row',
         gap: theme.spacing.md,
-    }
+    },
+    overlay: {
+        ...StyleSheet.absoluteFillObject,
+        backgroundColor: 'rgba(0, 0, 0, 0.6)',
+        zIndex: 998,
+    },
 });

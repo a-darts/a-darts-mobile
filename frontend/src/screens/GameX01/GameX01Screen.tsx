@@ -47,6 +47,9 @@ export const GameX01Screen = ({ navigation, route }: any) => {
 
   return (
     <SafeAreaView style={[styles.container]} edges={['bottom']}>
+      {toast.visible && (
+        <View style={styles.overlay} />
+      )}
       <Toast
         visible={toast.visible}
         title={toast.title}
