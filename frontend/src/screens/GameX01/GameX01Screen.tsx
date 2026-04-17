@@ -94,7 +94,7 @@ export const GameX01Screen = ({ navigation, route }: any) => {
             {p1.remainingScore}
           </Text>
           <Text style={styles.averageText}>
-            MEDIA: {p1.stats.average}
+            AVG: {p1.stats.average}
           </Text>
         </View>
 

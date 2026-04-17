@@ -30,7 +30,9 @@ export const ConfigX01Screen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollContent}>
+      <ScrollView
+        contentContainerStyle={styles.scrollContent}
+      >
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>JUEGO</Text>

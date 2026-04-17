@@ -47,8 +47,9 @@ export const styles = StyleSheet.create({
         marginVertical: theme.spacing.xs,
     },
     buttonsContainer: {
-        marginBottom: theme.spacing.xl,
-        marginTop: theme.spacing.xl,
+        padding: theme.spacing.lg,
+        paddingBottom: theme.spacing.xl,
+        paddingTop: theme.spacing.md,
         gap: theme.spacing.md,
     },
 });

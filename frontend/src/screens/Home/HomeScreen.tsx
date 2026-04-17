@@ -45,7 +45,10 @@ export const HomeScreen = ({ route, navigation }) => {
   };
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={styles.contentContainer}
+    >
 
       {/* Top User Profile Section */}
       <Card style={styles.profileCard}>

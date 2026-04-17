@@ -82,57 +82,58 @@ export const MatchX01SummaryScreen = ({ route, navigation }) => {
 
 
   return (
-    <ScrollView
-      style={styles.container}
-      contentContainerStyle={styles.contentContainer}
-    >
-      {match.players.length > 1 && (
-        <Card style={styles.winnerCard}>
-          <Text style={[styles.winnerText]}>
-            ¡{winnerName} HA GANADO!
-          </Text>
-        </Card>
-      )}
+    <View style={styles.container}>
+      <ScrollView
+        contentContainerStyle={styles.contentContainer}
+      >
+        {match.players.length > 1 && (
+          <Card style={styles.winnerCard}>
+            <Text style={[styles.winnerText]}>
+              ¡{winnerName} HA GANADO!
+            </Text>
+          </Card>
+        )}
 
-      <View style={styles.statsColumnsContainer}>
-        {match.players.map((player, index) => (
-          <View key={player.id || index} style={styles.playerColumn}>
+        <View style={styles.statsColumnsContainer}>
+          {match.players.map((player, index) => (
+            <View key={player.id || index} style={styles.playerColumn}>
 
-            {match.players.length > 1 && (
-              <Text style={styles.playerNameTitle} numberOfLines={1}>
-                {player.name}
-              </Text>
-            )}
+              {match.players.length > 1 && (
+                <Text style={styles.playerNameTitle} numberOfLines={1}>
+                  {player.name}
+                </Text>
+              )}
 
-            <StatsCard
-              title="Media"
-              content={player.stats.average.toFixed(2)}
-              borderColor={getBestValueColor(player.stats.average, averages)}
-              style={styles.card}
-            />
-            <StatsCard
-              title="+100"
-              content={player.stats.hundredPlus}
-              borderColor={getBestValueColor(player.stats.hundredPlus, hundreds)}
-              style={styles.card}
-            />
-            <StatsCard
-              title="+140"
-              content={player.stats.hundredFortyPlus}
-              borderColor={getBestValueColor(player.stats.hundredFortyPlus, hundredForties)}
-              style={styles.card}
-            />
-            <StatsCard
-              title="180s"
-              content={player.stats.oneEighties}
-              borderColor={getBestValueColor(player.stats.oneEighties, oneEighties)}
-              style={styles.card}
-            />
-          </View>
-        ))}
-      </View>
+              <StatsCard
+                title="Media"
+                content={player.stats.average.toFixed(2)}
+                borderColor={getBestValueColor(player.stats.average, averages)}
+                style={styles.card}
+              />
+              <StatsCard
+                title="+100"
+                content={player.stats.hundredPlus}
+                borderColor={getBestValueColor(player.stats.hundredPlus, hundreds)}
+                style={styles.card}
+              />
+              <StatsCard
+                title="+140"
+                content={player.stats.hundredFortyPlus}
+                borderColor={getBestValueColor(player.stats.hundredFortyPlus, hundredForties)}
+                style={styles.card}
+              />
+              <StatsCard
+                title="180s"
+                content={player.stats.oneEighties}
+                borderColor={getBestValueColor(player.stats.oneEighties, oneEighties)}
+                style={styles.card}
+              />
+            </View>
+          ))}
+        </View>
+      </ScrollView>
 
-      <View style={styles.buttonsContainer}>
+      <View style={[styles.buttonsContainer]}>
         <Button
           title="VOLVER A JUGAR"
           iconName="gps-fixed"
@@ -148,6 +149,6 @@ export const MatchX01SummaryScreen = ({ route, navigation }) => {
           onPress={handleExit}
         />
       </View>
-    </ScrollView>
+    </View>
   );
 };
