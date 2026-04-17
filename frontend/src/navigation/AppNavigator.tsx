@@ -9,7 +9,7 @@ import { MatchX01SummaryScreen } from '../screens/MatchX01Summary/MatchX01Summar
 import { theme } from '../theme/theme';
 
 export type AppStackParamList = {
-  Home: undefined;
+  Login: undefined;
   HomeScreen: undefined;
   ConfigX01: undefined;
   GameX01Screen: {
@@ -21,6 +21,8 @@ export type AppStackParamList = {
 };
 
 const Stack = createNativeStackNavigator<AppStackParamList>();
+
+import { AvatarDropdown } from '../components/AvatarDropdown';
 
 export const AppNavigator = () => {
   return (
@@ -37,10 +39,11 @@ export const AppNavigator = () => {
             fontFamily: theme.typography.fontFamily.semiBold,
             fontSize: theme.typography.sizes.md,
           },
+          headerRight: () => <AvatarDropdown />,
         }}
       >
         <Stack.Screen
-          name="Home"
+          name="Login"
           component={LoginScreen}
           options={{ title: 'scoreo' }}
         />

@@ -16,6 +16,8 @@ import {
   SpaceGrotesk_700Bold
 } from '@expo-google-fonts/space-grotesk';
 
+import { AuthProvider } from './frontend/src/utils/AuthContext';
+
 export default function App() {
   const [fontsLoaded, setFontsLoaded] = useState(false);
 
@@ -45,7 +47,9 @@ export default function App() {
 
   return (
     <SafeAreaProvider>
-      <AppNavigator />
+      <AuthProvider>
+        <AppNavigator />
+      </AuthProvider>
     </SafeAreaProvider>
   );
 }

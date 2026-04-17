@@ -7,6 +7,20 @@ export const colors = {
   activityIndicator: '#BFE55F',
   line: '#4C4C4C',
 
+  // Avatar
+  avatarBackground: '#2C2C2C',
+  avatarBorder: '#4C4C4C',
+  avatarText: '#FFFFFF',
+
+  avatarDropdownBackground: '#1A1A1A',
+  avatarDropdownBorder: '#4C4C4C',
+  avatarDropdownText: '#FFFFFF',
+  avatarDropdownIcon: '#FFFFFF',
+  avatarDropdownCloseText: '#FF4C4C',
+  avatarDropdownCloseIcon: '#FF4C4C',
+  avatarDropdownDivider: '#4C4C4C',
+
+
   // Cards
   cardBackground: '#1A1A1A',
   progressBackground: '#333333',

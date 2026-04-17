@@ -1,34 +1,23 @@
 import { useEffect, useState } from 'react';
-import UserServiceFactory from '../../../../../backend/src/infrastructure/factories/UserServiceFactory';
-
-const userService = UserServiceFactory.getInstance();
+import { useAuth } from '../../../utils/AuthContext';
 
 export const useLogin = (navigation: any) => {
+    const { login, logout, user } = useAuth();
     const [alias, setAlias] = useState('');
     const [error, setError] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        checkExistingUser();
-    }, []);
-
-    const checkExistingUser = async () => {
-        try {
-            const user = await userService.getCurrentUser();
-            if (user && user.name) {
-                // Si existe, redirigimos automáticamente
-                navigation.reset({
-                    index: 0,
-                    routes: [{ name: 'HomeScreen' }],
-                });
-            } else {
-                setIsLoading(false);
-            }
-        } catch (e) {
-            console.error("Error comprobando usuario persistido:", e);
+        if (user) {
+            // Si ya hay usuario en el contexto, redirigimos
+            navigation.reset({
+                index: 0,
+                routes: [{ name: 'HomeScreen' }],
+            });
+        } else {
             setIsLoading(false);
         }
-    };
+    }, [user]);
 
     const handleAliasChange = (text: string) => {
         setAlias(text);
@@ -42,13 +31,8 @@ export const useLogin = (navigation: any) => {
         }
 
         try {
-            await userService.login(alias.trim());
-
-            // Reiniciamos el stack para que el usuario no pueda volver atrás al login
-            navigation.reset({
-                index: 0,
-                routes: [{ name: 'HomeScreen' }],
-            });
+            await login(alias.trim());
+            // No navegamos aquí, el useEffect se encargará cuando el user cambie
         } catch (error) {
             console.error("Error en el login:", error);
             setError("Error al iniciar sesión");
@@ -56,7 +40,7 @@ export const useLogin = (navigation: any) => {
     };
 
     const handleEntrarComoInvitado = async () => {
-        await userService.logout();
+        await logout();
         navigation.navigate('HomeScreen');
     };
 
