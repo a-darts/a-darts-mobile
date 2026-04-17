@@ -12,14 +12,7 @@ export class MatchX01Mapper {
     // -------------------------------------------------------------------------
 
     static toDomain(raw: any): MatchX01 {
-        const c = raw.config || {};
-        const config = new MatchX01Config(
-            c._game ?? c.game ?? 501,
-            c._typeOfGame ?? c.typeOfGame,
-            c._numSets ?? c.numSets ?? 1,
-            c._numLegs ?? c.numLegs ?? 1,
-            c._playerNames ?? c.playerNames ?? [],
-        );
+        const config = MatchX01Mapper.configToDomain(raw.config || {});
 
         const players = (raw.players || []).map((p: any) =>
             MatchX01Mapper.playerDTOtoPlayerX01(p as PlayerDTO)
@@ -39,6 +32,27 @@ export class MatchX01Mapper {
             raw.status ?? 'PLAYING',
             history,
         );
+    }
+
+    static configToDomain(c: any): MatchX01Config {
+        return new MatchX01Config(
+            c._game ?? c.game ?? 501,
+            c._typeOfGame ?? c.typeOfGame,
+            c._numSets ?? c.numSets ?? 1,
+            c._numLegs ?? c.numLegs ?? 1,
+            c._playerNames ?? c.playerNames ?? [],
+        );
+    }
+
+    static configToDTO(config: MatchX01Config): MatchX01ConfigDTO {
+        const cfg = config as any;
+        return {
+            game: cfg._game ?? cfg.game,
+            typeOfGame: cfg._typeOfGame ?? cfg.typeOfGame,
+            numSets: cfg._numSets ?? cfg.numSets,
+            numLegs: cfg._numLegs ?? cfg.numLegs,
+            playerNames: cfg._playerNames ?? cfg.playerNames,
+        };
     }
 
     // -------------------------------------------------------------------------

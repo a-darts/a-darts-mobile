@@ -2,6 +2,9 @@ import { useState, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { DEFAULT_GAMES } from '../constants/Home.constants';
 import { useAuth } from '../../../utils/AuthContext';
+import MatchX01ServiceFactory from '../../../../../backend/src/infrastructure/factories/MatchX01ServiceFactory';
+
+const matchService = MatchX01ServiceFactory.getMatchX01Service();
 
 export const useHome = (route: any) => {
     const { user } = useAuth();
@@ -16,15 +19,21 @@ export const useHome = (route: any) => {
 
     const loadGames = async () => {
         try {
-            const storedGames = await AsyncStorage.getItem('@recent_games');
-            if (storedGames) {
-                setRecentGames(JSON.parse(storedGames));
+            const configs = await matchService.getRecentConfigs();
+
+            if (configs && configs.length > 0) {
+                const formattedGames = configs.map((cfg, index) => ({
+                    id: `recent-${index}`,
+                    title: `${cfg.game} - ${cfg.typeOfGame === 'bestOf' ? 'Al mejor de' : (cfg.typeOfGame === 'firstTo' ? 'A ganar' : '')} ${cfg.numLegs} legs`,
+                    numPlayers: cfg.playerNames.length,
+                    config: cfg
+                }));
+                setRecentGames(formattedGames);
             } else {
-                await AsyncStorage.setItem('@recent_games', JSON.stringify(DEFAULT_GAMES));
                 setRecentGames(DEFAULT_GAMES);
             }
         } catch (e) {
-            console.error(e);
+            console.error("Error loading recent games:", e);
             setRecentGames(DEFAULT_GAMES);
         }
     };

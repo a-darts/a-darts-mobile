@@ -24,8 +24,15 @@ export class MatchX01Service {
 
         // 4. Persistimos en el repositorio
         await this.matchRepository.save(match);
+        
+        // 5. Guardar en configuraciones recientes
+        await this.matchRepository.saveRecentConfig(config);
 
         return match;
+    }
+
+    async getRecentConfigs(): Promise<MatchX01Config[]> {
+        return await this.matchRepository.getRecentConfigs();
     }
 
     async addThrow(matchId: string, score: number, dartsUsed: number = 3): Promise<MatchX01> {

@@ -12,20 +12,23 @@ import { styles } from './styles/Home.styles';
 export const HomeScreen = ({ route, navigation }) => {
   const { username, isGuest, recentGames } = useHome(route);
 
-  const renderGameItem = ({ item }) => (
-    <Card style={styles.gameCard}>
-      <View style={styles.gameIconContainer}>
-        <Feather name="rotate-ccw" size={20} color={theme.colors.textSecondary} />
-      </View>
-      <View style={styles.gameInfo}>
-        <Text style={styles.gameTitle}>{item.title}</Text>
-        <Text style={styles.gamePlayers}>{item.players}</Text>
-      </View>
-      <TouchableOpacity style={styles.playButton} activeOpacity={0.7}>
-        <Feather name="play" size={20} color={theme.colors.textSecondary} />
-      </TouchableOpacity>
-    </Card>
-  );
+  const renderGameItem = ({ item }) => {
+    console.log("ITEM:", item);
+    return (
+      <Card style={styles.gameCard}>
+        <View style={styles.gameIconContainer}>
+          <Feather name="rotate-ccw" size={20} color={theme.colors.textSecondary} />
+        </View>
+        <View style={styles.gameInfo}>
+          <Text style={styles.gameTitle}>{item.title}</Text>
+          <Text style={styles.gamePlayers}>{item.numPlayers} jugadores</Text>
+        </View>
+        <TouchableOpacity style={styles.playButton} activeOpacity={0.7}>
+          <Feather name="play" size={20} color={theme.colors.textSecondary} />
+        </TouchableOpacity>
+      </Card>
+    );
+  };
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
