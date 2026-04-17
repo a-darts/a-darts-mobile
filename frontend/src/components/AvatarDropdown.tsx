@@ -98,7 +98,7 @@ export const AvatarDropdown = () => {
 
 const styles = StyleSheet.create({
     container: {
-        marginRight: 15,
+        marginRight: 16,
     },
     avatarButton: {
         width: 36,

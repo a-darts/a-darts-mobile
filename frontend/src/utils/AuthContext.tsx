@@ -7,6 +7,7 @@ interface AuthContextType {
     isLoading: boolean;
     login: (name: string) => Promise<void>;
     logout: () => Promise<void>;
+    updateUser: (name: string) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -51,8 +52,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         }
     };
 
+    const updateUser = async (name: string) => {
+        try {
+            const updatedUser = await userService.updateUser(name);
+            setUser(updatedUser);
+        } catch (error) {
+            console.error("Error updating user:", error);
+            throw error;
+        }
+    };
+
     return (
-        <AuthContext.Provider value={{ user, isLoading, login, logout }}>
+        <AuthContext.Provider value={{ user, isLoading, login, logout, updateUser }}>
             {children}
         </AuthContext.Provider>
     );

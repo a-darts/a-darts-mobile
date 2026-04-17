@@ -8,6 +8,8 @@ import { GameX01Screen } from '../screens/GameX01/GameX01Screen';
 import { MatchX01SummaryScreen } from '../screens/MatchX01Summary/MatchX01SummaryScreen';
 import { theme } from '../theme/theme';
 
+import { MyProfileScreen } from '../screens/MyProfile/MyProfileScreen';
+
 export type AppStackParamList = {
   Login: undefined;
   HomeScreen: undefined;
@@ -18,6 +20,8 @@ export type AppStackParamList = {
     numLegs?: number;
   };
   MatchX01SummaryScreen: undefined;
+  MyProfileScreen: undefined;
+  SettingsScreen: undefined;
 };
 
 const Stack = createNativeStackNavigator<AppStackParamList>();
@@ -50,12 +54,12 @@ export const AppNavigator = () => {
         <Stack.Screen
           name="HomeScreen"
           component={HomeScreen}
-          options={{ title: 'scoreo' }}
+          options={{ title: 'Inicio' }}
         />
         <Stack.Screen
           name="ConfigX01"
           component={ConfigX01Screen}
-          options={{ title: 'Nueva partida x01' }}
+          options={{ title: 'Nueva partida' }}
         />
         <Stack.Screen
           name="GameX01Screen"
@@ -70,6 +74,16 @@ export const AppNavigator = () => {
           name="MatchX01SummaryScreen"
           component={MatchX01SummaryScreen}
           options={{ title: 'Resumen de la partida' }}
+        />
+        <Stack.Screen
+          name="MyProfileScreen"
+          component={MyProfileScreen}
+          options={{ title: 'Mi perfil' }}
+        />
+        <Stack.Screen
+          name="SettingsScreen"
+          component={HomeScreen} // Placeholder
+          options={{ title: 'Ajustes' }}
         />
       </Stack.Navigator>
     </NavigationContainer>
