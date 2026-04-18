@@ -1,16 +1,20 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+
+import { IntroScreen } from '../screens/Intro/IntroScreen';
 import { LoginScreen } from '../screens/Login/LoginScreen';
 import { HomeScreen } from '../screens/Home/HomeScreen';
 import { ConfigX01Screen } from '../screens/ConfigX01/ConfigX01Screen';
 import { GameX01Screen } from '../screens/GameX01/GameX01Screen';
 import { MatchX01SummaryScreen } from '../screens/MatchX01Summary/MatchX01SummaryScreen';
-import { theme } from '../theme/theme';
-
 import { MyProfileScreen } from '../screens/MyProfile/MyProfileScreen';
 
+import { theme } from '../theme/theme';
+
+
 export type AppStackParamList = {
+  Intro: undefined;
   Login: undefined;
   HomeScreen: undefined;
   ConfigX01: undefined;
@@ -46,6 +50,11 @@ export const AppNavigator = () => {
           headerRight: () => <AvatarDropdown />,
         }}
       >
+        <Stack.Screen
+          name="Intro"
+          component={IntroScreen}
+          options={{ title: 'scoreo' }}
+        />
         <Stack.Screen
           name="Login"
           component={LoginScreen}

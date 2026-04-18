@@ -63,7 +63,6 @@ export class AsyncStorageMatchX01Repository implements IMatchX01Repository {
 
             // 3. Persistir
             const dtosToSave = toSave.map(c => MatchX01Mapper.configToDTO(c));
-            console.log("DTOS TO SAVE:", dtosToSave);
             await AsyncStorage.setItem(this.RECENT_KEY, JSON.stringify(dtosToSave));
         } catch (error) {
             console.error('Error saving recent config', error);

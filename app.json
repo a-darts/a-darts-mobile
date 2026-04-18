@@ -31,7 +31,8 @@
       "favicon": "./frontend/assets/favicon.png"
     },
     "plugins": [
-      "expo-font"
+      "expo-font",
+      "expo-video"
     ],
     "extra": {
       "eas": {

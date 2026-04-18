@@ -19,32 +19,28 @@ export const HomeScreen = ({ route, navigation }) => {
     }
   };
 
-  const renderGameItem = ({ item }) => {
-    console.log(recentGames);
-    console.log(item);
-    return (
-      <Card style={styles.gameCard}>
-        <View style={styles.gameIconContainer}>
-          <Feather name="rotate-ccw" size={20} color={theme.colors.textSecondary} />
-        </View>
-        <View style={styles.gameInfo}>
-          <Text style={styles.gameTitle}>
-            {item.title}
-          </Text>
-          <Text style={styles.gamePlayers}>
-            {item.numPlayers} {item.numPlayers > 1 ? 'jugadores' : 'jugador'}
-          </Text>
-        </View>
-        <TouchableOpacity
-          style={styles.playButton}
-          activeOpacity={0.7}
-          onPress={() => onPressPlayRecent(item.config)}
-        >
-          <Feather name="play" size={20} color={theme.colors.textSecondary} />
-        </TouchableOpacity>
-      </Card>
-    );
-  };
+  const renderGameItem = ({ item, index }) => (
+    <Card key={item.id || index} style={styles.gameCard}>
+      <View style={styles.gameIconContainer}>
+        <Feather name="rotate-ccw" size={20} color={theme.colors.textSecondary} />
+      </View>
+      <View style={styles.gameInfo}>
+        <Text style={styles.gameTitle}>
+          {item.title}
+        </Text>
+        <Text style={styles.gamePlayers}>
+          {item.numPlayers} {item.numPlayers > 1 ? 'jugadores' : 'jugador'}
+        </Text>
+      </View>
+      <TouchableOpacity
+        style={styles.playButton}
+        activeOpacity={0.7}
+        onPress={() => onPressPlayRecent(item.config)}
+      >
+        <Feather name="play" size={20} color={theme.colors.textSecondary} />
+      </TouchableOpacity>
+    </Card>
+  );
 
   return (
     <ScrollView
@@ -79,7 +75,7 @@ export const HomeScreen = ({ route, navigation }) => {
         <Text style={styles.sectionTitle}>PARTIDAS RECIENTES</Text>
         <View style={styles.listContainer}>
           {recentGames && recentGames.length > 0 ? (
-            recentGames.map((game) => renderGameItem({ item: game }))
+            recentGames.map((game, index) => renderGameItem({ item: game, index }))
           ) : (
             <Text style={styles.emptyText}>
               No se han encontrado partidas recientes
