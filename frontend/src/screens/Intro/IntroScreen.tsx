@@ -37,12 +37,11 @@ export const IntroScreen = () => {
 
     return (
         <View style={styles.container}>
-            {/* 3. Usamos VideoView en lugar de Video */}
             <VideoView
                 player={player}
                 style={styles.video}
-                contentMode="contain" // Equivale a ResizeMode.CONTAIN
-                nativeControls={false} // Quitamos los controles de play/pausa
+                contentFit="contain"
+                nativeControls={false}
             />
         </View>
     );
