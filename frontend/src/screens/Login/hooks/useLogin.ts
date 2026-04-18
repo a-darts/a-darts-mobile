@@ -9,11 +9,7 @@ export const useLogin = (navigation: any) => {
 
     useEffect(() => {
         if (user) {
-            // Si ya hay usuario en el contexto, redirigimos
-            navigation.reset({
-                index: 0,
-                routes: [{ name: 'HomeScreen' }],
-            });
+            navigation.navigate('HomeScreen');
         } else {
             setIsLoading(false);
         }
