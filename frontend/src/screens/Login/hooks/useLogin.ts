@@ -9,7 +9,10 @@ export const useLogin = (navigation: any) => {
 
     useEffect(() => {
         if (user) {
-            navigation.navigate('HomeScreen');
+            navigation.reset({
+                index: 0,
+                routes: [{ name: 'HomeScreen' }],
+            });
         } else {
             setIsLoading(false);
         }
