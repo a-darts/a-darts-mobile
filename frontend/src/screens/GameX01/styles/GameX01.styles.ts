@@ -62,7 +62,7 @@ export const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         padding: theme.spacing.sm,
-        marginHorizontal: theme.spacing.md,
+        marginHorizontal: theme.spacing.sm,
     },
     statsRowText: {
         fontFamily: theme.typography.fontFamily.semiBold,

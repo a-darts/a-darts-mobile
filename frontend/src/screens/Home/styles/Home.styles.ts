@@ -5,6 +5,7 @@ export const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: theme.colors.background,
+        paddingBottom: theme.spacing.xl,
     },
     contentContainer: {
         padding: theme.spacing.lg,
@@ -36,7 +37,8 @@ export const styles = StyleSheet.create({
         marginTop: theme.spacing.md,
     },
     recentGamesContainer: {
-        flex: 1,
+        // flex: 1,
+        width: '100%',
     },
     sectionTitle: {
         fontFamily: theme.typography.fontFamily.title,
@@ -88,5 +90,5 @@ export const styles = StyleSheet.create({
         fontFamily: theme.typography.fontFamily.regular,
         fontSize: theme.typography.sizes.sm,
         color: theme.colors.textSecondary,
-    },
+    }
 });

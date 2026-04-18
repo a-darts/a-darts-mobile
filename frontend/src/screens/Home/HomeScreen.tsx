@@ -20,6 +20,8 @@ export const HomeScreen = ({ route, navigation }) => {
   };
 
   const renderGameItem = ({ item }) => {
+    console.log(recentGames);
+    console.log(item);
     return (
       <Card style={styles.gameCard}>
         <View style={styles.gameIconContainer}>
@@ -75,18 +77,15 @@ export const HomeScreen = ({ route, navigation }) => {
       {/* Recent Games */}
       <View style={styles.recentGamesContainer}>
         <Text style={styles.sectionTitle}>PARTIDAS RECIENTES</Text>
-        <FlatList
-          data={recentGames}
-          keyExtractor={item => item.id}
-          renderItem={renderGameItem}
-          scrollEnabled={false}
-          contentContainerStyle={styles.listContainer}
-          ListEmptyComponent={
+        <View style={styles.listContainer}>
+          {recentGames && recentGames.length > 0 ? (
+            recentGames.map((game) => renderGameItem({ item: game }))
+          ) : (
             <Text style={styles.emptyText}>
               No se han encontrado partidas recientes
             </Text>
-          }
-        />
+          )}
+        </View>
       </View>
 
     </ScrollView>
