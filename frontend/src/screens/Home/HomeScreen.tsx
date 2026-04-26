@@ -51,7 +51,7 @@ export const HomeScreen = ({ route, navigation }) => {
       <Card style={styles.profileCard}>
         <Avatar
           isGuest={isGuest}
-          imageUri={require('../../../assets/dart_shape.gif')}
+          imageUri={require('../../../assets/dart_shape_green.gif')}
         />
         <Text style={[styles.usernameText, isGuest && styles.usernameTextGuest]}>
           {username.toUpperCase()}

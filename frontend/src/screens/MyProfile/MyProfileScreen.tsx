@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, ScrollView, StyleSheet } from 'react-native';
-import { Feather } from '@expo/vector-icons';
 import { Button } from '../../components/Button';
 import { Avatar } from '../../components/Avatar';
 import { Card } from '../../components/Card';
@@ -83,7 +82,7 @@ export const MyProfileScreen = ({ navigation }) => {
                 {/* User Info Card */}
                 <Card style={styles.profileCard}>
                     <Avatar
-                        imageUri={require('../../../assets/dart_shape.gif')}
+                        imageUri={require('../../../assets/dart_shape_green.gif')}
                     />
                     <Text style={styles.usernameText}>
                         {user?.name || 'Invitado'}
