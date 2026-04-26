@@ -1,8 +1,13 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { theme } from '../../../theme/theme';
 import { useKeypad } from '../hooks/useKeypad';
+
+const { width, height } = Dimensions.get('window');
+const aspectRatio = height / width;
+const isTablet = aspectRatio < 1.6 && width > 600;
+
 
 export const Keypad = ({
   onKeyPress,
@@ -159,16 +164,16 @@ const styles = StyleSheet.create({
   keyNum: {
     color: theme.colors.keyText,
     fontFamily: theme.typography.fontFamily.bold,
-    fontSize: theme.typography.sizes.lg,
+    fontSize: isTablet ? theme.typography.sizes.xxl : theme.typography.sizes.lg,
   },
   fastNum: {
     color: theme.colors.keyTextSecondary,
     fontFamily: theme.typography.fontFamily.bold,
-    fontSize: theme.typography.sizes.lg,
+    fontSize: isTablet ? theme.typography.sizes.xxl : theme.typography.sizes.lg,
   },
   gameShotBtnText: {
     color: theme.colors.keyTextSecondary,
     fontFamily: theme.typography.fontFamily.bold,
-    fontSize: theme.typography.sizes.md,
+    fontSize: isTablet ? theme.typography.sizes.xl : theme.typography.sizes.md,
   },
 });

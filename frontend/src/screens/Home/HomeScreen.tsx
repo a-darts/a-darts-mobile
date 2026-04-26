@@ -47,7 +47,6 @@ export const HomeScreen = ({ route, navigation }) => {
       style={styles.container}
       contentContainerStyle={styles.contentContainer}
     >
-
       {/* Top User Profile Section */}
       <Card style={styles.profileCard}>
         <Avatar
@@ -83,7 +82,6 @@ export const HomeScreen = ({ route, navigation }) => {
           )}
         </View>
       </View>
-
     </ScrollView>
   );
 };

@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity, Dimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useGameX01 } from './hooks/useGameX01';
 import { useKeypad } from './hooks/useKeypad';
@@ -8,6 +8,11 @@ import { Keypad } from './components/Keypad';
 import { Toast } from '../../components/Toast';
 import { styles } from './styles/GameX01.styles';
 import { Button } from '../../components/Button';
+
+const { width, height } = Dimensions.get('window');
+const aspectRatio = height / width;
+const isTablet = aspectRatio < 1.6 && width > 600;
+
 
 export const GameX01Screen = ({ navigation, route }: any) => {
   const {
@@ -26,9 +31,6 @@ export const GameX01Screen = ({ navigation, route }: any) => {
     return <View style={styles.container} />;
   }
 
-  const scoreInput = parseInt(inputValue, 10);
-  const isLeftScoreButtonDisabled = inputValue === '' || !canCheckoutWithDarts(scoreInput, 3);
-
   const { players, activePlayer } = match;
   const activeIndex = (match as any).activePlayerIndex;
 
@@ -44,6 +46,13 @@ export const GameX01Screen = ({ navigation, route }: any) => {
     setToast(prev => ({ ...prev, visible: false }));
     await submitScore(activePlayer.remainingScore, numDarts);
   };
+
+  const scoreInput = parseInt(inputValue, 10);
+  const newRemaining = activePlayer.remainingScore - scoreInput;
+  const isLeftScoreButtonDisabled =
+    inputValue === '' ||
+    !canCheckoutWithDarts(scoreInput, 3) ||
+    !canCheckoutWithDarts(newRemaining, 3);
 
   return (
     <SafeAreaView style={[styles.container]} edges={['bottom']}>
@@ -97,7 +106,7 @@ export const GameX01Screen = ({ navigation, route }: any) => {
             {p1.remainingScore}
           </Text>
           <Text style={styles.averageText}>
-            AVG: {p1.stats.average}
+            MEDIA: {p1.stats.average}
           </Text>
         </View>
 
@@ -146,7 +155,7 @@ export const GameX01Screen = ({ navigation, route }: any) => {
           title='Jugador inicial'
           iconName='swap-horiz'
           variant='tertiary'
-          size='normal'
+          size={isTablet ? 'large' : 'normal'}
           onPress={handleSwapStartingPlayer}
           style={styles.swapButton}
         />
@@ -159,7 +168,7 @@ export const GameX01Screen = ({ navigation, route }: any) => {
             <Button
               title='RESTO'
               variant='tertiary'
-              size='small'
+              size={isTablet ? 'large' : 'small'}
               onPress={handleEnterRemaining}
               disabled={isLeftScoreButtonDisabled}
               style={styles.topControlBtn}
@@ -167,7 +176,7 @@ export const GameX01Screen = ({ navigation, route }: any) => {
             <Button
               title='DESHACER'
               variant='tertiary'
-              size='small'
+              size={isTablet ? 'large' : 'small'}
               onPress={handleUndo}
               disabled={!canUndoLastThrow}
               style={styles.topControlBtn}

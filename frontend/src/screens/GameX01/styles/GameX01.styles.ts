@@ -1,5 +1,9 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Dimensions, Platform } from 'react-native';
 import { theme } from '../../../theme/theme';
+
+const { width, height } = Dimensions.get('window');
+const aspectRatio = height / width;
+const isTablet = aspectRatio < 1.6 && width > 600;
 
 export const styles = StyleSheet.create({
     container: {
@@ -27,6 +31,7 @@ export const styles = StyleSheet.create({
         borderRadius: theme.borderRadius.lg,
         backgroundColor: theme.colors.cardInactiveBackground,
         paddingHorizontal: theme.typography.sizes.xs,
+        paddingVertical: isTablet ? theme.spacing.md : 0,
     },
     playerCardActive: {
         borderColor: theme.colors.cardActiveBorder,
@@ -39,19 +44,19 @@ export const styles = StyleSheet.create({
     playerName: {
         color: theme.colors.text,
         fontFamily: theme.typography.fontFamily.semiBold,
-        fontSize: theme.typography.sizes.sm,
+        fontSize: isTablet ? theme.typography.sizes.lg : theme.typography.sizes.sm,
     },
     scoreLeftText: {
         color: theme.colors.textSecondary,
         fontFamily: theme.typography.fontFamily.bold,
-        fontSize: theme.typography.sizes.leftScore,
+        fontSize: isTablet ? theme.typography.sizes.leftScore * 2 : theme.typography.sizes.leftScore,
     },
     scoreActiveText: {
         color: theme.colors.buttonPrimaryBackground,
     },
     averageText: {
         color: theme.colors.textSecondary,
-        fontSize: theme.typography.sizes.xxs,
+        fontSize: isTablet ? theme.typography.sizes.md : theme.typography.sizes.xxs,
     },
 
     // Stats card (centre)
@@ -66,7 +71,7 @@ export const styles = StyleSheet.create({
     },
     statsRowText: {
         fontFamily: theme.typography.fontFamily.semiBold,
-        fontSize: theme.typography.sizes.md,
+        fontSize: isTablet ? theme.typography.sizes.xxl : theme.typography.sizes.md,
         color: theme.colors.text,
     },
     statsHighlight: {
@@ -78,7 +83,7 @@ export const styles = StyleSheet.create({
     statsLabel: {
         color: theme.colors.textSecondary,
         fontFamily: theme.typography.fontFamily.regular,
-        fontSize: theme.typography.sizes.xxs,
+        fontSize: isTablet ? theme.typography.sizes.md : theme.typography.sizes.xxs,
         letterSpacing: 2,
         marginTop: 2,
     },
@@ -101,7 +106,7 @@ export const styles = StyleSheet.create({
     tableCol: {
         flex: 1,
         fontFamily: theme.typography.fontFamily.regular,
-        fontSize: theme.typography.sizes.sm,
+        fontSize: isTablet ? theme.typography.sizes.xl : theme.typography.sizes.sm,
         color: theme.colors.text,
     },
     tableScore: {
@@ -126,7 +131,7 @@ export const styles = StyleSheet.create({
         borderRadius: theme.borderRadius.md,
         textAlign: 'center',
         fontFamily: theme.typography.fontFamily.bold,
-        fontSize: theme.typography.sizes.sm,
+        fontSize: isTablet ? theme.typography.sizes.xl : theme.typography.sizes.sm,
     },
 
     // Controls
@@ -158,7 +163,7 @@ export const styles = StyleSheet.create({
     inputText: {
         color: theme.colors.inputText,
         fontFamily: theme.typography.fontFamily.bold,
-        fontSize: theme.typography.sizes.lg,
+        fontSize: isTablet ? theme.typography.sizes.xl : theme.typography.sizes.lg,
     },
     topControlBtn: {
         flex: 1,
@@ -167,11 +172,6 @@ export const styles = StyleSheet.create({
         borderRadius: theme.borderRadius.md,
         alignItems: 'center',
         justifyContent: 'center',
-    },
-    topControlText: {
-        color: theme.colors.buttonPrimaryBackground,
-        fontFamily: theme.typography.fontFamily.bold,
-        fontSize: theme.typography.sizes.sm,
     },
 
     swapButton: {
@@ -189,11 +189,6 @@ export const styles = StyleSheet.create({
     },
     swapButtonIcon: {
         color: theme.colors.buttonTertiaryIcon,
-    },
-    swapButtonText: {
-        color: theme.colors.buttonTertiaryText,
-        fontFamily: theme.typography.fontFamily.bold,
-        fontSize: theme.typography.sizes.sm,
     },
 
     toastButtonsContainer: {
