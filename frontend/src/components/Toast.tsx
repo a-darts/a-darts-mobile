@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { Text, StyleSheet, Animated, View } from 'react-native';
 import { theme } from '../theme/theme';
 
-interface ToastProps {
+export interface ToastProps {
     visible: boolean,
     title: string,
     description: string,

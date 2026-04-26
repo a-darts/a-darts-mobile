@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, ScrollView, StyleSheet, Alert } from 'react-native';
+import { View, Text, ScrollView, StyleSheet } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { Button } from '../../components/Button';
 import { Avatar } from '../../components/Avatar';
@@ -8,10 +8,29 @@ import { TextInput } from '../../components/TextInput';
 import { theme } from '../../theme/theme';
 import { useAuth } from '../../utils/AuthContext';
 
+import { Toast } from '../../components/Toast';
+
+type ToastState = {
+    visible: boolean;
+    title: string;
+    description?: string;
+    type: 'error' | 'success';
+    mode: 'auto' | 'manual';
+    onCloseAction?: () => void;
+};
+
 export const MyProfileScreen = ({ navigation }) => {
     const { user, updateUser, logout } = useAuth();
     const [alias, setAlias] = useState(user?.name || '');
     const [isSaving, setIsSaving] = useState(false);
+
+    const [toast, setToast] = useState<ToastState>({
+        visible: false,
+        title: '',
+        description: '',
+        type: 'error',
+        mode: 'auto',
+    });
 
     useEffect(() => {
         if (user) {
@@ -21,17 +40,35 @@ export const MyProfileScreen = ({ navigation }) => {
 
     const handleSave = async () => {
         if (!alias.trim()) {
-            Alert.alert("Error", "El alias no puede estar vacío");
+            setToast({
+                visible: true,
+                title: 'Alias obligatorio',
+                description: 'El alias no puede estar vacío',
+                type: 'error',
+                mode: 'auto',
+            });
             return;
         }
 
         setIsSaving(true);
         try {
             await updateUser(alias.trim());
-            Alert.alert("Éxito", "Perfil actualizado correctamente");
+            setToast({
+                visible: true,
+                title: '¡Actualizado!',
+                description: 'Tu perfil ha sido actualizado correctamente',
+                type: 'success',
+                mode: 'auto',
+            });
         } catch (error) {
             console.error(error);
-            Alert.alert("Error", "No se pudo actualizar el perfil");
+            setToast({
+                visible: true,
+                title: 'Error',
+                description: 'No se pudo actualizar el perfil',
+                type: 'error',
+                mode: 'auto',
+            });
         } finally {
             setIsSaving(false);
         }
@@ -39,43 +76,55 @@ export const MyProfileScreen = ({ navigation }) => {
 
 
     return (
-        <ScrollView
-            style={styles.container}
-            contentContainerStyle={styles.contentContainer}
-        >
-            {/* User Info Card */}
-            <Card style={styles.profileCard}>
-                <Avatar
-                    imageUri={require('../../../assets/dart_shape.gif')}
-                />
-                <Text style={styles.usernameText}>
-                    {user?.name || 'Invitado'}
-                </Text>
-                <Text style={styles.userIdText}>ID: {user?.id || 'N/A'}</Text>
-            </Card>
+        <View style={styles.container}>
+            <ScrollView
+                contentContainerStyle={styles.contentContainer}
+            >
+                {/* User Info Card */}
+                <Card style={styles.profileCard}>
+                    <Avatar
+                        imageUri={require('../../../assets/dart_shape.gif')}
+                    />
+                    <Text style={styles.usernameText}>
+                        {user?.name || 'Invitado'}
+                    </Text>
+                    <Text style={styles.userIdText}>ID: {user?.id || 'N/A'}</Text>
+                </Card>
 
-            {/* Edit Section */}
-            <View style={styles.section}>
-                <Text style={styles.sectionTitle}>EDITAR PERFIL</Text>
-                <TextInput
-                    description="Alias"
-                    placeholder="Tu nombre de jugador"
-                    iconName="user"
-                    value={alias}
-                    onChangeText={setAlias}
-                />
+                {/* Edit Section */}
+                <View style={styles.section}>
+                    <Text style={styles.sectionTitle}>EDITAR PERFIL</Text>
+                    <TextInput
+                        description="Alias"
+                        placeholder="Tu nombre de jugador"
+                        iconName="user"
+                        value={alias}
+                        onChangeText={setAlias}
+                    />
 
-                <Button
-                    title={isSaving ? "GUARDANDO..." : "GUARDAR CAMBIOS"}
-                    variant="primary"
-                    size="large"
-                    iconName="save"
-                    onPress={handleSave}
-                    disabled={isSaving || alias === user?.name}
-                    style={styles.saveButton}
-                />
-            </View>
-        </ScrollView>
+                    <Button
+                        title={isSaving ? "GUARDANDO..." : "GUARDAR CAMBIOS"}
+                        variant="primary"
+                        size="large"
+                        iconName="save"
+                        onPress={handleSave}
+                        disabled={isSaving || alias === user?.name}
+                        style={styles.saveButton}
+                    />
+                </View>
+            </ScrollView>
+            {toast.visible && (
+                <View style={styles.overlay} />
+            )}
+            <Toast
+                visible={toast.visible}
+                title={toast.title}
+                description={toast.description}
+                type={toast.type}
+                mode={toast.mode}
+                onFinished={() => setToast(prev => ({ ...prev, visible: false }))}
+            />
+        </View>
     );
 };
 
@@ -115,5 +164,10 @@ const styles = StyleSheet.create({
     },
     saveButton: {
         marginTop: theme.spacing.xl,
-    }
+    },
+    overlay: {
+        ...StyleSheet.absoluteFillObject,
+        backgroundColor: 'rgba(0, 0, 0, 0.6)',
+        zIndex: 998,
+    },
 });
