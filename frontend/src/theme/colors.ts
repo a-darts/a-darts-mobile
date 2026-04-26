@@ -58,10 +58,10 @@ export const colors = {
   buttonTertiaryIcon: '#BFE55F',
   buttonTertiaryBorder: '#BFE55F',
 
-  buttonErrorBackground: 'transparent',
-  buttonErrorText: '#FF4C4C',
-  buttonErrorIcon: '#FF4C4C',
-  buttonErrorBorder: '#FF4C4C',
+  buttonErrorBackground: '#FF4C4C',
+  buttonErrorText: '#000000',
+  buttonErrorIcon: '#000000',
+  buttonErrorBorder: 'transparent',
 
   // Key
   keyBackground: '#242424',

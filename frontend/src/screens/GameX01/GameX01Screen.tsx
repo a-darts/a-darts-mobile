@@ -18,7 +18,7 @@ export const GameX01Screen = ({ navigation, route }: any) => {
   const {
     match, inputValue, toast, setToast, scrollViewRef,
     handleKeyPress, handleBackspace, handleUndo, submitScore,
-    handleEnter, handleEnterRemaining, handleGameShot,
+    handleEnter, handleEnterRemaining, handleGameShot, handleCheckout,
     handleSwapStartingPlayer,
   } = useGameX01(navigation, route);
 
@@ -26,6 +26,27 @@ export const GameX01Screen = ({ navigation, route }: any) => {
     isBogeyNumber,
     canCheckoutWithDarts,
   } = useKeypad();
+
+  // Si el usuario pulsa atrás, se le pide una segunda confirmación de la acción
+  React.useEffect(() => {
+    const unsubscribe = navigation.addListener('beforeRemove', (e) => {
+      e.preventDefault();
+
+      setToast({
+        visible: true,
+        title: '¿Salir de la partida?',
+        description: 'Si sales ahora, perderás el progreso del juego actual.',
+        type: 'error',
+        mode: 'manual',
+        onCloseAction: () => {
+          navigation.dispatch(e.data.action);
+        }
+      });
+    });
+
+    return unsubscribe;
+  }, [navigation]);
+
 
   if (!match) {
     return <View style={styles.container} />;
@@ -42,10 +63,6 @@ export const GameX01Screen = ({ navigation, route }: any) => {
 
   const canUndoLastThrow = match.history.length !== 0;
 
-  const handleCheckout = async (numDarts: number) => {
-    setToast(prev => ({ ...prev, visible: false }));
-    await submitScore(activePlayer.remainingScore, numDarts);
-  };
 
   const scoreInput = parseInt(inputValue, 10);
   const newRemaining = activePlayer.remainingScore - scoreInput;
@@ -53,6 +70,7 @@ export const GameX01Screen = ({ navigation, route }: any) => {
     inputValue === '' ||
     !canCheckoutWithDarts(scoreInput, 3) ||
     !canCheckoutWithDarts(newRemaining, 3);
+
 
   return (
     <SafeAreaView style={[styles.container]} edges={['bottom']}>
@@ -83,10 +101,33 @@ export const GameX01Screen = ({ navigation, route }: any) => {
                   variant='secondary'
                   size="normal"
                   disabled={isDisabled}
-                  onPress={() => { handleCheckout(num) }}
+                  onPress={() => { handleCheckout(activePlayer.remainingScore, num) }}
                 />
               );
             })}
+          </View>
+        )}
+        {toast.title === '¿Salir de la partida?' && (
+          <View style={styles.toastButtonsContainer}>
+            <Button
+              title="NO, QUEDARSE"
+              variant='error'
+              size="normal"
+              iconName="close"
+              onPress={() => setToast(prev => ({ ...prev, visible: false }))}
+            />
+            <Button
+              title="SÍ, SALIR"
+              variant='primary'
+              size="normal"
+              iconName="check"
+              onPress={() => {
+                setToast(prev => ({ ...prev, visible: false }));
+                if (toast.onCloseAction) {
+                  toast.onCloseAction();
+                }
+              }}
+            />
           </View>
         )}
       </Toast>

@@ -6,7 +6,7 @@ import { theme } from '../theme/theme';
 interface ButtonProps {
   title: string;
   onPress: () => void;
-  variant?: 'primary' | 'secondary' | 'tertiary';
+  variant?: 'primary' | 'secondary' | 'tertiary' | 'error';
   size?: 'small' | 'normal' | 'large';
   style?: any;
   iconName?: any;
@@ -17,18 +17,21 @@ const variantButtonStyles = {
   primary: 'primaryButton' as const,
   secondary: 'secondaryButton' as const,
   tertiary: 'tertiaryButton' as const,
+  error: 'errorButton' as const,
 };
 
 const variantTextStyles = {
   primary: 'primaryText' as const,
   secondary: 'secondaryText' as const,
   tertiary: 'tertiaryText' as const,
+  error: 'errorText' as const,
 };
 
 const variantIconColors = {
   primary: theme.colors.buttonPrimaryIcon,
   secondary: theme.colors.buttonSecondaryIcon,
   tertiary: theme.colors.buttonTertiaryIcon,
+  error: theme.colors.buttonErrorIcon,
 };
 
 const sizeButtonStyles = {
@@ -136,6 +139,11 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: theme.colors.buttonTertiaryBorder,
   },
+  errorButton: {
+    backgroundColor: theme.colors.buttonErrorBackground,
+    borderWidth: 1,
+    borderColor: theme.colors.buttonErrorBorder,
+  },
 
   smallText: {
     fontFamily: theme.typography.fontFamily.tertiaryButtonText,
@@ -158,5 +166,8 @@ const styles = StyleSheet.create({
   },
   tertiaryText: {
     color: theme.colors.buttonTertiaryText,
-  }
+  },
+  errorText: {
+    color: theme.colors.buttonErrorText,
+  },
 });

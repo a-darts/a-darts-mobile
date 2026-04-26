@@ -179,6 +179,11 @@ export const useGameX01 = (navigation: any, route: any) => {
         });
     };
 
+    const handleCheckout = async (scoreNum: number, numDarts: number) => {
+        setToast(prev => ({ ...prev, visible: false }));
+        await submitScore(scoreNum, numDarts);
+    };
+
     const handleSwapStartingPlayer = async () => {
         if (!match) return;
         try {
@@ -219,6 +224,7 @@ export const useGameX01 = (navigation: any, route: any) => {
         handleEnter,
         handleEnterRemaining,
         handleGameShot,
+        handleCheckout,
         handleSwapStartingPlayer,
     };
 };
