@@ -4,7 +4,7 @@ import { useVideoPlayer, VideoView } from 'expo-video';
 import { useNavigation, CommonActions } from '@react-navigation/native';
 import { theme } from '../../theme/theme';
 
-const videoSource = require('../../../assets/scoreo_animation.mp4');
+const videoSource = require('../../../assets/animation.mp4');
 
 export const IntroScreen = () => {
     const navigation = useNavigation();

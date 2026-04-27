@@ -24,7 +24,7 @@ export const LoginScreen = ({ navigation }) => {
       <View style={styles.header}>
         <Text style={styles.title}>Bienvenido a</Text>
         <Image
-          source={require('../../../assets/scoreo-white.png')}
+          source={require('../../../assets/logo_white.png')}
           style={styles.logoImage}
           resizeMode="contain"
         />
