@@ -25,7 +25,7 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.arianaporroche.a-darts"
+      "package": "com.adartsdevsorganization.adarts"
     },
     "web": {
       "favicon": "./frontend/assets/favicon.png"
@@ -37,8 +37,9 @@
     ],
     "extra": {
       "eas": {
-        "projectId": "ba9cb036-fa14-416f-87f9-73dbd3420f62"
+        "projectId": "a074d283-d844-43da-8414-9e215f12fbd1"
       }
-    }
+    },
+    "owner": "adartsdevs-organization"
   }
 }
