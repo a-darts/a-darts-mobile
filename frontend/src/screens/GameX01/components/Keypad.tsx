@@ -164,16 +164,16 @@ const styles = StyleSheet.create({
   keyNum: {
     color: theme.colors.keyText,
     fontFamily: theme.typography.fontFamily.bold,
-    fontSize: isTablet ? theme.typography.sizes.xxl : theme.typography.sizes.lg,
+    fontSize: isTablet ? theme.typography.sizes.xxxl : theme.typography.sizes.lg,
   },
   fastNum: {
     color: theme.colors.keyTextSecondary,
     fontFamily: theme.typography.fontFamily.bold,
-    fontSize: isTablet ? theme.typography.sizes.xxl : theme.typography.sizes.lg,
+    fontSize: isTablet ? theme.typography.sizes.xxxl : theme.typography.sizes.lg,
   },
   gameShotBtnText: {
     color: theme.colors.keyTextSecondary,
     fontFamily: theme.typography.fontFamily.bold,
-    fontSize: isTablet ? theme.typography.sizes.xl : theme.typography.sizes.md,
+    fontSize: isTablet ? theme.typography.sizes.xxl : theme.typography.sizes.md,
   },
 });

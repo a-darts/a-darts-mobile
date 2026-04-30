@@ -44,12 +44,12 @@ export const styles = StyleSheet.create({
     playerName: {
         color: theme.colors.text,
         fontFamily: theme.typography.fontFamily.semiBold,
-        fontSize: isTablet ? theme.typography.sizes.lg : theme.typography.sizes.sm,
+        fontSize: isTablet ? theme.typography.sizes.xl : theme.typography.sizes.sm,
     },
     scoreLeftText: {
         color: theme.colors.textSecondary,
         fontFamily: theme.typography.fontFamily.bold,
-        fontSize: isTablet ? theme.typography.sizes.leftScore * 2 : theme.typography.sizes.leftScore,
+        fontSize: isTablet ? theme.typography.sizes.leftScore * 2.5 : theme.typography.sizes.leftScore,
     },
     scoreActiveText: {
         color: theme.colors.buttonPrimaryBackground,
@@ -71,7 +71,7 @@ export const styles = StyleSheet.create({
     },
     statsRowText: {
         fontFamily: theme.typography.fontFamily.semiBold,
-        fontSize: isTablet ? theme.typography.sizes.xxl : theme.typography.sizes.md,
+        fontSize: isTablet ? theme.typography.sizes.xxxl : theme.typography.sizes.md,
         color: theme.colors.text,
     },
     statsHighlight: {
@@ -83,7 +83,7 @@ export const styles = StyleSheet.create({
     statsLabel: {
         color: theme.colors.textSecondary,
         fontFamily: theme.typography.fontFamily.regular,
-        fontSize: isTablet ? theme.typography.sizes.md : theme.typography.sizes.xxs,
+        fontSize: isTablet ? theme.typography.sizes.xl : theme.typography.sizes.xxs,
         letterSpacing: 2,
         marginTop: 2,
     },
@@ -106,11 +106,11 @@ export const styles = StyleSheet.create({
     tableCol: {
         flex: 1,
         fontFamily: theme.typography.fontFamily.regular,
-        fontSize: isTablet ? theme.typography.sizes.xl : theme.typography.sizes.sm,
+        fontSize: isTablet ? theme.typography.sizes.xxxl : theme.typography.sizes.sm,
         color: theme.colors.text,
     },
     tableScore: {
-        color: theme.colors.textSecondary,
+        color: theme.colors.text,
     },
     tableRemaining: {
         color: theme.colors.text,
@@ -131,7 +131,7 @@ export const styles = StyleSheet.create({
         borderRadius: theme.borderRadius.md,
         textAlign: 'center',
         fontFamily: theme.typography.fontFamily.bold,
-        fontSize: isTablet ? theme.typography.sizes.xl : theme.typography.sizes.sm,
+        fontSize: isTablet ? theme.typography.sizes.xxxl : theme.typography.sizes.sm,
     },
 
     // Controls
