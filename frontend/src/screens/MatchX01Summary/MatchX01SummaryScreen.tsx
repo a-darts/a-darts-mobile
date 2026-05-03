@@ -95,11 +95,11 @@ export const MatchX01SummaryScreen = ({ route, navigation }) => {
           {match.players.map((player, index) => (
             <View key={player.id || index} style={styles.playerColumn}>
 
-              {match.players.length > 1 && (
-                <Text style={styles.playerNameTitle} numberOfLines={1}>
-                  {player.name}
-                </Text>
-              )}
+              {/* {match.players.length > 1 && ( */}
+              <Text style={styles.playerNameTitle} numberOfLines={1}>
+                {player.name}
+              </Text>
+              {/* )} */}
 
               <StatsCard
                 title="Media"

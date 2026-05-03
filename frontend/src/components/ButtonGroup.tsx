@@ -28,10 +28,12 @@ export const ButtonGroup = ({ options, selectedValue, onSelect }) => {
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
     gap: theme.spacing.sm,
   },
   button: {
     flex: 1,
+    minWidth: 128,
     height: 50,
     backgroundColor: theme.colors.buttonSecondaryBackground,
     borderRadius: theme.borderRadius.md,
