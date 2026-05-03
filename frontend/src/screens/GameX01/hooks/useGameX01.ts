@@ -140,6 +140,15 @@ export const useGameX01 = (navigation: any, route: any) => {
         const score = parseInt(inputValue, 10);
         if (isNaN(score)) return;
 
+        if (isMatchFinished()) {
+            openToast({
+                title: 'ERROR',
+                description: 'La partida ya ha finalizado',
+                type: 'error',
+                mode: 'auto',
+            });
+            return;
+        }
         if (isLegFinished(score) && canCheckoutWithDarts(score, 3)) {
             openToast({
                 title: '¿Con cuántos dardos has cerrado?',
@@ -147,9 +156,10 @@ export const useGameX01 = (navigation: any, route: any) => {
                 type: 'success',
                 mode: 'manual',
             });
-        } else {
-            await submitScore(score);
+            return;
         }
+
+        await submitScore(score);
     };
 
     const handleEnterRemaining = async () => {
@@ -158,6 +168,16 @@ export const useGameX01 = (navigation: any, route: any) => {
         if (isNaN(remaining)) return;
 
         const score = match.activePlayer.remainingScore - remaining;
+
+        if (isMatchFinished()) {
+            openToast({
+                title: 'ERROR',
+                description: 'La partida ya ha finalizado',
+                type: 'error',
+                mode: 'auto',
+            });
+            return;
+        }
         if (isLegFinished(score) && canCheckoutWithDarts(score, 3)) {
             openToast({
                 title: '¿Con cuántos dardos has cerrado?',
@@ -165,9 +185,10 @@ export const useGameX01 = (navigation: any, route: any) => {
                 type: 'success',
                 mode: 'manual',
             });
-        } else {
-            await submitScore(score);
+            return;
         }
+
+        await submitScore(score);
     };
 
     const handleGameShot = async () => {
@@ -201,6 +222,11 @@ export const useGameX01 = (navigation: any, route: any) => {
 
     const isLegFinished = (scoreNum: number) => {
         if (scoreNum == match?.activePlayer.remainingScore) return true;
+        return false;
+    }
+
+    const isMatchFinished = () => {
+        if (match?.status === GameStatus.FINISHED) return true;
         return false;
     }
 

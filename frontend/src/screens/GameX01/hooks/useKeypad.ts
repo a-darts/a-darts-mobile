@@ -11,7 +11,7 @@ export const useKeypad = () => {
     };
 
     const getGameShotStatus = (remainingScore: number) => {
-        const isDisabled = !canCheckoutWithDarts(remainingScore, 3);
+        const isDisabled = !canCheckoutWithDarts(remainingScore, 3) || remainingScore == 0;
         return {
             isDisabled,
             style: { opacity: isDisabled ? 0.2 : 1 }

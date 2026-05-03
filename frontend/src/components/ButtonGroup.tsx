@@ -32,8 +32,7 @@ const styles = StyleSheet.create({
     gap: theme.spacing.sm,
   },
   button: {
-    flex: 1,
-    minWidth: 128,
+    minWidth: 100,
     height: 50,
     backgroundColor: theme.colors.buttonSecondaryBackground,
     borderRadius: theme.borderRadius.md,

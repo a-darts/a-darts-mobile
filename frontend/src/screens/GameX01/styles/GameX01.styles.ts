@@ -152,6 +152,7 @@ export const styles = StyleSheet.create({
     },
     inputBox: {
         flex: 2,
+        minHeight: 48,
         backgroundColor: theme.colors.inputBoxBackground,
         borderRadius: theme.borderRadius.md,
         borderBottomWidth: 1,
