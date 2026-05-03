@@ -55,7 +55,7 @@ export const Keypad = ({
   return (
     <View style={styles.container}>
       <View style={styles.keypadRow}>
-        <View style={styles.doubleKeyBtn}>
+        <View style={styles.fastBtnContainer}>
           <GameShotButton />
         </View>
         <View style={styles.separator} />
@@ -71,9 +71,19 @@ export const Keypad = ({
       </View>
 
       <View style={styles.keypadRow}>
-        <View style={styles.doubleKeyBtn}>
-          <FastButton score={26} />
-          <FastButton score={45} />
+        <View style={styles.fastBtnContainer}>
+          {isTablet ? (
+            <>
+              <FastButton score={26} />
+              <FastButton score={60} />
+              <FastButton score={100} />
+            </>
+          ) : (
+            <>
+              <FastButton score={26} />
+              <FastButton score={45} />
+            </>
+          )}
         </View>
         <View style={styles.separator} />
         <TouchableOpacity style={styles.keyBtn} onPress={() => onKeyPress('4')}>
@@ -88,9 +98,19 @@ export const Keypad = ({
       </View>
 
       <View style={styles.keypadRow}>
-        <View style={styles.doubleKeyBtn}>
-          <FastButton score={60} />
-          <FastButton score={85} />
+        <View style={styles.fastBtnContainer}>
+          {isTablet ? (
+            <>
+              <FastButton score={41} />
+              <FastButton score={81} />
+              <FastButton score={140} />
+            </>
+          ) : (
+            <>
+              <FastButton score={60} />
+              <FastButton score={85} />
+            </>
+          )}
         </View>
         <View style={styles.separator} />
         <TouchableOpacity style={styles.keyBtn} onPress={() => onKeyPress('7')}>
@@ -105,9 +125,19 @@ export const Keypad = ({
       </View>
 
       <View style={styles.keypadRow}>
-        <View style={styles.doubleKeyBtn}>
-          <FastButton score={100} />
-          <FastButton score={140} />
+        <View style={styles.fastBtnContainer}>
+          {isTablet ? (
+            <>
+              <FastButton score={45} />
+              <FastButton score={85} />
+              <FastButton score={180} />
+            </>
+          ) : (
+            <>
+              <FastButton score={100} />
+              <FastButton score={140} />
+            </>
+          )}
         </View>
         <View style={styles.separator} />
         <TouchableOpacity style={styles.keyBtn} onPress={onBackspace}>
@@ -143,8 +173,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  doubleKeyBtn: {
-    flex: 2,
+  fastBtnContainer: {
+    flex: isTablet ? 3 : 2,
     flexDirection: 'row',
     gap: theme.spacing.sm,
   },
@@ -164,16 +194,16 @@ const styles = StyleSheet.create({
   keyNum: {
     color: theme.colors.keyText,
     fontFamily: theme.typography.fontFamily.bold,
-    fontSize: isTablet ? theme.typography.sizes.xxxl : theme.typography.sizes.lg,
+    fontSize: theme.typography.sizes.lg,
   },
   fastNum: {
     color: theme.colors.keyTextSecondary,
     fontFamily: theme.typography.fontFamily.bold,
-    fontSize: isTablet ? theme.typography.sizes.xxxl : theme.typography.sizes.lg,
+    fontSize: theme.typography.sizes.lg,
   },
   gameShotBtnText: {
     color: theme.colors.keyTextSecondary,
     fontFamily: theme.typography.fontFamily.bold,
-    fontSize: isTablet ? theme.typography.sizes.xxl : theme.typography.sizes.md,
+    fontSize: theme.typography.sizes.lg,
   },
 });

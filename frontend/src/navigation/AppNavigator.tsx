@@ -58,7 +58,7 @@ export const AppNavigator = () => {
         <Stack.Screen
           name="Login"
           component={LoginScreen}
-          options={{ title: 'a-darts' }}
+          options={{ title: 'Inicio' }}
         />
         <Stack.Screen
           name="HomeScreen"
