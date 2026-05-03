@@ -63,6 +63,11 @@ export const colors = {
   buttonErrorIcon: '#000000',
   buttonErrorBorder: 'transparent',
 
+  buttonRemoveBackground: 'transparent',
+  buttonRemoveText: '#FF4C4C',
+  buttonRemoveIcon: '#FF4C4C',
+  buttonRemoveBorder: 'transparent',
+
   // Key
   keyBackground: '#242424',
   keyBorder: '#4C4C4C',

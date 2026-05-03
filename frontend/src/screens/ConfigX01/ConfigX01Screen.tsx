@@ -91,7 +91,11 @@ export const ConfigX01Screen = ({ navigation }) => {
                   style={styles.removePlayerBtn}
                   onPress={handleRemovePlayer}
                 >
-                  <Feather name="trash-2" size={20} color={theme.colors.inputTextError} />
+                  <Feather
+                    name="trash-2"
+                    size={20}
+                    color={theme.colors.buttonRemoveIcon}
+                  />
                 </TouchableOpacity>
               )}
             </View>

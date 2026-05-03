@@ -33,7 +33,7 @@ export const styles = StyleSheet.create({
 
     player2Row: {
         flexDirection: 'row',
-        alignItems: 'flex-start',
+        alignItems: 'center',
     },
     player2Input: {
         flex: 1,
@@ -43,11 +43,12 @@ export const styles = StyleSheet.create({
         height: 44,
         alignItems: 'center',
         justifyContent: 'center',
-        marginTop: 34,
+        marginTop: 20,
         marginLeft: theme.spacing.sm,
         borderWidth: 1,
-        borderColor: theme.colors.buttonErrorBorder,
         borderRadius: theme.borderRadius.round,
+        borderColor: theme.colors.buttonRemoveBorder,
+        backgroundColor: theme.colors.buttonRemoveBackground,
     },
     addPlayerBtn: {
         alignSelf: 'flex-start',
