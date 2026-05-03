@@ -74,10 +74,7 @@ export const MatchX01SummaryScreen = ({ route, navigation }) => {
   };
 
   const handleExit = () => {
-    navigation.reset({
-      index: 0,
-      routes: [{ name: 'HomeScreen' }],
-    });
+    navigation.navigate('HomeScreen');
   };
 
 
