@@ -118,6 +118,10 @@ export class MatchX01 {
 
         player.editThrow(throwIndex, newScore);
 
+        if (player.remainingScore === 0) {
+            this.handleLegWon(player);
+        }
+
         // Al editar una tirada intermedia, el historial de "undo" se vuelve inconsistente
         // Para simplificar, lo vaciamos
         this._history = [];

@@ -105,20 +105,35 @@ export class PlayerX01 {
 
     // 1. Update the target throw
     const previousRemaining = this._throws[index - 1].remainingScore;
+    const newRemaining = previousRemaining - newScore;
     this._throws[index] = new ThrowX01(
       newScore,
-      previousRemaining - newScore,
+      newRemaining,
       this._throws[index].dartCount
     );
 
-    // 2. Recalculate subsequent throws
-    for (let i = index + 1; i < this._throws.length; i++) {
-      const prevRem = this._throws[i - 1].remainingScore;
-      this._throws[i] = new ThrowX01(
-        this._throws[i].score,
-        prevRem - this._throws[i].score,
-        this._throws[i].dartCount
-      );
+    if (newRemaining === 0) {
+      this._throws = this._throws.slice(0, index + 1);
+    } else {
+      // 2. Recalculate subsequent throws
+      let truncateAt = -1;
+      for (let i = index + 1; i < this._throws.length; i++) {
+        const prevRem = this._throws[i - 1].remainingScore;
+        const currentRem = prevRem - this._throws[i].score;
+        this._throws[i] = new ThrowX01(
+          this._throws[i].score,
+          currentRem,
+          this._throws[i].dartCount
+        );
+        if (currentRem === 0) {
+          truncateAt = i;
+          break;
+        }
+      }
+
+      if (truncateAt !== -1) {
+        this._throws = this._throws.slice(0, truncateAt + 1);
+      }
     }
 
     // 3. Update current remaining score

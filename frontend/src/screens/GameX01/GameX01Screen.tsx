@@ -145,6 +145,7 @@ export const GameX01Screen = ({ navigation, route }: any) => {
                 title="CANCELAR"
                 variant='error'
                 size="normal"
+                iconName="close"
                 onPress={() => {
                   setEditingThrow(null);
                   setToast(prev => ({ ...prev, visible: false }));
@@ -154,6 +155,7 @@ export const GameX01Screen = ({ navigation, route }: any) => {
                 title="GUARDAR"
                 variant='primary'
                 size="normal"
+                iconName="check"
                 onPress={handleSaveEdit}
               />
             </View>

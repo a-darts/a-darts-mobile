@@ -241,7 +241,18 @@ export const useGameX01 = (navigation: any, route: any) => {
             );
             setMatch(updatedMatch);
             setEditingThrow(null);
-            closeToast();
+
+            if (updatedMatch.status === GameStatus.FINISHED) {
+                openToast({
+                    title: '¡Victoria!',
+                    description: 'Partida finalizada',
+                    type: 'success',
+                    mode: 'auto',
+                    onCloseAction: () => navigation.navigate('MatchX01SummaryScreen', { matchId: match.id }),
+                });
+            } else {
+                closeToast();
+            }
         } catch (error: any) {
             openToast({
                 title: 'Error',
