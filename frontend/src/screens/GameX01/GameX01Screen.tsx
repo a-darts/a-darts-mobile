@@ -142,17 +142,7 @@ export const GameX01Screen = ({ navigation, route }: any) => {
             />
             <View style={styles.toastButtonsContainer}>
               <Button
-                title="CANCELAR"
-                variant='error'
-                size="normal"
-                iconName="close"
-                onPress={() => {
-                  setEditingThrow(null);
-                  setToast(prev => ({ ...prev, visible: false }));
-                }}
-              />
-              <Button
-                title="GUARDAR"
+                title="CAMBIAR"
                 variant='primary'
                 size="normal"
                 iconName="check"
