@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react';
-import { Text, StyleSheet, Animated, View } from 'react-native';
+import { Text, StyleSheet, Animated, View, TouchableOpacity } from 'react-native';
+import { MaterialIcons } from '@expo/vector-icons';
 import { theme } from '../theme/theme';
 
 export interface ToastProps {
@@ -22,6 +23,14 @@ export const Toast = ({
     children,
 }: ToastProps) => {
     const fadeAnim = useRef(new Animated.Value(0)).current;
+
+    const handleClose = () => {
+        Animated.timing(fadeAnim, {
+            toValue: 0,
+            duration: 200,
+            useNativeDriver: true,
+        }).start(() => onFinished());
+    };
 
     useEffect(() => {
         if (visible) {
@@ -61,6 +70,19 @@ export const Toast = ({
                     : theme.colors.toastBorderError,
             }
         ]}>
+            {mode === 'manual' && (
+                <TouchableOpacity
+                    style={styles.closeButton}
+                    onPress={handleClose}
+                    activeOpacity={0.7}
+                >
+                    <MaterialIcons
+                        name="close"
+                        size={20}
+                        color={theme.colors.toastTextSecondary}
+                    />
+                </TouchableOpacity>
+            )}
             <Text style={styles.toastText}>{title}</Text>
             {description && (
                 <Text style={styles.toastSubText}>
@@ -112,5 +134,12 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         gap: theme.spacing.sm,
         marginTop: theme.spacing.md,
+    },
+    closeButton: {
+        position: 'absolute',
+        top: 12,
+        right: 12,
+        padding: 4,
+        zIndex: 1000,
     },
 });
