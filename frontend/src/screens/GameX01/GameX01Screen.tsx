@@ -8,6 +8,7 @@ import { Keypad } from './components/Keypad';
 import { Toast } from '../../components/Toast';
 import { styles } from './styles/GameX01.styles';
 import { Button } from '../../components/Button';
+import { TextInput } from '../../components/TextInput';
 
 const { width, height } = Dimensions.get('window');
 const aspectRatio = height / width;
@@ -20,6 +21,7 @@ export const GameX01Screen = ({ navigation, route }: any) => {
     handleKeyPress, handleBackspace, handleUndo, submitScore,
     handleEnter, handleEnterRemaining, handleGameShot, handleCheckout,
     handleSwapStartingPlayer,
+    editingThrow, setEditingThrow, handleEditThrowPress, handleSaveEdit,
   } = useGameX01(navigation, route);
 
   const {
@@ -130,6 +132,33 @@ export const GameX01Screen = ({ navigation, route }: any) => {
             />
           </View>
         )}
+        {toast.title === 'Editar tirada' && editingThrow && (
+          <View style={{ width: '100%', marginTop: 10 }}>
+            <TextInput
+              value={editingThrow.score}
+              onChangeText={(text) => setEditingThrow({ ...editingThrow, score: text })}
+              keyboardType="numeric"
+              autoFocus
+            />
+            <View style={styles.toastButtonsContainer}>
+              <Button
+                title="CANCELAR"
+                variant='error'
+                size="normal"
+                onPress={() => {
+                  setEditingThrow(null);
+                  setToast(prev => ({ ...prev, visible: false }));
+                }}
+              />
+              <Button
+                title="GUARDAR"
+                variant='primary'
+                size="normal"
+                onPress={handleSaveEdit}
+              />
+            </View>
+          </View>
+        )}
       </Toast>
 
       {/* Header */}
@@ -189,7 +218,12 @@ export const GameX01Screen = ({ navigation, route }: any) => {
         )}
       </View>
 
-      <GameTable p1={p1} p2={p2} scrollViewRef={scrollViewRef} />
+      <GameTable
+        p1={p1}
+        p2={p2}
+        scrollViewRef={scrollViewRef}
+        onEditThrow={handleEditThrowPress}
+      />
 
       {canSwapStartingPlayer && (
         <Button

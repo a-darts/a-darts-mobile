@@ -29,6 +29,7 @@ export const useGameX01 = (navigation: any, route: any) => {
 
     const [match, setMatch] = useState<MatchX01 | null>(null);
     const [inputValue, setInputValue] = useState('');
+    const [editingThrow, setEditingThrow] = useState<{ playerId: string, index: number, score: string } | null>(null);
     const [toast, setToast] = useState<ToastState>({
         visible: false,
         title: '',
@@ -215,6 +216,42 @@ export const useGameX01 = (navigation: any, route: any) => {
         await submitScore(scoreNum, numDarts);
     };
 
+    const handleEditThrowPress = (playerId: string, index: number, score: number) => {
+        if (index === 0) return; // No se puede editar el estado inicial
+        setEditingThrow({ playerId, index, score: score.toString() });
+        openToast({
+            title: 'Editar tirada',
+            description: 'Introduce la nueva puntuación',
+            type: 'success',
+            mode: 'manual',
+        });
+    };
+
+    const handleSaveEdit = async () => {
+        if (!match || !editingThrow) return;
+        const newScore = parseInt(editingThrow.score, 10);
+        if (isNaN(newScore)) return;
+
+        try {
+            const updatedMatch = await matchX01Service.editThrow(
+                match.id,
+                editingThrow.playerId,
+                editingThrow.index,
+                newScore
+            );
+            setMatch(updatedMatch);
+            setEditingThrow(null);
+            closeToast();
+        } catch (error: any) {
+            openToast({
+                title: 'Error',
+                description: error.message,
+                type: 'error',
+                mode: 'auto',
+            });
+        }
+    };
+
     const handleSwapStartingPlayer = async () => {
         if (!match) return;
         try {
@@ -262,5 +299,9 @@ export const useGameX01 = (navigation: any, route: any) => {
         handleGameShot,
         handleCheckout,
         handleSwapStartingPlayer,
+        editingThrow,
+        setEditingThrow,
+        handleEditThrowPress,
+        handleSaveEdit,
     };
 };

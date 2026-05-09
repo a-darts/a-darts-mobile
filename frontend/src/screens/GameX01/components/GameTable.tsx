@@ -1,8 +1,7 @@
-import React from 'react';
-import { ScrollView, View, Text } from 'react-native';
+import { ScrollView, View, Text, TouchableOpacity } from 'react-native';
 import { styles } from '../styles/GameX01.styles';
 
-export const GameTable = ({ p1, p2, scrollViewRef }: any) => {
+export const GameTable = ({ p1, p2, scrollViewRef, onEditThrow }: any) => {
     const maxThrows = Math.max(p1.throws.length, p2 ? p2.throws.length : 0);
     const throwRows = Array.from({ length: maxThrows }, (_, i) => ({
         p1: p1.throws[i] ?? null,
@@ -26,9 +25,14 @@ export const GameTable = ({ p1, p2, scrollViewRef }: any) => {
                             <View style={styles.spacer} />
 
                             <View style={styles.tableRowSecondary}>
-                                <Text style={[styles.tableCol, styles.tableScore, styles.textRight]}>
-                                    {showP1Score ? row.p1?.score : ''}
-                                </Text>
+                                <TouchableOpacity
+                                    onPress={() => onEditThrow(p1.id, index, row.p1?.score)}
+                                    disabled={index === 0 || !row.p1}
+                                >
+                                    <Text style={[styles.tableCol, styles.tableScore, styles.textRight]}>
+                                        {showP1Score ? row.p1?.score : ''}
+                                    </Text>
+                                </TouchableOpacity>
                                 <Text style={[styles.tableCol, styles.tableRemaining, styles.textRight]}>
                                     {row.p1?.remainingScore ?? ''}
                                 </Text>
@@ -49,9 +53,14 @@ export const GameTable = ({ p1, p2, scrollViewRef }: any) => {
                                     <Text style={[styles.tableCol, styles.tableRemaining, styles.textLeft]}>
                                         {row.p2?.remainingScore ?? ''}
                                     </Text>
-                                    <Text style={[styles.tableCol, styles.tableScore, styles.textLeft]}>
-                                        {showP2Score ? row.p2?.score : ''}
-                                    </Text>
+                                    <TouchableOpacity
+                                        onPress={() => onEditThrow(p2.id, index, row.p2?.score)}
+                                        disabled={index === 0 || !row.p2}
+                                    >
+                                        <Text style={[styles.tableCol, styles.tableScore, styles.textLeft]}>
+                                            {showP2Score ? row.p2?.score : ''}
+                                        </Text>
+                                    </TouchableOpacity>
                                 </View>
                             ) : (
                                 <View style={styles.spacer} />
