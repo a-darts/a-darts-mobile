@@ -110,6 +110,19 @@ export class MatchX01 {
         this.restoreSnapshot(previous);
     }
 
+    public editThrow(playerId: string, throwIndex: number, newScore: number): void {
+        const player = this._players.find(p => p.id === playerId);
+        if (!player) {
+            throw new Error(`Jugador con ID ${playerId} no encontrado`);
+        }
+
+        player.editThrow(throwIndex, newScore);
+
+        // Al editar una tirada intermedia, el historial de "undo" se vuelve inconsistente
+        // Para simplificar, lo vaciamos
+        this._history = [];
+    }
+
     public swapStartingPlayer(): void {
         // Solo permitido antes de la primera tirada
         if (this._history.length > 0) return;

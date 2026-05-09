@@ -62,6 +62,16 @@ export class MatchX01Service {
         return match;
     }
 
+    async editThrow(matchId: string, playerId: string, throwIndex: number, newScore: number): Promise<MatchX01> {
+        const match = await this.matchRepository.getById(matchId);
+        if (!match) throw new Error('Partida no encontrada');
+
+        match.editThrow(playerId, throwIndex, newScore);
+
+        await this.matchRepository.save(match);
+        return match;
+    }
+
     async swapStartingPlayer(matchId: string): Promise<MatchX01> {
         const match = await this.matchRepository.getById(matchId);
         if (!match) throw new Error('Partida no encontrada');

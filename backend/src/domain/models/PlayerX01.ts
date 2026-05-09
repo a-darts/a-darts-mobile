@@ -98,6 +98,47 @@ export class PlayerX01 {
     this._throws.push(newThrow);
   }
 
+  public editThrow(index: number, newScore: number): void {
+    if (index <= 0 || index >= this._throws.length) {
+      throw new Error('Índice de tirada inválido');
+    }
+
+    // 1. Update the target throw
+    const previousRemaining = this._throws[index - 1].remainingScore;
+    this._throws[index] = new ThrowX01(
+      newScore,
+      previousRemaining - newScore,
+      this._throws[index].dartCount
+    );
+
+    // 2. Recalculate subsequent throws
+    for (let i = index + 1; i < this._throws.length; i++) {
+      const prevRem = this._throws[i - 1].remainingScore;
+      this._throws[i] = new ThrowX01(
+        this._throws[i].score,
+        prevRem - this._throws[i].score,
+        this._throws[i].dartCount
+      );
+    }
+
+    // 3. Update current remaining score
+    this._remainingScore = this._throws[this._throws.length - 1].remainingScore;
+
+    // 4. Recalculate stats
+    this.recalculateStats();
+  }
+
+  private recalculateStats(): void {
+    let newStats = new PlayerX01Stats();
+    // Omitimos el índice 0 (estado inicial)
+    for (let i = 1; i < this._throws.length; i++) {
+      const t = this._throws[i];
+      // Asumimos 3 dardos por tirada ya que no se guardan individualmente
+      newStats = newStats.updateWithNewScore(t.score, 3);
+    }
+    this._stats = newStats;
+  }
+
   public winLeg(): void {
     this._numLegsWon++;
   }
