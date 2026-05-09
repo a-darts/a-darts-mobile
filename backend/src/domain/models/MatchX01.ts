@@ -116,15 +116,21 @@ export class MatchX01 {
             throw new Error(`Jugador con ID ${playerId} no encontrado`);
         }
 
+        // 1. Si editamos una tirada intermedia, el historial se vuelve inconsistente
+        const isLastThrow = throwIndex === player.throws.length - 1;
+        if (!isLastThrow) {
+            this._history = [];
+        }
+
+        // 2. Guardamos snapshot antes de editar para permitir undo
+        this._history.push(this.takeSnapshot());
+
+        // 3. Aplicamos el cambio
         player.editThrow(throwIndex, newScore);
 
         if (player.remainingScore === 0) {
             this.handleLegWon(player);
         }
-
-        // Al editar una tirada intermedia, el historial de "undo" se vuelve inconsistente
-        // Para simplificar, lo vaciamos
-        this._history = [];
     }
 
     public swapStartingPlayer(): void {
@@ -152,6 +158,11 @@ export class MatchX01 {
             this._players.forEach(p => p.resetForNewLeg(this._config.game));
             this.rotateStartingPlayerForLeg();
         }
+
+        // Si la partida ha terminado, nos aseguramos de que el jugador activo sea el ganador
+        if (this._status === GameStatus.FINISHED) {
+            this._activePlayerIndex = this._players.findIndex(p => p.id === winner.id);
+        }
     }
 
     private handleSetWon(winner: PlayerX01): void {
@@ -162,6 +173,7 @@ export class MatchX01 {
             // Win the match
             this._players.forEach(p => p.resetLegsForMatchEnd());
             this._status = GameStatus.FINISHED;
+            this._activePlayerIndex = this._players.findIndex(p => p.id === winner.id);
         } else {
             // Win 1 set
             this._players.forEach(p => p.resetForNewSet(this._config.game));

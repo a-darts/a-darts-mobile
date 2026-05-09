@@ -40,22 +40,22 @@ export const useGameX01 = (navigation: any, route: any) => {
     const scrollViewRef = useRef<ScrollView>(null);
 
     useEffect(() => {
-        const loadGame = async () => {
+        const loadMatch = async () => {
+            if (!matchId) return;
             const result = await matchRepo.getById(matchId);
-            if (!result) {
-                openToast({
-                    title: 'Error',
-                    description: 'No se pudo cargar la partida',
-                    type: 'error',
-                    mode: 'auto',
-                });
-                setTimeout(() => navigation.goBack(), 2000);
-                return;
+            if (result) {
+                setMatch(result);
             }
-            setMatch(result);
         };
-        loadGame();
-    }, [matchId]);
+
+        const unsubscribe = navigation.addListener('focus', () => {
+            loadMatch();
+        });
+
+        loadMatch();
+
+        return unsubscribe;
+    }, [navigation, matchId]);
 
     const handleKeyPress = (char: string) => {
         setInputValue(prev => {
