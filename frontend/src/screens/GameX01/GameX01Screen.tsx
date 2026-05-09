@@ -237,6 +237,7 @@ export const GameX01Screen = ({ navigation, route }: any) => {
           onEnter={handleEnter}
           onFastScore={submitScore}
           onGameShot={handleGameShot}
+          onCheckout={handleCheckout}
           remainingScore={activePlayer.remainingScore}
         />
       </View>

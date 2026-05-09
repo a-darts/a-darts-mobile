@@ -15,13 +15,41 @@ export const Keypad = ({
   onEnter,
   onFastScore,
   onGameShot,
+  onCheckout,
   remainingScore,
 }) => {
 
   const {
     getButtonStatus,
     getGameShotStatus,
+    canCheckoutWithDarts,
   } = useKeypad();
+
+
+  const NumberKey = ({ num }: { num: string }) => {
+    const n = parseInt(num, 10);
+    const canCheckout = (n >= 1 && n <= 3) && canCheckoutWithDarts(remainingScore, n);
+
+    return (
+      <TouchableOpacity
+        style={styles.keyBtn}
+        onPress={() => onKeyPress(num)}
+        onLongPress={() => {
+          if (canCheckout && onCheckout) {
+            onCheckout(remainingScore, n);
+          }
+        }}
+        delayLongPress={500}
+      >
+        <Text style={[
+          styles.keyNum,
+          canCheckout && { color: theme.colors.keyTextCheckout }
+        ]}>
+          {num}
+        </Text>
+      </TouchableOpacity>
+    );
+  };
 
 
   const FastButton = ({ score }: { score: number }) => {
@@ -59,15 +87,9 @@ export const Keypad = ({
           <GameShotButton />
         </View>
         <View style={styles.separator} />
-        <TouchableOpacity style={styles.keyBtn} onPress={() => onKeyPress('1')}>
-          <Text style={styles.keyNum}>1</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.keyBtn} onPress={() => onKeyPress('2')}>
-          <Text style={styles.keyNum}>2</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.keyBtn} onPress={() => onKeyPress('3')}>
-          <Text style={styles.keyNum}>3</Text>
-        </TouchableOpacity>
+        <NumberKey num="1" />
+        <NumberKey num="2" />
+        <NumberKey num="3" />
       </View>
 
       <View style={styles.keypadRow}>
@@ -86,15 +108,9 @@ export const Keypad = ({
           )}
         </View>
         <View style={styles.separator} />
-        <TouchableOpacity style={styles.keyBtn} onPress={() => onKeyPress('4')}>
-          <Text style={styles.keyNum}>4</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.keyBtn} onPress={() => onKeyPress('5')}>
-          <Text style={styles.keyNum}>5</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.keyBtn} onPress={() => onKeyPress('6')}>
-          <Text style={styles.keyNum}>6</Text>
-        </TouchableOpacity>
+        <NumberKey num="4" />
+        <NumberKey num="5" />
+        <NumberKey num="6" />
       </View>
 
       <View style={styles.keypadRow}>
@@ -113,15 +129,9 @@ export const Keypad = ({
           )}
         </View>
         <View style={styles.separator} />
-        <TouchableOpacity style={styles.keyBtn} onPress={() => onKeyPress('7')}>
-          <Text style={styles.keyNum}>7</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.keyBtn} onPress={() => onKeyPress('8')}>
-          <Text style={styles.keyNum}>8</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.keyBtn} onPress={() => onKeyPress('9')}>
-          <Text style={styles.keyNum}>9</Text>
-        </TouchableOpacity>
+        <NumberKey num="7" />
+        <NumberKey num="8" />
+        <NumberKey num="9" />
       </View>
 
       <View style={styles.keypadRow}>
@@ -143,9 +153,7 @@ export const Keypad = ({
         <TouchableOpacity style={styles.keyBtn} onPress={onBackspace}>
           <Feather name="delete" size={20} color={theme.colors.keyIcon} />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.keyBtn} onPress={() => onKeyPress('0')}>
-          <Text style={styles.keyNum}>0</Text>
-        </TouchableOpacity>
+        <NumberKey num="0" />
         <TouchableOpacity style={styles.keyBtn} onPress={onEnter}>
           <Feather name="corner-down-left" size={20} color={theme.colors.keyIcon} />
         </TouchableOpacity>

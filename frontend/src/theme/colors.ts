@@ -74,6 +74,7 @@ export const colors = {
   keyText: '#C7C7C7',
   keyTextSecondary: '#B3B3B3',
   keyIcon: '#C7C7C7',
+  keyTextCheckout: '#BFE55F',
 
   // Tabs
   tabActiveText: '#FFFFFF',

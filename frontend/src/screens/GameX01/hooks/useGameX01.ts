@@ -201,6 +201,16 @@ export const useGameX01 = (navigation: any, route: any) => {
     };
 
     const handleCheckout = async (scoreNum: number, numDarts: number) => {
+        if (isMatchFinished()) {
+            openToast({
+                title: 'ERROR',
+                description: 'La partida ya ha finalizado',
+                type: 'error',
+                mode: 'auto',
+            });
+            return;
+        }
+
         setToast(prev => ({ ...prev, visible: false }));
         await submitScore(scoreNum, numDarts);
     };
