@@ -113,23 +113,48 @@ export class MatchX01 {
     public editThrow(playerId: string, throwIndex: number, newScore: number): void {
         const player = this._players.find(p => p.id === playerId);
         if (!player) {
-            throw new Error(`Jugador con ID ${playerId} no encontrado`);
+            throw new Error('Jugador no encontrado');
         }
 
-        // 1. Si editamos una tirada intermedia, el historial se vuelve inconsistente
-        const isLastThrow = throwIndex === player.throws.length - 1;
-        if (!isLastThrow) {
-            this._history = [];
-        }
+        const oldLength = player.throws.length;
 
-        // 2. Guardamos snapshot antes de editar para permitir undo
-        this._history.push(this.takeSnapshot());
-
-        // 3. Aplicamos el cambio
+        // 1. Aplicamos el cambio al jugador
         player.editThrow(throwIndex, newScore);
 
+        // 2. Actualizamos el historial para que sea consistente con la edición
+        const truncated = player.throws.length < oldLength;
+
+        if (truncated) {
+            // Si hubo truncado (cierre), el historial posterior es inválido
+            this._history = [this.takeSnapshot()];
+        } else {
+            // Si no hay truncado, actualizamos todas las snapshots existentes
+            this._history = this._history.map(snap => {
+                const updatedPlayers = snap.players.map(pSnap => {
+                    if (pSnap.id !== playerId) return pSnap;
+                    // Solo si la snapshot contiene la tirada editada
+                    if (throwIndex >= pSnap.throws.length) return pSnap;
+
+                    try {
+                        const p = PlayerX01.fromSnapshot(pSnap);
+                        p.editThrow(throwIndex, newScore);
+                        return p.snapshot();
+                    } catch (e) {
+                        // Si falla la edición en la snapshot (p.ej. por bust), 
+                        // es mejor dejarla como está o marcarla para borrar
+                        return pSnap;
+                    }
+                });
+                return { ...snap, players: updatedPlayers };
+            });
+        }
+
+        // 3. Re-evaluar estado de la partida
         if (player.remainingScore === 0) {
             this.handleLegWon(player);
+        } else if (this._status === GameStatus.FINISHED) {
+            this._status = GameStatus.PLAYING;
+            this._activePlayerIndex = this._players.indexOf(player);
         }
     }
 

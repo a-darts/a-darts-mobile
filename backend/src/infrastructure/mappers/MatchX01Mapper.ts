@@ -22,6 +22,11 @@ export class MatchX01Mapper {
             (s: MatchX01SnapshotDTO) => MatchX01Mapper.snapshotDTOtoSnapshot(s)
         );
 
+        const statusStr = raw.status ?? 'PLAYING';
+        const status = isNaN(Number(statusStr))
+            ? (statusStr === 'FINISHED' ? GameStatus.FINISHED : GameStatus.PLAYING)
+            : Number(statusStr) as GameStatus;
+
         return MatchX01.restore(
             raw.id,
             config,
@@ -29,7 +34,7 @@ export class MatchX01Mapper {
             raw.activePlayerIndex ?? 0,
             raw.startingPlayerIndexForLeg ?? 0,
             raw.startingPlayerIndexForSet ?? 0,
-            raw.status ?? 'PLAYING',
+            status,
             history,
         );
     }
@@ -154,12 +159,17 @@ export class MatchX01Mapper {
     }
 
     private static snapshotDTOtoSnapshot(s: MatchX01SnapshotDTO) {
+        const statusStr = s.status ?? 'PLAYING';
+        const status = isNaN(Number(statusStr))
+            ? (statusStr === 'FINISHED' ? GameStatus.FINISHED : GameStatus.PLAYING)
+            : Number(statusStr) as GameStatus;
+
         return {
             players: s.players.map(p => MatchX01Mapper.playerDTOtoPlayerX01(p).snapshot()),
             activePlayerIndex: s.activePlayerIndex,
             startingPlayerIndexForLeg: s.startingPlayerIndexForLeg,
             startingPlayerIndexForSet: s.startingPlayerIndexForSet,
-            status: s.status,
+            status: status,
         };
     }
 
