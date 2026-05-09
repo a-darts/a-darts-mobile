@@ -40,6 +40,7 @@ export const GameX01Screen = ({ navigation, route }: any) => {
         description: 'Si sales ahora, perderás el progreso del juego actual.',
         type: 'error',
         mode: 'manual',
+        showCloseButton: false,
         onCloseAction: () => {
           navigation.dispatch(e.data.action);
         }
@@ -85,6 +86,7 @@ export const GameX01Screen = ({ navigation, route }: any) => {
         description={toast.description}
         type={toast.type}
         mode={toast.mode}
+        showCloseButton={toast.showCloseButton}
         onFinished={() => {
           setToast(prev => ({ ...prev, visible: false }))
           if (toast.onCloseAction) {

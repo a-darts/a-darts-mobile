@@ -18,6 +18,7 @@ type ToastState = {
     type: 'error' | 'success';
     mode: 'auto' | 'manual';
     onCloseAction?: () => void;
+    showCloseButton?: boolean;
 };
 
 export const useGameX01 = (navigation: any, route: any) => {
@@ -36,6 +37,7 @@ export const useGameX01 = (navigation: any, route: any) => {
         description: '',
         type: 'error',
         mode: 'auto',
+        showCloseButton: true,
     });
     const scrollViewRef = useRef<ScrollView>(null);
 
@@ -195,9 +197,9 @@ export const useGameX01 = (navigation: any, route: any) => {
     const handleGameShot = async () => {
         openToast({
             title: '¿Con cuántos dardos has cerrado?',
-            description: '',
             type: 'success',
             mode: 'manual',
+            showCloseButton: true,
         });
     };
 

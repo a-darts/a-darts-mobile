@@ -11,6 +11,7 @@ export interface ToastProps {
     mode: 'auto' | 'manual',
     onFinished: () => void,
     children?,
+    showCloseButton?: boolean,
 }
 
 export const Toast = ({
@@ -21,6 +22,7 @@ export const Toast = ({
     mode = 'auto',
     onFinished,
     children,
+    showCloseButton = true,
 }: ToastProps) => {
     const fadeAnim = useRef(new Animated.Value(0)).current;
 
@@ -70,7 +72,7 @@ export const Toast = ({
                     : theme.colors.toastBorderError,
             }
         ]}>
-            {mode === 'manual' && (
+            {mode === 'manual' && showCloseButton && (
                 <TouchableOpacity
                     style={styles.closeButton}
                     onPress={handleClose}
