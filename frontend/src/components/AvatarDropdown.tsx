@@ -8,7 +8,7 @@ import { useNavigation } from '@react-navigation/native';
 
 export const AvatarDropdown = () => {
     const { user, logout } = useAuth();
-    const { showAverage, setShowAverage } = useSettings();
+    const { showAverage, setShowAverage, askDartsOnCheckout, setAskDartsOnCheckout } = useSettings();
     const [showMenu, setShowMenu] = useState(false);
     const navigation = useNavigation<any>();
 
@@ -18,7 +18,6 @@ export const AvatarDropdown = () => {
         setShowMenu(false);
         await logout();
 
-        // Redirigir al Login
         navigation.reset({
             index: 0,
             routes: [{ name: 'Login' }],
@@ -80,6 +79,18 @@ export const AvatarDropdown = () => {
                                     <Switch
                                         value={showAverage}
                                         onValueChange={setShowAverage}
+                                        trackColor={{ false: '#3E3E3E', true: theme.colors.buttonPrimaryBackground }}
+                                        thumbColor={'#FFFFFF'}
+                                        ios_backgroundColor="#3E3E3E"
+                                        style={{ transform: [{ scaleX: 0.8 }, { scaleY: 0.8 }] }}
+                                    />
+                                </View>
+
+                                <View style={styles.settingsItem}>
+                                    <Text style={styles.settingsItemText}>Preguntar dardos tirados a cierre</Text>
+                                    <Switch
+                                        value={askDartsOnCheckout}
+                                        onValueChange={setAskDartsOnCheckout}
                                         trackColor={{ false: '#3E3E3E', true: theme.colors.buttonPrimaryBackground }}
                                         thumbColor={'#FFFFFF'}
                                         ios_backgroundColor="#3E3E3E"
@@ -151,7 +162,7 @@ const styles = StyleSheet.create({
         marginRight: theme.spacing.md,
         backgroundColor: theme.colors.avatarDropdownBackground,
         borderRadius: 12,
-        width: 180,
+        width: 200,
         paddingVertical: 10,
         elevation: 10,
         borderWidth: 1,
@@ -208,6 +219,8 @@ const styles = StyleSheet.create({
     settingsItemText: {
         color: theme.colors.avatarDropdownText,
         fontFamily: theme.typography.fontFamily.medium,
-        fontSize: 14,
+        fontSize: 13,
+        flex: 1,
+        marginRight: 8,
     }
 });

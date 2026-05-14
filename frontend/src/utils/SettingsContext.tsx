@@ -4,12 +4,15 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 interface SettingsContextType {
     showAverage: boolean;
     setShowAverage: (value: boolean) => Promise<void>;
+    askDartsOnCheckout: boolean;
+    setAskDartsOnCheckout: (value: boolean) => Promise<void>;
 }
 
 const SettingsContext = createContext<SettingsContextType | undefined>(undefined);
 
 export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [showAverage, setShowAverageState] = useState(true);
+    const [askDartsOnCheckout, setAskDartsOnCheckoutState] = useState(true);
 
     useEffect(() => {
         const loadSettings = async () => {
@@ -17,6 +20,11 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
                 const storedShowAverage = await AsyncStorage.getItem('showAverage');
                 if (storedShowAverage !== null) {
                     setShowAverageState(storedShowAverage === 'true');
+                }
+
+                const storedAskDarts = await AsyncStorage.getItem('askDartsOnCheckout');
+                if (storedAskDarts !== null) {
+                    setAskDartsOnCheckoutState(storedAskDarts === 'true');
                 }
             } catch (error) {
                 console.error('Error loading settings:', error);
@@ -34,8 +42,22 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         }
     };
 
+    const setAskDartsOnCheckout = async (value: boolean) => {
+        try {
+            setAskDartsOnCheckoutState(value);
+            await AsyncStorage.setItem('askDartsOnCheckout', value.toString());
+        } catch (error) {
+            console.error('Error saving settings:', error);
+        }
+    };
+
     return (
-        <SettingsContext.Provider value={{ showAverage, setShowAverage }}>
+        <SettingsContext.Provider value={{
+            showAverage,
+            setShowAverage,
+            askDartsOnCheckout,
+            setAskDartsOnCheckout
+        }}>
             {children}
         </SettingsContext.Provider>
     );

@@ -6,6 +6,7 @@ import MatchX01ServiceFactory from '../../../../../backend/src/infrastructure/fa
 import { BustException } from '../../../../../backend/src/domain/exceptions/Exceptions';
 import { GameStatus } from '../../../../../backend/src/domain/enums/GameStatus';
 import { useKeypad } from './useKeypad';
+import { useSettings } from '../../../utils/SettingsContext';
 
 // Obtenemos los servicios y el repo desde la Factoría (fuera del hook)
 const matchRepo = MatchX01ServiceFactory.getRepository();
@@ -27,6 +28,8 @@ export const useGameX01 = (navigation: any, route: any) => {
     const {
         canCheckoutWithDarts,
     } = useKeypad();
+
+    const { askDartsOnCheckout } = useSettings();
 
     const [match, setMatch] = useState<MatchX01 | null>(null);
     const [inputValue, setInputValue] = useState('');
@@ -153,12 +156,16 @@ export const useGameX01 = (navigation: any, route: any) => {
             return;
         }
         if (isLegFinished(score) && canCheckoutWithDarts(score, 3)) {
-            openToast({
-                title: '¿Con cuántos dardos has cerrado?',
-                description: '',
-                type: 'success',
-                mode: 'manual',
-            });
+            if (askDartsOnCheckout) {
+                openToast({
+                    title: '¿Con cuántos dardos has cerrado?',
+                    description: '',
+                    type: 'success',
+                    mode: 'manual',
+                });
+            } else {
+                await submitScore(score, 3);
+            }
             return;
         }
 
@@ -182,12 +189,16 @@ export const useGameX01 = (navigation: any, route: any) => {
             return;
         }
         if (isLegFinished(score) && canCheckoutWithDarts(score, 3)) {
-            openToast({
-                title: '¿Con cuántos dardos has cerrado?',
-                description: '',
-                type: 'success',
-                mode: 'manual',
-            });
+            if (askDartsOnCheckout) {
+                openToast({
+                    title: '¿Con cuántos dardos has cerrado?',
+                    description: '',
+                    type: 'success',
+                    mode: 'manual',
+                });
+            } else {
+                await submitScore(score, 3);
+            }
             return;
         }
 
@@ -195,12 +206,18 @@ export const useGameX01 = (navigation: any, route: any) => {
     };
 
     const handleGameShot = async () => {
-        openToast({
-            title: '¿Con cuántos dardos has cerrado?',
-            type: 'success',
-            mode: 'manual',
-            showCloseButton: true,
-        });
+        if (askDartsOnCheckout) {
+            openToast({
+                title: '¿Con cuántos dardos has cerrado?',
+                type: 'success',
+                mode: 'manual',
+                showCloseButton: true,
+            });
+        } else {
+            if (match) {
+                await submitScore(match.activePlayer.remainingScore, 3);
+            }
+        }
     };
 
     const handleCheckout = async (scoreNum: number, numDarts: number) => {
