@@ -53,12 +53,12 @@ export const AppNavigator = () => {
         <Stack.Screen
           name="Intro"
           component={IntroScreen}
-          options={{ title: 'a-darts' }}
+          options={{ title: 'a-darts', headerRight: () => null }}
         />
         <Stack.Screen
           name="Login"
           component={LoginScreen}
-          options={{ title: 'Inicio' }}
+          options={{ title: 'Inicio', headerRight: () => null }}
         />
         <Stack.Screen
           name="HomeScreen"

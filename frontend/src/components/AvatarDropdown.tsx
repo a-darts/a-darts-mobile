@@ -12,9 +12,7 @@ export const AvatarDropdown = () => {
     const [showMenu, setShowMenu] = useState(false);
     const navigation = useNavigation<any>();
 
-    if (!user) return null;
-
-    const initial = user.name ? user.name.charAt(0).toUpperCase() : '?';
+    const initial = user ? (user.name ? user.name.charAt(0).toUpperCase() : '?') : 'I';
 
     const handleLogout = async () => {
         setShowMenu(false);
@@ -54,18 +52,22 @@ export const AvatarDropdown = () => {
                     <View style={styles.modalOverlay}>
                         <TouchableWithoutFeedback>
                             <View style={styles.menuContainer}>
-                                <View style={styles.userInfo}>
-                                    <Text style={styles.userNameText}>{user.name}</Text>
-                                    <View style={styles.divider} />
-                                </View>
+                                {user && (
+                                    <View style={styles.userInfo}>
+                                        <Text style={styles.userNameText}>{user.name}</Text>
+                                        <View style={styles.divider} />
+                                    </View>
+                                )}
 
-                                <TouchableOpacity
-                                    style={styles.menuItem}
-                                    onPress={handleMyProfile}
-                                >
-                                    <Feather name="user" size={18} color={theme.colors.avatarDropdownIcon} />
-                                    <Text style={styles.menuItemText}>Mi perfil</Text>
-                                </TouchableOpacity>
+                                {user && (
+                                    <TouchableOpacity
+                                        style={styles.menuItem}
+                                        onPress={handleMyProfile}
+                                    >
+                                        <Feather name="user" size={18} color={theme.colors.avatarDropdownIcon} />
+                                        <Text style={styles.menuItemText}>Mi perfil</Text>
+                                    </TouchableOpacity>
+                                )}
 
                                 <View style={styles.divider} />
 
@@ -87,13 +89,25 @@ export const AvatarDropdown = () => {
 
                                 <View style={styles.divider} />
 
-                                <TouchableOpacity
-                                    style={[styles.menuItem, styles.logoutItem]}
-                                    onPress={handleLogout}
-                                >
-                                    <Feather name="log-out" size={18} color={theme.colors.avatarDropdownCloseIcon} />
-                                    <Text style={[styles.menuItemText, { color: theme.colors.avatarDropdownCloseText }]}>Cerrar sesión</Text>
-                                </TouchableOpacity>
+                                {user && (
+                                    <TouchableOpacity
+                                        style={[styles.menuItem, styles.logoutItem]}
+                                        onPress={handleLogout}
+                                    >
+                                        <Feather name="log-out" size={18} color={theme.colors.avatarDropdownCloseIcon} />
+                                        <Text style={[styles.menuItemText, { color: theme.colors.avatarDropdownCloseText }]}>Cerrar sesión</Text>
+                                    </TouchableOpacity>
+                                )}
+
+                                {!user && (
+                                    <TouchableOpacity
+                                        style={[styles.menuItem, styles.logoutItem]}
+                                        onPress={() => { setShowMenu(false); navigation.navigate('Login'); }}
+                                    >
+                                        <Feather name="log-in" size={18} color={theme.colors.avatarDropdownIcon} />
+                                        <Text style={styles.menuItemText}>Iniciar sesión</Text>
+                                    </TouchableOpacity>
+                                )}
                             </View>
                         </TouchableWithoutFeedback>
                     </View>
