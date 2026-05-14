@@ -53,7 +53,7 @@ export const AppNavigator = () => {
         <Stack.Screen
           name="Intro"
           component={IntroScreen}
-          options={{ title: 'a-darts', headerRight: () => null }}
+          options={{ title: 'A-Darts', headerRight: () => null }}
         />
         <Stack.Screen
           name="Login"
