@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Modal, TouchableWithoutFeedback, Animated } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Modal, TouchableWithoutFeedback, Switch } from 'react-native';
 import { useAuth } from '../utils/AuthContext';
+import { useSettings } from '../utils/SettingsContext';
 import { theme } from '../theme/theme';
 import { Feather } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 
 export const AvatarDropdown = () => {
     const { user, logout } = useAuth();
+    const { showAverage, setShowAverage } = useSettings();
     const [showMenu, setShowMenu] = useState(false);
     const navigation = useNavigation<any>();
 
@@ -64,6 +66,24 @@ export const AvatarDropdown = () => {
                                     <Feather name="user" size={18} color={theme.colors.avatarDropdownIcon} />
                                     <Text style={styles.menuItemText}>Mi perfil</Text>
                                 </TouchableOpacity>
+
+                                <View style={styles.divider} />
+
+                                <View style={styles.sectionHeader}>
+                                    <Text style={styles.sectionHeaderText}>AJUSTES</Text>
+                                </View>
+
+                                <View style={styles.settingsItem}>
+                                    <Text style={styles.settingsItemText}>Ver media</Text>
+                                    <Switch
+                                        value={showAverage}
+                                        onValueChange={setShowAverage}
+                                        trackColor={{ false: '#3E3E3E', true: theme.colors.buttonPrimaryBackground }}
+                                        thumbColor={'#FFFFFF'}
+                                        ios_backgroundColor="#3E3E3E"
+                                        style={{ transform: [{ scaleX: 0.8 }, { scaleY: 0.8 }] }}
+                                    />
+                                </View>
 
                                 <View style={styles.divider} />
 
@@ -152,5 +172,28 @@ const styles = StyleSheet.create({
     },
     logoutItem: {
         marginTop: 2,
+    },
+    sectionHeader: {
+        paddingHorizontal: 15,
+        paddingTop: 8,
+        paddingBottom: 4,
+    },
+    sectionHeaderText: {
+        color: theme.colors.textSecondary,
+        fontFamily: theme.typography.fontFamily.bold,
+        fontSize: 10,
+        letterSpacing: 1,
+    },
+    settingsItem: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        paddingVertical: 4,
+        paddingHorizontal: 15,
+    },
+    settingsItemText: {
+        color: theme.colors.avatarDropdownText,
+        fontFamily: theme.typography.fontFamily.medium,
+        fontSize: 14,
     }
 });

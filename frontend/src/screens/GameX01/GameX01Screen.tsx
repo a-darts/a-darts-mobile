@@ -9,6 +9,7 @@ import { Toast } from '../../components/Toast';
 import { styles } from './styles/GameX01.styles';
 import { Button } from '../../components/Button';
 import { TextInput } from '../../components/TextInput';
+import { useSettings } from '../../utils/SettingsContext';
 
 const { width, height } = Dimensions.get('window');
 const aspectRatio = height / width;
@@ -23,6 +24,8 @@ export const GameX01Screen = ({ navigation, route }: any) => {
     handleSwapStartingPlayer,
     editingThrow, setEditingThrow, handleEditThrowPress, handleSaveEdit,
   } = useGameX01(navigation, route);
+
+  const { showAverage } = useSettings();
 
   const {
     isBogeyNumber,
@@ -169,9 +172,11 @@ export const GameX01Screen = ({ navigation, route }: any) => {
           <Text style={[styles.scoreLeftText, activeIndex === 0 && styles.scoreActiveText]}>
             {p1.remainingScore}
           </Text>
-          <Text style={styles.averageText}>
-            MEDIA: {p1.stats.average}
-          </Text>
+          {showAverage && (
+            <Text style={styles.averageText}>
+              MEDIA: {p1.stats.average}
+            </Text>
+          )}
         </View>
 
         {/* Marcador central  */}
@@ -205,9 +210,11 @@ export const GameX01Screen = ({ navigation, route }: any) => {
             <Text style={[styles.scoreLeftText, activeIndex === 1 && styles.scoreActiveText]}>
               {p2.remainingScore}
             </Text>
-            <Text style={styles.averageText}>
-              MEDIA: {p2.stats.average}
-            </Text>
+            {showAverage && (
+              <Text style={styles.averageText}>
+                MEDIA: {p2.stats.average}
+              </Text>
+            )}
           </View>
         )}
       </View>

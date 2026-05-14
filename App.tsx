@@ -17,6 +17,7 @@ import {
 } from '@expo-google-fonts/space-grotesk';
 
 import { AuthProvider } from './frontend/src/utils/AuthContext';
+import { SettingsProvider } from './frontend/src/utils/SettingsContext';
 
 export default function App() {
   const [fontsLoaded, setFontsLoaded] = useState(false);
@@ -47,9 +48,11 @@ export default function App() {
 
   return (
     <SafeAreaProvider>
-      <AuthProvider>
-        <AppNavigator />
-      </AuthProvider>
+      <SettingsProvider>
+        <AuthProvider>
+          <AppNavigator />
+        </AuthProvider>
+      </SettingsProvider>
     </SafeAreaProvider>
   );
 }
