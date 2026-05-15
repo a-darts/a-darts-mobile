@@ -38,8 +38,7 @@ export const GameX01Screen = ({ navigation, route }: any) => {
   // Si el usuario pulsa atrás, se le pide una segunda confirmación de la acción
   React.useEffect(() => {
     const unsubscribe = navigation.addListener('beforeRemove', (e) => {
-      // Si la partida ya ha terminado o estamos forzando la salida, no interrumpimos
-      if (match?.status === GameStatus.FINISHED || isLeaving.current) {
+      if (isLeaving.current) {
         return;
       }
 
@@ -54,10 +53,7 @@ export const GameX01Screen = ({ navigation, route }: any) => {
         showCloseButton: false,
         onCloseAction: () => {
           isLeaving.current = true;
-          navigation.reset({
-            index: 0,
-            routes: [{ name: 'HomeScreen' }],
-          });
+          navigation.navigate('HomeScreen');
         }
       });
     });
