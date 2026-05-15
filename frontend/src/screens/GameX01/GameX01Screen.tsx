@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { View, Text, TouchableOpacity, Dimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useGameX01 } from './hooks/useGameX01';
@@ -10,6 +10,7 @@ import { styles } from './styles/GameX01.styles';
 import { Button } from '../../components/Button';
 import { TextInput } from '../../components/TextInput';
 import { useSettings } from '../../utils/SettingsContext';
+import { GameStatus } from '../../../../backend/src/domain/enums/GameStatus';
 
 const { width, height } = Dimensions.get('window');
 const aspectRatio = height / width;
@@ -32,9 +33,16 @@ export const GameX01Screen = ({ navigation, route }: any) => {
     canCheckoutWithDarts,
   } = useKeypad();
 
+  const isLeaving = useRef(false);
+
   // Si el usuario pulsa atrás, se le pide una segunda confirmación de la acción
   React.useEffect(() => {
     const unsubscribe = navigation.addListener('beforeRemove', (e) => {
+      // Si la partida ya ha terminado o estamos forzando la salida, no interrumpimos
+      if (match?.status === GameStatus.FINISHED || isLeaving.current) {
+        return;
+      }
+
       e.preventDefault();
 
       setToast({
@@ -45,13 +53,17 @@ export const GameX01Screen = ({ navigation, route }: any) => {
         mode: 'manual',
         showCloseButton: false,
         onCloseAction: () => {
-          navigation.dispatch(e.data.action);
+          isLeaving.current = true;
+          navigation.reset({
+            index: 0,
+            routes: [{ name: 'HomeScreen' }],
+          });
         }
       });
     });
 
     return unsubscribe;
-  }, [navigation]);
+  }, [navigation, match?.status]);
 
 
   if (!match) {
