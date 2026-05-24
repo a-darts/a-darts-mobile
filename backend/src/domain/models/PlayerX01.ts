@@ -237,7 +237,7 @@ export class PlayerX01 {
   // Snapshots
   // -------------------------------------------------------------------------
 
-  public snapshot(): PlayerX01Snapshot {
+  public takeSnapshot(): PlayerX01Snapshot {
     return {
       id: this.id,
       name: this._name,

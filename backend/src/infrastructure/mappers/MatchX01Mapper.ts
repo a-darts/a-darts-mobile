@@ -165,7 +165,7 @@ export class MatchX01Mapper {
             : Number(statusStr) as GameStatus;
 
         return {
-            players: s.players.map(p => MatchX01Mapper.playerDTOtoPlayerX01(p).snapshot()),
+            players: s.players.map(p => MatchX01Mapper.playerDTOtoPlayerX01(p).takeSnapshot()),
             activePlayerIndex: s.activePlayerIndex,
             startingPlayerIndexForLeg: s.startingPlayerIndexForLeg,
             startingPlayerIndexForSet: s.startingPlayerIndexForSet,
@@ -174,7 +174,7 @@ export class MatchX01Mapper {
     }
 
     private static snapshotToDTO(s: {
-        players: ReturnType<PlayerX01['snapshot']>[];
+        players: ReturnType<PlayerX01['takeSnapshot']>[];
         activePlayerIndex: number;
         startingPlayerIndexForLeg: number;
         startingPlayerIndexForSet: number;

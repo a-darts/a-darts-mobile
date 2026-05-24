@@ -177,7 +177,7 @@ describe('PlayerX01 Entity', () => {
             const player = PlayerX01.create(PLAYER_NAME, INITIAL_SCORE);
             player.addThrow(180);
 
-            const snapshot = player.snapshot();
+            const snapshot = player.takeSnapshot();
 
             expect(snapshot.stats.oneEighties).toBe(1);
             expect(snapshot.stats.average).toBe(180);
@@ -186,7 +186,7 @@ describe('PlayerX01 Entity', () => {
         it('debería recuperar el estado completo (incluyendo stats) desde un snapshot', () => {
             const player = PlayerX01.create(PLAYER_NAME, INITIAL_SCORE);
             player.addThrow(140);
-            const snapshot = player.snapshot();
+            const snapshot = player.takeSnapshot();
 
             const restoredPlayer = PlayerX01.fromSnapshot(snapshot);
 

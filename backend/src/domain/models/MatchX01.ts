@@ -5,7 +5,7 @@ import { MatchX01Config } from "./MatchX01Config";
 import { PlayerX01 } from "./PlayerX01";
 
 interface MatchX01Snapshot {
-    players: ReturnType<PlayerX01['snapshot']>[];
+    players: ReturnType<PlayerX01['takeSnapshot']>[];
     activePlayerIndex: number;
     startingPlayerIndexForLeg: number;
     startingPlayerIndexForSet: number;
@@ -138,7 +138,7 @@ export class MatchX01 {
                     try {
                         const p = PlayerX01.fromSnapshot(pSnap);
                         p.editThrow(throwIndex, newScore);
-                        return p.snapshot();
+                        return p.takeSnapshot();
                     } catch (e) {
                         // Si falla la edición en la snapshot (p.ej. por bust), 
                         // es mejor dejarla como está o marcarla para borrar
@@ -307,7 +307,7 @@ export class MatchX01 {
 
     private takeSnapshot(): MatchX01Snapshot {
         return {
-            players: this._players.map(p => p.snapshot()),
+            players: this._players.map(p => p.takeSnapshot()),
             activePlayerIndex: this._activePlayerIndex,
             startingPlayerIndexForLeg: this._startingPlayerIndexForLeg,
             startingPlayerIndexForSet: this._startingPlayerIndexForSet,
@@ -315,11 +315,11 @@ export class MatchX01 {
         };
     }
 
-    private restoreSnapshot(snap: MatchX01Snapshot): void {
-        this._activePlayerIndex = snap.activePlayerIndex;
-        this._startingPlayerIndexForLeg = snap.startingPlayerIndexForLeg;
-        this._startingPlayerIndexForSet = snap.startingPlayerIndexForSet;
-        this._status = snap.status;
-        this._players = snap.players.map(s => PlayerX01.fromSnapshot(s));
+    private restoreSnapshot(snapshot: MatchX01Snapshot): void {
+        this._activePlayerIndex = snapshot.activePlayerIndex;
+        this._startingPlayerIndexForLeg = snapshot.startingPlayerIndexForLeg;
+        this._startingPlayerIndexForSet = snapshot.startingPlayerIndexForSet;
+        this._status = snapshot.status;
+        this._players = snapshot.players.map(s => PlayerX01.fromSnapshot(s));
     }
 }
