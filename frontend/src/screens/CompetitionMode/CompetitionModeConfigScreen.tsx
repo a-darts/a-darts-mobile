@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, StyleSheet, ActivityIndicator } from 'react-native';
+import { View, Text, TextInput, StyleSheet, ActivityIndicator, Alert } from 'react-native';
 import SocketClientService from '../../services/SocketClientService';
 import { Button } from '../../components/Button';
 import { theme } from '../../theme/theme';
 import { MatchX01 } from '../../../../backend/src/domain/models/MatchX01';
 import MatchX01ServiceFactory from '../../../../backend/src/infrastructure/factories/MatchX01ServiceFactory';
 import { MatchX01Config } from '../../../../backend/src/domain/models/MatchX01Config';
+import { GameTypes } from '../../../../backend/src/domain/enums/GameTypes';
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://192.168.0.44:3000';
 
@@ -24,12 +25,18 @@ export const CompetitionModeConfigScreen = ({ navigation }: any) => {
                 setAssignedMatchId(matchId);
                 await fetchMatchDetails(matchId);
             });
+
+            SocketClientService.onMatchStarted((matchId) => {
+                // Notificamos inicio y avanzamos
+                handleMatchStartedEvent(matchId);
+            });
         }
 
         return () => {
             SocketClientService.offMatchAssigned();
+            SocketClientService.offMatchStarted();
         };
-    }, [isConnected]);
+    }, [isConnected, matchInfo, tournamentInfo]);
 
     const fetchMatchDetails = async (matchId: string) => {
         setIsLoadingMatch(true);
@@ -65,46 +72,63 @@ export const CompetitionModeConfigScreen = ({ navigation }: any) => {
         setIsConnected(true);
     };
 
-    const handleStartMatch = async () => {
-        if (!assignedMatchId || !matchInfo || !tournamentInfo) return;
-        console.log("Asigned match id:", assignedMatchId);
-        setIsLoadingMatch(true);
-        try {
-            // 1. Notificar al backend web que empezamos
-            await fetch(`${API_URL}/api/matches/${assignedMatchId}/start`, {
-                method: 'POST',
-            });
+    const handleMatchStartedEvent = async (matchId: string) => {
+        if (!matchInfo || !tournamentInfo) return;
 
+        try {
             // 2. Crear partido local
             const playerNames = [
                 matchInfo.participant1?.alias || 'Jugador 1',
                 matchInfo.participant2?.alias || 'Jugador 2'
             ];
 
+            const mappedGameType = tournamentInfo.gameType === 'BEST_OF' ? GameTypes.BestOf : GameTypes.FirstTo;
+
             const config = new MatchX01Config(
                 parseInt(tournamentInfo.game) || 501,
-                tournamentInfo.gameType || 'BestOf',
+                mappedGameType,
                 tournamentInfo.numSets || 1,
                 tournamentInfo.numLegs || 1,
-                playerNames,
+                playerNames
             );
 
-            const match = MatchX01.create(assignedMatchId, config);
+            const match = MatchX01.create(matchId, config);
 
-            // Guardar localmente
-            const matchRepo = MatchX01ServiceFactory.getRepository();
-            await matchRepo.save(match);
+            // 3. Guardarlo en el respositorio asincrono
+            await MatchX01ServiceFactory.getRepository().save(match);
 
-            // 3. Navegar
-            navigation.navigate('GameX01Screen', { matchId: assignedMatchId });
+            // 4. Set the matchId in the socket service so it can emit throws
+            SocketClientService.setMatchId(matchId);
 
-            // Limpiar estado
-            setAssignedMatchId(null);
-            setMatchInfo(null);
-            setTournamentInfo(null);
+            // 5. Navegar
+            navigation.navigate('GameX01Screen', {
+                matchId: matchId,
+                playerNames: config.playerNames,
+                game: config.game,
+                numSets: config.numSets,
+                numLegs: config.numLegs,
+                typeOfGame: config.typeOfGame
+            });
         } catch (error) {
-            console.error('Error al iniciar partido:', error);
+            console.error('Error al instanciar el partido localmente:', error);
+            Alert.alert('Error', 'No se pudo crear el partido. Revisa la configuración del torneo.');
         } finally {
+            setIsLoadingMatch(false);
+        }
+    };
+
+    const handleStartMatch = async () => {
+        if (!assignedMatchId) return;
+        console.log("Asigned match id:", assignedMatchId);
+        setIsLoadingMatch(true);
+        try {
+            // 1. Notificar al backend web que empezamos (esto disparará el evento match_started)
+            await fetch(`${API_URL}/api/matches/${assignedMatchId}/start`, {
+                method: 'POST',
+            });
+            // NOTA: No navegamos aquí. Navegaremos cuando recibamos el evento 'match_started'
+        } catch (error) {
+            console.error('Error iniciando el partido:', error);
             setIsLoadingMatch(false);
         }
     };

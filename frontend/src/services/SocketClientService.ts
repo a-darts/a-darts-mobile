@@ -81,6 +81,19 @@ class SocketClientService {
         if (!this.socket) return;
         this.socket.off('match_assigned');
     }
+
+    public onMatchStarted(callback: (matchId: string) => void): void {
+        if (!this.socket) return;
+        this.socket.on('match_started', (data: { matchId: string }) => {
+            console.log('[Socket] Partido INICIADO en la diana:', data.matchId);
+            callback(data.matchId);
+        });
+    }
+
+    public offMatchStarted(): void {
+        if (!this.socket) return;
+        this.socket.off('match_started');
+    }
 }
 
 export default new SocketClientService();
