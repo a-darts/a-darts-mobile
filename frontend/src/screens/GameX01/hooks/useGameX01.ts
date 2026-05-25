@@ -7,6 +7,7 @@ import { BustException } from '../../../../../backend/src/domain/exceptions/Exce
 import { GameStatus } from '../../../../../backend/src/domain/enums/GameStatus';
 import { useKeypad } from './useKeypad';
 import { useSettings } from '../../../utils/SettingsContext';
+import SocketClientService from '../../../services/SocketClientService';
 
 // Obtenemos los servicios y el repo desde la Factoría (fuera del hook)
 const matchRepo = MatchX01ServiceFactory.getRepository();
@@ -50,6 +51,7 @@ export const useGameX01 = (navigation: any, route: any) => {
             const result = await matchRepo.getById(matchId);
             if (result) {
                 setMatch(result);
+                SocketClientService.setMatchId(matchId);
             }
         };
 
@@ -94,6 +96,10 @@ export const useGameX01 = (navigation: any, route: any) => {
             // Actualizamos el estado con la nueva instancia (esto dispara el re-render)
             setMatch(updatedMatch);
             setInputValue('');
+
+            if (SocketClientService.isConnected()) {
+                SocketClientService.emitScoreUpdate({ score: scoreNum, dartsUsed, matchState: updatedMatch });
+            }
 
             if (updatedMatch.status === GameStatus.FINISHED) {
                 openToast({

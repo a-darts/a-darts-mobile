@@ -9,6 +9,7 @@ import { ConfigX01Screen } from '../screens/ConfigX01/ConfigX01Screen';
 import { GameX01Screen } from '../screens/GameX01/GameX01Screen';
 import { MatchX01SummaryScreen } from '../screens/MatchX01Summary/MatchX01SummaryScreen';
 import { MyProfileScreen } from '../screens/MyProfile/MyProfileScreen';
+import { CompetitionModeConfigScreen } from '../screens/CompetitionMode/CompetitionModeConfigScreen';
 
 import { theme } from '../theme/theme';
 
@@ -18,6 +19,7 @@ export type AppStackParamList = {
   Login: undefined;
   HomeScreen: undefined;
   ConfigX01: undefined;
+  CompetitionModeConfig: undefined;
   GameX01Screen: {
     game?: string;
     typeOfGame?: string;
@@ -69,6 +71,11 @@ export const AppNavigator = () => {
           name="ConfigX01"
           component={ConfigX01Screen}
           options={{ title: 'Nueva partida' }}
+        />
+        <Stack.Screen
+          name="CompetitionModeConfig"
+          component={CompetitionModeConfigScreen}
+          options={{ title: 'Modo Competición' }}
         />
         <Stack.Screen
           name="GameX01Screen"

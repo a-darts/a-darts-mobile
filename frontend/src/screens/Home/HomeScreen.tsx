@@ -67,6 +67,15 @@ export const HomeScreen = ({ route, navigation }) => {
           size='large'
           onPress={() => navigation.navigate('ConfigX01')}
         />
+        <View style={{ marginTop: 15 }}>
+          <Button
+            title="MODO COMPETICIÓN"
+            iconName="monitor"
+            variant='secondary'
+            size='large'
+            onPress={() => navigation.navigate('CompetitionModeConfig')}
+          />
+        </View>
       </View>
 
       {/* Recent Games */}
