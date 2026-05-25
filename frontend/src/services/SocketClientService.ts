@@ -15,9 +15,7 @@ class SocketClientService {
         }
 
         this.boardId = boardId;
-        this.socket = io(this.SERVER_URL, {
-            transports: ['websocket'], // Forzar websocket para mejor rendimiento en React Native
-        });
+        this.socket = io(this.SERVER_URL);
 
         this.socket.on('connect', () => {
             console.log(`[Socket] Conectado exitosamente. Socket ID: ${this.socket?.id}`);
