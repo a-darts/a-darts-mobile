@@ -111,6 +111,7 @@ export const useGameX01 = (navigation: any, route: any) => {
                         legsWon: updatedMatch.players[1].numLegsWon,
                     },
                     activePlayerIndex: updatedMatch.activePlayerIndex,
+                    throwerPlayerIndex: updatedMatch.activePlayerIndex === 0 ? 1 : 0,
                     status: updatedMatch.status,
                 });
             }

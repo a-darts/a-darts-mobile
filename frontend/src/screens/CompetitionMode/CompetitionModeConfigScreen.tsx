@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, TextInput, StyleSheet, ActivityIndicator, Alert } from 'react-native';
 import SocketClientService from '../../services/SocketClientService';
 import { Button } from '../../components/Button';
@@ -19,60 +19,112 @@ export const CompetitionModeConfigScreen = ({ navigation }: any) => {
     const [tournamentInfo, setTournamentInfo] = useState<any>(null);
     const [isLoadingMatch, setIsLoadingMatch] = useState(false);
 
+    // Guardamos referencias mutables de los datos para evitar cierres de JS obsoletos en eventos asíncronos
+    const matchInfoRef = useRef<any>(null);
+    const tournamentInfoRef = useRef<any>(null);
+
+    const updateMatchDataStates = (matchDetails: any, tournamentDetails: any) => {
+        setMatchInfo(matchDetails);
+        setTournamentInfo(tournamentDetails);
+        matchInfoRef.current = matchDetails;
+        tournamentInfoRef.current = tournamentDetails;
+    };
 
     const fetchMatchAndTournamentData = async (matchId: string) => {
-        const matchRes = await fetch(`${API_URL}/api/matches/${matchId}`);
-        if (!matchRes.ok) throw new Error('No se pudo obtener el partido');
-        const matchData = await matchRes.json();
+        console.log(`[HTTP Fetch] Solicitando datos para matchId: ${matchId} a ${API_URL}`);
+        try {
+            const matchRes = await fetch(`${API_URL}/api/matches/${matchId}`);
+            if (!matchRes.ok) throw new Error(`HTTP Error de match: ${matchRes.status}`);
 
-        let tInfo = null;
-        if (matchData.data.tournamentId) {
-            const tournamentRes = await fetch(`${API_URL}/api/tournaments/${matchData.data.tournamentId}`);
-            if (tournamentRes.ok) {
-                const tournamentData = await tournamentRes.json();
-                tInfo = tournamentData.data.info;
+            const matchData = await matchRes.json();
+            console.log('[HTTP Fetch] Respuesta matchData recibida con éxito');
+
+            // Adaptabilidad defensiva por si la respuesta no viene envuelta en .data
+            const actualMatchData = matchData.data || matchData;
+
+            let tInfo = null;
+            if (actualMatchData && actualMatchData.tournamentId) {
+                console.log(`[HTTP Fetch] Buscando torneo asociado ID: ${actualMatchData.tournamentId}`);
+                const tournamentRes = await fetch(`${API_URL}/api/tournaments/${actualMatchData.tournamentId}`);
+                if (tournamentRes.ok) {
+                    const tournamentData = await tournamentRes.json();
+                    const actualTournamentData = tournamentData.data || tournamentData;
+                    tInfo = actualTournamentData.info || actualTournamentData;
+                }
             }
+            return { matchDetails: actualMatchData, tournamentDetails: tInfo };
+        } catch (error) {
+            console.error('[HTTP Fetch] Error crítico en la solicitud de datos:', error);
+            throw error;
         }
-        return { matchDetails: matchData.data, tournamentDetails: tInfo };
     };
 
     useEffect(() => {
-        SocketClientService.onMatchAssigned(async (matchId) => {
-            setAssignedMatchId(matchId);
-            setIsLoadingMatch(true);
-            try {
-                const { matchDetails, tournamentDetails } = await fetchMatchAndTournamentData(matchId);
-                setMatchInfo(matchDetails);
-                setTournamentInfo(tournamentDetails);
-            } catch (error) {
-                console.error('Error obteniendo detalles del partido asignado:', error);
-            } finally {
-                setIsLoadingMatch(false);
+        // Función auxiliar para verificar si el socket está listo y asignarle los eventos
+        const setupSocketListeners = () => {
+            const socket = SocketClientService.socket;
+            if (!socket) return;
+
+            // Limpiamos listeners previos para evitar duplicados si hay re-renders
+            socket.off('match_assigned');
+            socket.off('match_started');
+            socket.off('match_restored');
+
+            // 1. Escucha de asignación
+            socket.on('match_assigned', async (data: { matchId: string }) => {
+                console.log(`[Pantalla] ¡Evento match_assigned detectado directamente! ID: ${data.matchId}`);
+
+                // Forzamos el cambio de estado de React de manera inmediata
+                setAssignedMatchId(data.matchId);
+                setIsLoadingMatch(true);
+
+                try {
+                    const { matchDetails, tournamentDetails } = await fetchMatchAndTournamentData(data.matchId);
+                    updateMatchDataStates(matchDetails, tournamentDetails);
+                } catch (error) {
+                    console.error('[Pantalla] Error al procesar HTTP tras la asignación:', error);
+                    Alert.alert('Error de Red', 'Se asignó el partido pero falló la descarga de detalles.');
+                } finally {
+                    setIsLoadingMatch(false);
+                }
+            });
+
+            // 2. Escucha de inicio
+            socket.on('match_started', async (data: { matchId: string }) => {
+                console.log(`[Pantalla] Evento match_started detectado para ID: ${data.matchId}`);
+                await handleMatchStartedEvent(data.matchId);
+            });
+
+            // 3. Escucha de restauración
+            socket.on('match_restored', async (data: { matchId: string, historyThrows: any[] }) => {
+                console.log(`[Pantalla] Evento match_restored detectado para ID: ${data.matchId}`);
+                await handleMatchRestoredEvent(data.matchId, data.historyThrows);
+            });
+        };
+
+        // Ejecutamos la configuración inicial
+        setupSocketListeners();
+
+        // Pequeño intervalo de control por si el socket tarda milisegundos en instanciarse tras dar al botón "Conectar"
+        const interval = setInterval(() => {
+            if (SocketClientService.socket && !SocketClientService.socket.hasListeners('match_assigned')) {
+                setupSocketListeners();
             }
-        });
-
-        SocketClientService.onMatchStarted(async (matchId) => {
-            await handleMatchStartedEvent(matchId);
-        });
-
-        SocketClientService.onMatchRestored(async (data) => {
-            console.log('[Frontend] Ejecutando auto-restauración para el match:', data.matchId);
-            await handleMatchRestoredEvent(data.matchId, data.historyThrows);
-        });
+        }, 1000);
 
         return () => {
-            SocketClientService.offMatchAssigned();
-            SocketClientService.offMatchStarted();
-            SocketClientService.offMatchRestored();
+            clearInterval(interval);
+            const socket = SocketClientService.socket;
+            if (socket) {
+                socket.off('match_assigned');
+                socket.off('match_started');
+                socket.off('match_restored');
+            }
         };
-    }, []);
+    }, [isConnected]);
 
     const handleConnect = () => {
-        if (!boardId.trim()) {
-            return;
-        }
-
-        // Conectar al socket usando el boardId
+        if (!boardId.trim()) return;
         SocketClientService.connect(boardId.trim());
         setIsConnected(true);
     };
@@ -80,21 +132,22 @@ export const CompetitionModeConfigScreen = ({ navigation }: any) => {
     const handleMatchStartedEvent = async (matchId: string) => {
         setIsLoadingMatch(true);
         try {
-            let currentMatchInfo = matchInfo;
-            let currentTournamentInfo = tournamentInfo;
+            // Usamos la referencia mutable para leer el valor en tiempo real libre de cierres obsoletos
+            let currentMatchInfo = matchInfoRef.current;
+            let currentTournamentInfo = tournamentInfoRef.current;
 
             if (!currentMatchInfo || !currentTournamentInfo) {
-                console.log('[CompetitionMode] Estados vacíos en el inicio rápido. Ejecutando fetch de emergencia...');
+                console.log('[Match Start] Estados locales vacíos en inicio rápido. Ejecutando fetch de emergencia...');
                 const { matchDetails, tournamentDetails } = await fetchMatchAndTournamentData(matchId);
                 currentMatchInfo = matchDetails;
                 currentTournamentInfo = tournamentDetails;
+                updateMatchDataStates(currentMatchInfo, currentTournamentInfo);
             }
 
             if (!currentMatchInfo || !currentTournamentInfo) {
-                throw new Error('Los datos del partido o torneo no se pudieron recuperar en el último intento.');
+                throw new Error('Imposible recuperar los metadatos esenciales del partido para instanciar el dominio.');
             }
 
-            // 2. Crear partido local usando las variables locales garantizadas
             const playerNames = [
                 currentMatchInfo.participant1?.alias || 'Jugador 1',
                 currentMatchInfo.participant2?.alias || 'Jugador 2'
@@ -111,16 +164,11 @@ export const CompetitionModeConfigScreen = ({ navigation }: any) => {
             );
 
             const match = MatchX01.create(matchId, config);
-
-            // 3. Guardarlo en el repositorio asíncrono
             await MatchX01ServiceFactory.getRepository().save(match);
-
-            // 4. Setear el matchId en el servicio de sockets
             SocketClientService.setMatchId(matchId);
 
             setIsLoadingMatch(false);
 
-            // 5. Navegar con la configuración real calculada
             navigation.navigate('GameX01Screen', {
                 matchId: matchId,
                 playerNames: config.playerNames,
@@ -131,7 +179,7 @@ export const CompetitionModeConfigScreen = ({ navigation }: any) => {
             });
         } catch (error) {
             console.error('Error al instanciar el partido localmente:', error);
-            Alert.alert('Error', 'No se pudo iniciar el partido. Revisa la red o configuración del torneo.');
+            Alert.alert('Error', 'No se pudo iniciar el partido de dardos.');
         } finally {
             setIsLoadingMatch(false);
         }
@@ -140,14 +188,14 @@ export const CompetitionModeConfigScreen = ({ navigation }: any) => {
     const handleMatchRestoredEvent = async (matchId: string, historyThrows: any[]) => {
         setIsLoadingMatch(true);
         try {
-            let currentMatchInfo = matchInfo;
-            let currentTournamentInfo = tournamentInfo;
+            let currentMatchInfo = matchInfoRef.current;
+            let currentTournamentInfo = tournamentInfoRef.current;
 
-            // Si los estados están vacíos (porque la app se acaba de abrir/conectar), hacemos fetch de emergencia
             if (!currentMatchInfo || !currentTournamentInfo) {
                 const { matchDetails, tournamentDetails } = await fetchMatchAndTournamentData(matchId);
                 currentMatchInfo = matchDetails;
                 currentTournamentInfo = tournamentDetails;
+                updateMatchDataStates(currentMatchInfo, currentTournamentInfo);
             }
 
             const playerNames = [
@@ -164,27 +212,20 @@ export const CompetitionModeConfigScreen = ({ navigation }: any) => {
                 playerNames
             );
 
-            // Creamos la entidad de dominio local
             const match = MatchX01.create(matchId, config);
 
-            // NOTA: Si tu MatchX01 local soporta un método para rehidratar el historial, deberías hacerlo aquí, ej:
             if (Array.isArray(historyThrows) && historyThrows.length > 0) {
                 historyThrows.forEach((t: any) => {
-                    // Asumiendo que viene un objeto { score: number, dartsUsed?: number }
-                    // o directamente el número. Ajusta según tu API.
                     const score = typeof t === 'number' ? t : t.score;
                     const darts = t.dartsUsed !== undefined ? t.dartsUsed : 3;
-
                     match.addThrow(score, darts);
                 });
             }
 
             await MatchX01ServiceFactory.getRepository().save(match);
             SocketClientService.setMatchId(matchId);
-
             setIsLoadingMatch(false);
 
-            // Navegación directa e inmediata a la pantalla de juego
             navigation.navigate('GameX01Screen', {
                 matchId: matchId,
                 playerNames: config.playerNames,
@@ -192,7 +233,7 @@ export const CompetitionModeConfigScreen = ({ navigation }: any) => {
                 numSets: config.numSets,
                 numLegs: config.numLegs,
                 typeOfGame: config.typeOfGame,
-                historyThrows: historyThrows // Le pasas el historial para que GameX01Screen lo procese al montar
+                historyThrows: historyThrows
             });
 
         } catch (error) {
@@ -205,21 +246,21 @@ export const CompetitionModeConfigScreen = ({ navigation }: any) => {
 
     const handleStartMatch = async () => {
         if (!assignedMatchId) return;
-        console.log("Asigned match id:", assignedMatchId);
         setIsLoadingMatch(true);
         try {
-            // 1. Notificar al backend web que empezamos (esto disparará el evento match_started)
             await fetch(`${API_URL}/api/matches/${assignedMatchId}/start`, {
                 method: 'POST',
             });
         } catch (error) {
-            console.error('Error iniciando el partido:', error);
+            console.error('Error iniciando el partido por HTTP:', error);
+            Alert.alert('Error', 'No se pudo enviar la orden de inicio al servidor.');
+        } finally {
             setIsLoadingMatch(false);
         }
     };
 
+    // --- RENDERIZADO DE INTERFAZ ---
     if (isConnected) {
-        // Si ya tenemos un ID de partido asignado, nos quedamos en esta vista pase lo que pase con los datos
         if (assignedMatchId) {
             return (
                 <View style={styles.waitingContainer}>
@@ -227,27 +268,33 @@ export const CompetitionModeConfigScreen = ({ navigation }: any) => {
                         {isLoadingMatch ? (
                             <>
                                 <ActivityIndicator size="large" color={theme.colors.activityIndicator} />
-                                <Text style={[styles.waitingSubtitle, { marginTop: 15 }]}>Cargando datos del partido...</Text>
+                                <Text style={[styles.waitingSubtitle, { marginTop: 15 }]}>Sincronizando datos...</Text>
                             </>
                         ) : !matchInfo ? (
-                            // Si terminó de cargar pero no hay datos, mostramos un estado de error
                             <>
-                                <Text style={styles.matchTitle}>Error al cargar</Text>
-                                <Text style={styles.waitingMessage}>No se pudieron recuperar los detalles del partido.</Text>
-                                <Button
-                                    title="Reintentar"
-                                    onPress={() => fetchMatchAndTournamentData(assignedMatchId)
-                                        .then(({ matchDetails, tournamentDetails }) => {
-                                            setMatchInfo(matchDetails);
-                                            setTournamentInfo(tournamentDetails);
-                                        }).catch(() => { })}
-                                    variant="primary"
-                                />
+                                <Text style={styles.matchTitle}>Error de Datos</Text>
+                                <Text style={styles.waitingMessage}>No se ha podido leer la información del partido {assignedMatchId}.</Text>
+                                <View style={{ marginTop: 20, width: '80%' }}>
+                                    <Button
+                                        title="Forzar Reintento"
+                                        onPress={async () => {
+                                            setIsLoadingMatch(true);
+                                            try {
+                                                const { matchDetails, tournamentDetails } = await fetchMatchAndTournamentData(assignedMatchId);
+                                                updateMatchDataStates(matchDetails, tournamentDetails);
+                                            } catch {
+                                                Alert.alert('Error', 'Sigue fallando la conexión HTTP.');
+                                            } finally {
+                                                setIsLoadingMatch(false);
+                                            }
+                                        }}
+                                        variant="primary"
+                                    />
+                                </View>
                             </>
                         ) : (
                             <>
                                 <Text style={styles.matchTitle}>¡Partido Asignado!</Text>
-
                                 <View style={styles.matchCard}>
                                     <Text style={styles.playerText}>{matchInfo?.participant1?.alias || 'Jugador 1'}</Text>
                                     <Text style={styles.vsText}>VS</Text>
@@ -284,12 +331,10 @@ export const CompetitionModeConfigScreen = ({ navigation }: any) => {
                     <ActivityIndicator size="large" color={theme.colors.activityIndicator} />
                     <Text style={styles.waitingTitle}>Diana Emparejada</Text>
                     <Text style={styles.waitingSubtitle}>ID: {boardId}</Text>
-
                     <Text style={styles.waitingMessage}>
                         Esperando a que el administrador asigne un partido desde el panel web...
                     </Text>
                 </View>
-
                 <View style={styles.disconnectContainer}>
                     <Button
                         title="Desconectar"
@@ -327,6 +372,7 @@ export const CompetitionModeConfigScreen = ({ navigation }: any) => {
         </View>
     );
 };
+
 
 const styles = StyleSheet.create({
     container: {
