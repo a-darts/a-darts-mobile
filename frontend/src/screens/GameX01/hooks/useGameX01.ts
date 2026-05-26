@@ -281,10 +281,70 @@ export const useGameX01 = (navigation: any, route: any) => {
                 match.id,
                 editingThrow.playerId,
                 editingThrow.index,
-                newScore
+                newScore,
             );
             setMatch(updatedMatch);
             setEditingThrow(null);
+
+            if (SocketClientService.isConnected()) {
+                const startingScore = match.config?.game ?? 501;
+                const formattedHistory = updatedMatch.history
+                    .slice(1) // Omitimos el estado inicial
+                    .map((snap: any, index: number) => {
+                        const throwerIndex = snap.activePlayerIndex === 0 ? 1 : 0;
+
+                        // Recuperamos la snapshot anterior de la lista completa (sumando 1 al índice por el slice)
+                        const prevSnap = updatedMatch.history[index];
+
+                        // Calculamos los puntos obtenidos en este tiro deduciendo el remanente anterior
+                        const prevRemaining = prevSnap ? prevSnap.players[throwerIndex].remainingScore : startingScore;
+                        const currentRemaining = snap.players[throwerIndex].remainingScore;
+                        const calculatedScore = prevRemaining - currentRemaining;
+
+                        return {
+                            score: calculatedScore, // <-- ¡AQUÍ ESTÁ EL SCORE QUE FALTA!
+                            status: snap.status,
+                            activePlayerIndex: snap.activePlayerIndex,
+                            throwerPlayerIndex: throwerIndex,
+                            participant1: {
+                                remainingScore: snap.players[0].remainingScore,
+                                setsWon: snap.players[0].numSetsWon,
+                                legsWon: snap.players[0].numLegsWon,
+                            },
+                            participant2: {
+                                remainingScore: snap.players[1].remainingScore,
+                                setsWon: snap.players[1].numSetsWon,
+                                legsWon: snap.players[1].numLegsWon,
+                            }
+                        };
+                    });
+
+                // Calculamos el score para la última tirada (el estado actual del partido tras el edit)
+                const lastThrowerIndex = updatedMatch.activePlayerIndex === 0 ? 1 : 0;
+                const absoluteLastSnap = updatedMatch.history[updatedMatch.history.length - 1];
+                const lastPrevRemaining = absoluteLastSnap ? absoluteLastSnap.players[lastThrowerIndex].remainingScore : startingScore;
+                const lastCalculatedScore = lastPrevRemaining - updatedMatch.players[lastThrowerIndex].remainingScore;
+
+                formattedHistory.push({
+                    score: lastCalculatedScore, // <-- SCORE recalculado para la última edición
+                    status: updatedMatch.status,
+                    activePlayerIndex: updatedMatch.activePlayerIndex,
+                    throwerPlayerIndex: lastThrowerIndex,
+                    participant1: {
+                        remainingScore: updatedMatch.players[0].remainingScore,
+                        setsWon: updatedMatch.players[0].numSetsWon,
+                        legsWon: updatedMatch.players[0].numLegsWon,
+                    },
+                    participant2: {
+                        remainingScore: updatedMatch.players[1].remainingScore,
+                        setsWon: updatedMatch.players[1].numSetsWon,
+                        legsWon: updatedMatch.players[1].numLegsWon,
+                    }
+                });
+
+                // Emitimos el cambio masivo al backend
+                SocketClientService.emitScoreEdit(formattedHistory);
+            }
 
             if (updatedMatch.status === GameStatus.FINISHED) {
                 openToast({
