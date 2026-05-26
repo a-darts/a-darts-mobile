@@ -15,8 +15,8 @@ import { useConfigX01 } from './hooks/useConfigX01';
 type GamesX01 = 170 | 301 | 501 | 701 | 1001;
 
 enum GameTypes {
-  BestOf = 'bestOf',
-  FirstTo = 'firstTo',
+  BEST_OF = 'BEST_OF',
+  FIRST_TO = 'FIRST_TO',
 }
 
 

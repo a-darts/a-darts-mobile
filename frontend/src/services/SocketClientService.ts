@@ -5,8 +5,11 @@ class SocketClientService {
     private boardId: string | null = null;
     private matchId: string | null = null;
 
-    // TODO: Reemplazar con la URL base correcta según el entorno (ej: variables de entorno)
-    // Para desarrollo local con emulador, puede que necesites usar la IP de tu PC en lugar de localhost
+    private matchAssignedCallback: ((matchId: string) => void) | null = null;
+    private matchStartedCallback: ((matchId: string) => void) | null = null;
+    private matchRestoredCallback: ((data: { matchId: string, historyThrows: any[] }) => void) | null = null;
+
+    // MIRAR: Reemplazar por la url real del proyecto
     private readonly SERVER_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:3000';
 
     public connect(boardId: string): void {
@@ -21,6 +24,27 @@ class SocketClientService {
             console.log(`[Socket] Conectado exitosamente. Socket ID: ${this.socket?.id}`);
             // Unirse a la sala de la diana
             this.socket?.emit('join_board', this.boardId);
+        });
+
+        this.socket.on('match_assigned', (data: { matchId: string }) => {
+            console.log('[Socket] Partido asignado a la diana:', data.matchId);
+            if (this.matchAssignedCallback) {
+                this.matchAssignedCallback(data.matchId);
+            }
+        });
+
+        this.socket.on('match_started', (data: { matchId: string }) => {
+            console.log('[Socket] Partido INICIADO en la diana:', data.matchId);
+            if (this.matchStartedCallback) {
+                this.matchStartedCallback(data.matchId);
+            }
+        });
+
+        this.socket.on('match_restored', (data: { matchId: string, historyThrows: any[] }) => {
+            console.log('[Socket] Partido DETECTADO EN CURSO (Restaurando):', data.matchId);
+            if (this.matchRestoredCallback) {
+                this.matchRestoredCallback(data);
+            }
         });
 
         this.socket.on('disconnect', () => {
@@ -39,6 +63,9 @@ class SocketClientService {
         }
         this.boardId = null;
         this.matchId = null;
+        this.matchAssignedCallback = null;
+        this.matchStartedCallback = null;
+        this.matchRestoredCallback = null;
     }
 
     public setMatchId(matchId: string): void {
@@ -70,29 +97,27 @@ class SocketClientService {
     }
 
     public onMatchAssigned(callback: (matchId: string) => void): void {
-        if (!this.socket) return;
-        this.socket.on('match_assigned', (data: { matchId: string }) => {
-            console.log('[Socket] Partido asignado a la diana:', data.matchId);
-            callback(data.matchId);
-        });
+        this.matchAssignedCallback = callback;
     }
 
     public offMatchAssigned(): void {
-        if (!this.socket) return;
-        this.socket.off('match_assigned');
+        this.matchAssignedCallback = null;
     }
 
     public onMatchStarted(callback: (matchId: string) => void): void {
-        if (!this.socket) return;
-        this.socket.on('match_started', (data: { matchId: string }) => {
-            console.log('[Socket] Partido INICIADO en la diana:', data.matchId);
-            callback(data.matchId);
-        });
+        this.matchStartedCallback = callback;
     }
 
     public offMatchStarted(): void {
-        if (!this.socket) return;
-        this.socket.off('match_started');
+        this.matchStartedCallback = null;
+    }
+
+    public onMatchRestored(callback: (data: { matchId: string, historyThrows: any[] }) => void): void {
+        this.matchRestoredCallback = callback;
+    }
+
+    public offMatchRestored(): void {
+        this.matchRestoredCallback = null;
     }
 }
 

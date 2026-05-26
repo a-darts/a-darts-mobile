@@ -4,7 +4,7 @@ export const normalizeOdd = (
     value: number,
     type?: GameTypes
 ): number => {
-    if (type !== GameTypes.BestOf) return value;
+    if (type !== GameTypes.BEST_OF) return value;
 
     return value % 2 === 0 ? value + 1 : value;
 };

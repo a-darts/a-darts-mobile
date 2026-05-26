@@ -19,48 +19,53 @@ export const CompetitionModeConfigScreen = ({ navigation }: any) => {
     const [tournamentInfo, setTournamentInfo] = useState<any>(null);
     const [isLoadingMatch, setIsLoadingMatch] = useState(false);
 
-    useEffect(() => {
-        if (isConnected) {
-            SocketClientService.onMatchAssigned(async (matchId) => {
-                setAssignedMatchId(matchId);
-                await fetchMatchDetails(matchId);
-            });
 
-            SocketClientService.onMatchStarted((matchId) => {
-                // Notificamos inicio y avanzamos
-                handleMatchStartedEvent(matchId);
-            });
+    const fetchMatchAndTournamentData = async (matchId: string) => {
+        const matchRes = await fetch(`${API_URL}/api/matches/${matchId}`);
+        if (!matchRes.ok) throw new Error('No se pudo obtener el partido');
+        const matchData = await matchRes.json();
+
+        let tInfo = null;
+        if (matchData.data.tournamentId) {
+            const tournamentRes = await fetch(`${API_URL}/api/tournaments/${matchData.data.tournamentId}`);
+            if (tournamentRes.ok) {
+                const tournamentData = await tournamentRes.json();
+                tInfo = tournamentData.data.info;
+            }
         }
+        return { matchDetails: matchData.data, tournamentDetails: tInfo };
+    };
+
+    useEffect(() => {
+        SocketClientService.onMatchAssigned(async (matchId) => {
+            setAssignedMatchId(matchId);
+            setIsLoadingMatch(true);
+            try {
+                const { matchDetails, tournamentDetails } = await fetchMatchAndTournamentData(matchId);
+                setMatchInfo(matchDetails);
+                setTournamentInfo(tournamentDetails);
+            } catch (error) {
+                console.error('Error obteniendo detalles del partido asignado:', error);
+            } finally {
+                setIsLoadingMatch(false);
+            }
+        });
+
+        SocketClientService.onMatchStarted(async (matchId) => {
+            await handleMatchStartedEvent(matchId);
+        });
+
+        SocketClientService.onMatchRestored(async (data) => {
+            console.log('[Frontend] Ejecutando auto-restauración para el match:', data.matchId);
+            await handleMatchRestoredEvent(data.matchId, data.historyThrows);
+        });
 
         return () => {
             SocketClientService.offMatchAssigned();
             SocketClientService.offMatchStarted();
+            SocketClientService.offMatchRestored();
         };
-    }, [isConnected, matchInfo, tournamentInfo]);
-
-    const fetchMatchDetails = async (matchId: string) => {
-        setIsLoadingMatch(true);
-        try {
-            const matchRes = await fetch(`${API_URL}/api/matches/${matchId}`);
-            if (!matchRes.ok) throw new Error('No se pudo obtener el partido');
-            const matchData = await matchRes.json();
-
-            setMatchInfo(matchData.data);
-
-            if (matchData.data.tournamentId) {
-                const tournamentRes = await fetch(`${API_URL}/api/tournaments/${matchData.data.tournamentId}`);
-                if (tournamentRes.ok) {
-                    const tournamentData = await tournamentRes.json();
-                    setTournamentInfo(tournamentData.data.info);
-                }
-            }
-        } catch (error) {
-            console.error('Error obteniendo detalles del partido:', error);
-            // Si quieres alertar: Alert.alert('Error', 'No se pudieron cargar los detalles del partido.');
-        } finally {
-            setIsLoadingMatch(false);
-        }
-    };
+    }, []);
 
     const handleConnect = () => {
         if (!boardId.trim()) {
@@ -73,34 +78,49 @@ export const CompetitionModeConfigScreen = ({ navigation }: any) => {
     };
 
     const handleMatchStartedEvent = async (matchId: string) => {
-        if (!matchInfo || !tournamentInfo) return;
-
+        setIsLoadingMatch(true);
         try {
-            // 2. Crear partido local
+            let currentMatchInfo = matchInfo;
+            let currentTournamentInfo = tournamentInfo;
+
+            if (!currentMatchInfo || !currentTournamentInfo) {
+                console.log('[CompetitionMode] Estados vacíos en el inicio rápido. Ejecutando fetch de emergencia...');
+                const { matchDetails, tournamentDetails } = await fetchMatchAndTournamentData(matchId);
+                currentMatchInfo = matchDetails;
+                currentTournamentInfo = tournamentDetails;
+            }
+
+            if (!currentMatchInfo || !currentTournamentInfo) {
+                throw new Error('Los datos del partido o torneo no se pudieron recuperar en el último intento.');
+            }
+
+            // 2. Crear partido local usando las variables locales garantizadas
             const playerNames = [
-                matchInfo.participant1?.alias || 'Jugador 1',
-                matchInfo.participant2?.alias || 'Jugador 2'
+                currentMatchInfo.participant1?.alias || 'Jugador 1',
+                currentMatchInfo.participant2?.alias || 'Jugador 2'
             ];
 
-            const mappedGameType = tournamentInfo.gameType === 'BEST_OF' ? GameTypes.BestOf : GameTypes.FirstTo;
+            const mappedGameType = currentTournamentInfo.gameType === 'BEST_OF' ? GameTypes.BEST_OF : GameTypes.FIRST_TO;
 
             const config = new MatchX01Config(
-                parseInt(tournamentInfo.game) || 501,
+                parseInt(currentTournamentInfo.game) || 501,
                 mappedGameType,
-                tournamentInfo.numSets || 1,
-                tournamentInfo.numLegs || 1,
+                currentTournamentInfo.numSets || 1,
+                currentTournamentInfo.numLegs || 1,
                 playerNames
             );
 
             const match = MatchX01.create(matchId, config);
 
-            // 3. Guardarlo en el respositorio asincrono
+            // 3. Guardarlo en el repositorio asíncrono
             await MatchX01ServiceFactory.getRepository().save(match);
 
-            // 4. Set the matchId in the socket service so it can emit throws
+            // 4. Setear el matchId en el servicio de sockets
             SocketClientService.setMatchId(matchId);
 
-            // 5. Navegar
+            setIsLoadingMatch(false);
+
+            // 5. Navegar con la configuración real calculada
             navigation.navigate('GameX01Screen', {
                 matchId: matchId,
                 playerNames: config.playerNames,
@@ -111,7 +131,73 @@ export const CompetitionModeConfigScreen = ({ navigation }: any) => {
             });
         } catch (error) {
             console.error('Error al instanciar el partido localmente:', error);
-            Alert.alert('Error', 'No se pudo crear el partido. Revisa la configuración del torneo.');
+            Alert.alert('Error', 'No se pudo iniciar el partido. Revisa la red o configuración del torneo.');
+        } finally {
+            setIsLoadingMatch(false);
+        }
+    };
+
+    const handleMatchRestoredEvent = async (matchId: string, historyThrows: any[]) => {
+        setIsLoadingMatch(true);
+        try {
+            let currentMatchInfo = matchInfo;
+            let currentTournamentInfo = tournamentInfo;
+
+            // Si los estados están vacíos (porque la app se acaba de abrir/conectar), hacemos fetch de emergencia
+            if (!currentMatchInfo || !currentTournamentInfo) {
+                const { matchDetails, tournamentDetails } = await fetchMatchAndTournamentData(matchId);
+                currentMatchInfo = matchDetails;
+                currentTournamentInfo = tournamentDetails;
+            }
+
+            const playerNames = [
+                currentMatchInfo.participant1?.alias || 'Jugador 1',
+                currentMatchInfo.participant2?.alias || 'Jugador 2'
+            ];
+            const mappedGameType = currentTournamentInfo.gameType === 'BEST_OF' ? GameTypes.BEST_OF : GameTypes.FIRST_TO;
+
+            const config = new MatchX01Config(
+                parseInt(currentTournamentInfo.game) || 501,
+                mappedGameType,
+                currentTournamentInfo.numSets || 1,
+                currentTournamentInfo.numLegs || 1,
+                playerNames
+            );
+
+            // Creamos la entidad de dominio local
+            const match = MatchX01.create(matchId, config);
+
+            // NOTA: Si tu MatchX01 local soporta un método para rehidratar el historial, deberías hacerlo aquí, ej:
+            if (Array.isArray(historyThrows) && historyThrows.length > 0) {
+                historyThrows.forEach((t: any) => {
+                    // Asumiendo que viene un objeto { score: number, dartsUsed?: number }
+                    // o directamente el número. Ajusta según tu API.
+                    const score = typeof t === 'number' ? t : t.score;
+                    const darts = t.dartsUsed !== undefined ? t.dartsUsed : 3;
+
+                    match.addThrow(score, darts);
+                });
+            }
+
+            await MatchX01ServiceFactory.getRepository().save(match);
+            SocketClientService.setMatchId(matchId);
+
+            setIsLoadingMatch(false);
+
+            // Navegación directa e inmediata a la pantalla de juego
+            navigation.navigate('GameX01Screen', {
+                matchId: matchId,
+                playerNames: config.playerNames,
+                game: config.game,
+                numSets: config.numSets,
+                numLegs: config.numLegs,
+                typeOfGame: config.typeOfGame,
+                historyThrows: historyThrows // Le pasas el historial para que GameX01Screen lo procese al montar
+            });
+
+        } catch (error) {
+            console.error('Error al auto-restaurar el partido localmente:', error);
+            Alert.alert('Error', 'No se pudo restaurar la partida en curso.');
         } finally {
             setIsLoadingMatch(false);
         }
@@ -126,7 +212,6 @@ export const CompetitionModeConfigScreen = ({ navigation }: any) => {
             await fetch(`${API_URL}/api/matches/${assignedMatchId}/start`, {
                 method: 'POST',
             });
-            // NOTA: No navegamos aquí. Navegaremos cuando recibamos el evento 'match_started'
         } catch (error) {
             console.error('Error iniciando el partido:', error);
             setIsLoadingMatch(false);
@@ -134,12 +219,31 @@ export const CompetitionModeConfigScreen = ({ navigation }: any) => {
     };
 
     if (isConnected) {
-        if (assignedMatchId && (matchInfo || isLoadingMatch)) {
+        // Si ya tenemos un ID de partido asignado, nos quedamos en esta vista pase lo que pase con los datos
+        if (assignedMatchId) {
             return (
                 <View style={styles.waitingContainer}>
                     <View style={styles.loadingBox}>
                         {isLoadingMatch ? (
-                            <ActivityIndicator size="large" color={theme.colors.activityIndicator} />
+                            <>
+                                <ActivityIndicator size="large" color={theme.colors.activityIndicator} />
+                                <Text style={[styles.waitingSubtitle, { marginTop: 15 }]}>Cargando datos del partido...</Text>
+                            </>
+                        ) : !matchInfo ? (
+                            // Si terminó de cargar pero no hay datos, mostramos un estado de error
+                            <>
+                                <Text style={styles.matchTitle}>Error al cargar</Text>
+                                <Text style={styles.waitingMessage}>No se pudieron recuperar los detalles del partido.</Text>
+                                <Button
+                                    title="Reintentar"
+                                    onPress={() => fetchMatchAndTournamentData(assignedMatchId)
+                                        .then(({ matchDetails, tournamentDetails }) => {
+                                            setMatchInfo(matchDetails);
+                                            setTournamentInfo(tournamentDetails);
+                                        }).catch(() => { })}
+                                    variant="primary"
+                                />
+                            </>
                         ) : (
                             <>
                                 <Text style={styles.matchTitle}>¡Partido Asignado!</Text>
@@ -154,7 +258,7 @@ export const CompetitionModeConfigScreen = ({ navigation }: any) => {
                                     <View style={styles.configCard}>
                                         <Text style={styles.configText}>Modalidad: {tournamentInfo.game}</Text>
                                         <Text style={styles.configText}>
-                                            {tournamentInfo.gameType === 'BestOf' ? 'Al mejor de' : 'Primero a'}: {tournamentInfo.numSets} Sets, {tournamentInfo.numLegs} Legs
+                                            {tournamentInfo.gameType === 'BEST_OF' ? 'Al mejor de' : 'Primero a'}: {tournamentInfo.numSets} Sets, {tournamentInfo.numLegs} Legs
                                         </Text>
                                     </View>
                                 )}

@@ -11,7 +11,7 @@ describe('MatchX01 Entity', () => {
 
     beforeEach(() => {
         // Configuramos una partida rápida de 301 para los tests
-        config = new MatchX01Config(301, GameTypes.FirstTo, 1, 1, ['Alice', 'Bob']);
+        config = new MatchX01Config(301, GameTypes.FIRST_TO, 1, 1, ['Alice', 'Bob']);
     });
 
     describe('Creation & Restore', () => {
@@ -54,7 +54,7 @@ describe('MatchX01 Entity', () => {
 
             match.addThrow(141); // Alice (Quedan 160)
             match.addThrow(0);   // Bob
-            match.addThrow(160); // Alice gana Leg y Match (porque es FirstTo 1 set/1 leg)
+            match.addThrow(160); // Alice gana Leg y Match (porque es FIRST_TO 1 set/1 leg)
 
             expect(match.status).toBe(GameStatus.FINISHED);
         });
@@ -143,10 +143,10 @@ describe('MatchX01 Entity', () => {
         });
     });
 
-    describe('Game Rules (BestOf vs FirstTo)', () => {
-        it('debería calcular correctamente el objetivo en modo BestOf', () => {
-            // BestOf 3 significa que hay que ganar 2 (3/2 + 1 = 2)
-            const bestOfConfig = new MatchX01Config(301, GameTypes.BestOf, 1, 3, ['Alice', 'Bob']);
+    describe('Game Rules (BEST_OF vs FIRST_TO)', () => {
+        it('debería calcular correctamente el objetivo en modo BEST_OF', () => {
+            // BEST_OF 3 significa que hay que ganar 2 (3/2 + 1 = 2)
+            const bestOfConfig = new MatchX01Config(301, GameTypes.BEST_OF, 1, 3, ['Alice', 'Bob']);
             const match = MatchX01.create(MATCH_ID, bestOfConfig);
 
             // Alice gana Leg 1
@@ -180,8 +180,8 @@ describe('MatchX01 Entity', () => {
 
     describe('Complex Match Flow (Sets and Legs Rotation)', () => {
         it('debería manejar la victoria de un Set y rotar el inicio del siguiente Set', () => {
-            // Config: FirstTo 2 Sets, cada Set FirstTo 2 Legs
-            const complexConfig = new MatchX01Config(301, GameTypes.FirstTo, 2, 1, ['Alice', 'Bob']);
+            // Config: FIRST_TO 2 Sets, cada Set FIRST_TO 2 Legs
+            const complexConfig = new MatchX01Config(301, GameTypes.FIRST_TO, 2, 1, ['Alice', 'Bob']);
             const match = MatchX01.create(MATCH_ID, complexConfig);
 
             // Set 1
@@ -200,7 +200,7 @@ describe('MatchX01 Entity', () => {
         });
 
         it('debería finalizar la partida al ganar el número de Sets objetivo', () => {
-            const setConfig = new MatchX01Config(101, GameTypes.FirstTo, 2, 1, ['Alice', 'Bob']);
+            const setConfig = new MatchX01Config(101, GameTypes.FIRST_TO, 2, 1, ['Alice', 'Bob']);
             const match = MatchX01.create(MATCH_ID, setConfig);
 
             // Alice gana Set 1

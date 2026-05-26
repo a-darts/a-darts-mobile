@@ -98,7 +98,21 @@ export const useGameX01 = (navigation: any, route: any) => {
             setInputValue('');
 
             if (SocketClientService.isConnected()) {
-                SocketClientService.emitScoreUpdate({ score: scoreNum });
+                SocketClientService.emitScoreUpdate({
+                    score: scoreNum,
+                    participant1: {
+                        remainingScore: updatedMatch.players[0].remainingScore,
+                        setsWon: updatedMatch.players[0].numSetsWon,
+                        legsWon: updatedMatch.players[0].numLegsWon,
+                    },
+                    participant2: {
+                        remainingScore: updatedMatch.players[1].remainingScore,
+                        setsWon: updatedMatch.players[1].numSetsWon,
+                        legsWon: updatedMatch.players[1].numLegsWon,
+                    },
+                    activePlayerIndex: updatedMatch.activePlayerIndex,
+                    status: updatedMatch.status,
+                });
             }
 
             if (updatedMatch.status === GameStatus.FINISHED) {

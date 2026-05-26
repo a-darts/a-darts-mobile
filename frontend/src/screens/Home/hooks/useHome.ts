@@ -23,7 +23,7 @@ export const useHome = (route: any) => {
             if (configs && configs.length > 0) {
                 const formattedGames = configs.map((cfg, index) => ({
                     id: `recent-${index}`,
-                    title: `${cfg.game} - ${cfg.typeOfGame === 'bestOf' ? 'Al mejor de' : (cfg.typeOfGame === 'firstTo' ? 'A ganar' : '')} ${cfg.numLegs} legs`,
+                    title: `${cfg.game} - ${cfg.typeOfGame === 'BEST_OF' ? 'Al mejor de' : (cfg.typeOfGame === 'FIRST_TO' ? 'A ganar' : '')} ${cfg.numLegs} legs`,
                     numPlayers: cfg.playerNames.length,
                     config: cfg
                 }));

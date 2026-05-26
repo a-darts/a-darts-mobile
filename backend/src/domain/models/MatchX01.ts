@@ -217,10 +217,10 @@ export class MatchX01 {
     }
 
     private calculateTarget(total: number): number {
-        if (this._config.typeOfGame === GameTypes.BestOf) {
-            return Math.floor(total / 2) + 1; // BestOf
+        if (this._config.typeOfGame === GameTypes.BEST_OF) {
+            return Math.floor(total / 2) + 1; // BEST_OF
         }
-        return total; // FirstTo
+        return total; // FIRST_TO
     }
 
     private rotateStartingPlayerForLeg(): void {

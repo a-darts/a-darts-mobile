@@ -12,7 +12,7 @@ const matchX01Service = MatchX01ServiceFactory.getMatchX01Service();
 export const useConfigX01 = (navigation: any) => {
     const [config, setConfig] = useState({
         game: 501,
-        typeOfGame: GameTypes.FirstTo,
+        typeOfGame: GameTypes.FIRST_TO,
         numSets: 1,
         numLegs: 1,
         playerNames: ['']
@@ -55,8 +55,8 @@ export const useConfigX01 = (navigation: any) => {
         try {
             setError(null);
 
-            // 1. Validar que si es BestOf deben ser numLegs y numSets impares
-            const isBestOf = config.typeOfGame === GameTypes.BestOf;
+            // 1. Validar que si es BEST_OF deben ser numLegs y numSets impares
+            const isBestOf = config.typeOfGame === GameTypes.BEST_OF;
             if (isBestOf && (config.numLegs % 2 === 0 || config.numSets % 2 === 0)) {
                 setError('El número de legs y sets debe ser impar');
                 return;

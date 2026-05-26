@@ -9,6 +9,6 @@ export const GAME_OPTIONS = [
 ];
 
 export const TYPE_OPTIONS = [
-    { label: 'A ganar', value: GameTypes.FirstTo },
-    { label: 'Al mejor de', value: GameTypes.BestOf },
+    { label: 'A ganar', value: GameTypes.FIRST_TO },
+    { label: 'Al mejor de', value: GameTypes.BEST_OF },
 ];

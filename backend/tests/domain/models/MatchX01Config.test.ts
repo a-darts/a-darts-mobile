@@ -4,7 +4,7 @@ import { GameTypes } from '../../../src/domain/enums/GameTypes';
 describe('MatchX01Config Value Object', () => {
     const validParams = {
         game: 501,
-        typeOfGame: GameTypes.FirstTo,
+        typeOfGame: GameTypes.FIRST_TO,
         numSets: 3,
         numLegs: 5,
         playerNames: ['Michael van Gerwen', 'Gary Anderson']
@@ -20,7 +20,7 @@ describe('MatchX01Config Value Object', () => {
         );
 
         expect(config.game).toBe(501);
-        expect(config.typeOfGame).toBe(GameTypes.FirstTo);
+        expect(config.typeOfGame).toBe(GameTypes.FIRST_TO);
         expect(config.numSets).toBe(3);
         expect(config.numLegs).toBe(5);
         expect(config.playerNames).toEqual(validParams.playerNames);
@@ -28,7 +28,7 @@ describe('MatchX01Config Value Object', () => {
 
     it('debería mantener la inmutabilidad del array de nombres de jugadores', () => {
         const names = ['P1', 'P2'];
-        const config = new MatchX01Config(301, GameTypes.BestOf, 1, 3, names);
+        const config = new MatchX01Config(301, GameTypes.BEST_OF, 1, 3, names);
 
         // Intentamos modificar el array original
         names.push('P3');
@@ -39,7 +39,7 @@ describe('MatchX01Config Value Object', () => {
     });
 
     it('el getter playerNames debería devolver una copia para evitar mutaciones externas', () => {
-        const config = new MatchX01Config(301, GameTypes.BestOf, 1, 3, ['P1', 'P2']);
+        const config = new MatchX01Config(301, GameTypes.BEST_OF, 1, 3, ['P1', 'P2']);
 
         // Intentamos modificar el array obtenido por el getter
         const namesFromGetter = config.playerNames;
@@ -50,10 +50,10 @@ describe('MatchX01Config Value Object', () => {
     });
 
     it('debería recuperar correctamente el tipo de juego (enum)', () => {
-        const configFirstTo = new MatchX01Config(501, GameTypes.FirstTo, 1, 1, ['P1']);
-        const configBestOf = new MatchX01Config(501, GameTypes.BestOf, 1, 1, ['P1']);
+        const configFirstTo = new MatchX01Config(501, GameTypes.FIRST_TO, 1, 1, ['P1']);
+        const configBestOf = new MatchX01Config(501, GameTypes.BEST_OF, 1, 1, ['P1']);
 
-        expect(configFirstTo.typeOfGame).toBe(GameTypes.FirstTo);
-        expect(configBestOf.typeOfGame).toBe(GameTypes.BestOf);
+        expect(configFirstTo.typeOfGame).toBe(GameTypes.FIRST_TO);
+        expect(configBestOf.typeOfGame).toBe(GameTypes.BEST_OF);
     });
 });
