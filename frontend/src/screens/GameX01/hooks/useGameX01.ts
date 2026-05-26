@@ -98,7 +98,7 @@ export const useGameX01 = (navigation: any, route: any) => {
             setInputValue('');
 
             if (SocketClientService.isConnected()) {
-                SocketClientService.emitScoreUpdate({ score: scoreNum, dartsUsed, matchState: updatedMatch });
+                SocketClientService.emitScoreUpdate({ score: scoreNum });
             }
 
             if (updatedMatch.status === GameStatus.FINISHED) {
