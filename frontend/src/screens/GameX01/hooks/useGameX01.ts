@@ -152,6 +152,10 @@ export const useGameX01 = (navigation: any, route: any) => {
             setInputValue('');
             const updatedMatch = await matchX01Service.undoLastThrow(match.id);
             setMatch(updatedMatch);
+
+            if (SocketClientService.isConnected()) {
+                SocketClientService.emitScoreUndo();
+            }
         } catch (error: any) {
             openToast({
                 title: 'Error',

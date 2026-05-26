@@ -178,6 +178,14 @@ class SocketClientService {
         });
     }
 
+    public emitScoreUndo(): void {
+        if (!this.socket?.connected) return;
+        this.socket.emit('score_undo', {
+            boardId: this.boardId,
+            matchId: this.matchId,
+        });
+    }
+
     public isConnected(): boolean {
         return this.socket?.connected || false;
     }
