@@ -102,11 +102,23 @@ export const useGameX01 = (navigation: any, route: any) => {
                     score: scoreNum,
                     participant1: {
                         remainingScore: updatedMatch.players[0].remainingScore,
+                        stats: {
+                            average: updatedMatch.players[0].stats.average,
+                            oneEighties: updatedMatch.players[0].stats.oneEighties,
+                            hundredFortyPlus: updatedMatch.players[0].stats.hundredFortyPlus,
+                            hundredPlus: updatedMatch.players[0].stats.hundredPlus,
+                        },
                         setsWon: updatedMatch.players[0].numSetsWon,
                         legsWon: updatedMatch.players[0].numLegsWon,
                     },
                     participant2: {
                         remainingScore: updatedMatch.players[1].remainingScore,
+                        stats: {
+                            average: updatedMatch.players[1].stats.average,
+                            oneEighties: updatedMatch.players[1].stats.oneEighties,
+                            hundredFortyPlus: updatedMatch.players[1].stats.hundredFortyPlus,
+                            hundredPlus: updatedMatch.players[1].stats.hundredPlus,
+                        },
                         setsWon: updatedMatch.players[1].numSetsWon,
                         legsWon: updatedMatch.players[1].numLegsWon,
                     },
