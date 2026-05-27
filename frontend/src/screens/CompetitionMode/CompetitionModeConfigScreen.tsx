@@ -11,7 +11,7 @@ import { GameTypes } from '../../../../backend/src/domain/enums/GameTypes';
 const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://192.168.0.44:3000';
 
 export const CompetitionModeConfigScreen = ({ navigation }: any) => {
-    const [boardId, setBoardId] = useState('');
+    const [boardShortId, setBoardShortId] = useState('');
     const [isConnected, setIsConnected] = useState(false);
 
     const [assignedMatchId, setAssignedMatchId] = useState<string | null>(null);
@@ -124,8 +124,8 @@ export const CompetitionModeConfigScreen = ({ navigation }: any) => {
     }, [isConnected]);
 
     const handleConnect = () => {
-        if (!boardId.trim()) return;
-        SocketClientService.connect(boardId.trim());
+        if (!boardShortId.trim()) return;
+        SocketClientService.connect(boardShortId.trim());
         setIsConnected(true);
     };
 
@@ -330,7 +330,7 @@ export const CompetitionModeConfigScreen = ({ navigation }: any) => {
                 <View style={styles.loadingBox}>
                     <ActivityIndicator size="large" color={theme.colors.activityIndicator} />
                     <Text style={styles.waitingTitle}>Diana Emparejada</Text>
-                    <Text style={styles.waitingSubtitle}>ID: {boardId}</Text>
+                    <Text style={styles.waitingSubtitle}>ID: {boardShortId}</Text>
                     <Text style={styles.waitingMessage}>
                         Esperando a que el administrador asigne un partido desde el panel web...
                     </Text>
@@ -357,8 +357,8 @@ export const CompetitionModeConfigScreen = ({ navigation }: any) => {
             <TextInput
                 style={styles.input}
                 placeholder="ID de la Diana (Ej: uuid...)"
-                value={boardId}
-                onChangeText={setBoardId}
+                value={boardShortId}
+                onChangeText={setBoardShortId}
                 autoCapitalize="none"
                 placeholderTextColor={theme.colors.inputPlaceholder}
             />
