@@ -13,6 +13,8 @@ const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://192.168.0.44:3000';
 export const CompetitionModeConfigScreen = ({ navigation }: any) => {
     const [boardShortId, setBoardShortId] = useState('');
     const [isConnected, setIsConnected] = useState(false);
+    const [isAutoConnecting, setIsAutoConnecting] = useState(false);
+    const [showClearButton, setShowClearButton] = useState(false);
 
     const [assignedMatchId, setAssignedMatchId] = useState<string | null>(null);
     const [matchInfo, setMatchInfo] = useState<any>(null);
@@ -58,6 +60,29 @@ export const CompetitionModeConfigScreen = ({ navigation }: any) => {
             throw error;
         }
     };
+
+    // Intenta reconectar automáticamente con un boardShortId guardado
+    useEffect(() => {
+        const attemptAutoConnect = async () => {
+            try {
+                setIsAutoConnecting(true);
+                const savedBoardShortId = await SocketClientService.getBoardShortId();
+                if (savedBoardShortId) {
+                    console.log('[CompetitionMode] Intentando reconectar con boardShortId guardado...');
+                    setBoardShortId(savedBoardShortId);
+                    setShowClearButton(true);
+                    // Intenta conectar automáticamente
+                    SocketClientService.connect(savedBoardShortId.trim());
+                    setIsConnected(true);
+                }
+            } catch (error) {
+                console.error('[CompetitionMode] Error al intentar reconectar:', error);
+            } finally {
+                setIsAutoConnecting(false);
+            }
+        };
+        attemptAutoConnect();
+    }, []);
 
     useEffect(() => {
         // Función auxiliar para verificar si el socket está listo y asignarle los eventos
@@ -127,6 +152,13 @@ export const CompetitionModeConfigScreen = ({ navigation }: any) => {
         if (!boardShortId.trim()) return;
         SocketClientService.connect(boardShortId.trim());
         setIsConnected(true);
+    };
+
+    const handleClearSavedBoardId = async () => {
+        await SocketClientService.clearBoardShortId();
+        setBoardShortId('');
+        setShowClearButton(false);
+        console.log('[CompetitionMode] boardShortId guardado eliminado');
     };
 
     const handleMatchStartedEvent = async (matchId: string) => {
@@ -344,6 +376,14 @@ export const CompetitionModeConfigScreen = ({ navigation }: any) => {
                         }}
                         variant="secondary"
                     />
+                    {showClearButton && (
+                        <Button
+                            title="Olvidar Diana"
+                            onPress={handleClearSavedBoardId}
+                            variant="secondary"
+                            size="small"
+                        />
+                    )}
                 </View>
             </View>
         );
@@ -351,24 +391,43 @@ export const CompetitionModeConfigScreen = ({ navigation }: any) => {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Modo Competición</Text>
-            <Text style={styles.subtitle}>Empareja esta tablet con una diana</Text>
+            {isAutoConnecting ? (
+                <>
+                    <ActivityIndicator size="large" color={theme.colors.activityIndicator} />
+                    <Text style={styles.title}>Buscando conexión anterior</Text>
+                    <Text style={styles.subtitle}>Intentando reconectar con la diana...</Text>
+                </>
+            ) : (
+                <>
+                    <Text style={styles.title}>Modo Competición</Text>
+                    <Text style={styles.subtitle}>Empareja esta tablet con una diana</Text>
 
-            <TextInput
-                style={styles.input}
-                placeholder="ID de la Diana (Ej: uuid...)"
-                value={boardShortId}
-                onChangeText={setBoardShortId}
-                autoCapitalize="none"
-                placeholderTextColor={theme.colors.inputPlaceholder}
-            />
+                    <TextInput
+                        style={styles.input}
+                        placeholder="ID de la Diana (Ej: uuid...)"
+                        value={boardShortId}
+                        onChangeText={setBoardShortId}
+                        autoCapitalize="none"
+                        placeholderTextColor={theme.colors.inputPlaceholder}
+                    />
 
-            <Button
-                title="Conectar"
-                onPress={handleConnect}
-                variant="primary"
-                size="large"
-            />
+                    <Button
+                        title="Conectar"
+                        onPress={handleConnect}
+                        variant="primary"
+                        size="large"
+                    />
+
+                    {showClearButton && (
+                        <Button
+                            title="Olvidar Diana Guardada"
+                            onPress={handleClearSavedBoardId}
+                            variant="secondary"
+                            size="small"
+                        />
+                    )}
+                </>
+            )}
         </View>
     );
 };

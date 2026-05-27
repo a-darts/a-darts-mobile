@@ -1,4 +1,7 @@
 import { io, Socket } from 'socket.io-client';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+const BOARD_SHORT_ID_KEY = 'boardShortId';
 
 class SocketClientService {
     // Cambiamos a public para poder escuchar directamente desde el useEffect de los componentes si es necesario
@@ -20,6 +23,8 @@ class SocketClientService {
         this.socket.on('connect', () => {
             console.log(`[Socket] Conectado exitosamente. Socket ID: ${this.socket?.id}`);
             this.socket?.emit('join_board', this.boardShortId);
+            // Persistir el boardShortId después de conexión exitosa
+            this.saveBoardShortId(this.boardShortId);
         });
 
         this.socket.on('disconnect', () => {
@@ -31,6 +36,31 @@ class SocketClientService {
         });
     }
 
+    public async saveBoardShortId(boardShortId: string | null): Promise<void> {
+        try {
+            if (boardShortId) {
+                await AsyncStorage.setItem(BOARD_SHORT_ID_KEY, boardShortId);
+                console.log(`[Socket] boardShortId guardado: ${boardShortId}`);
+            } else {
+                await AsyncStorage.removeItem(BOARD_SHORT_ID_KEY);
+                console.log('[Socket] boardShortId eliminado');
+            }
+        } catch (error) {
+            console.error('[Socket] Error al guardar boardShortId:', error);
+        }
+    }
+
+    public async getBoardShortId(): Promise<string | null> {
+        try {
+            const id = await AsyncStorage.getItem(BOARD_SHORT_ID_KEY);
+            console.log(`[Socket] boardShortId recuperado: ${id}`);
+            return id;
+        } catch (error) {
+            console.error('[Socket] Error al recuperar boardShortId:', error);
+            return null;
+        }
+    }
+
     public disconnect(): void {
         if (this.socket) {
             this.socket.disconnect();
@@ -38,6 +68,10 @@ class SocketClientService {
         }
         this.boardShortId = null;
         this.matchId = null;
+    }
+
+    public clearBoardShortId(): void {
+        this.saveBoardShortId(null);
     }
 
     public setMatchId(matchId: string): void {
