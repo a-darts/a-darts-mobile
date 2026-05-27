@@ -37,7 +37,7 @@ export const GameX01Screen = ({ navigation, route }: any) => {
 
   // Si el usuario pulsa atrás, se le pide una segunda confirmación de la acción
   React.useEffect(() => {
-    const unsubscribe = navigation.addListener('beforeRemove', (e) => {
+    const unsubscribe = navigation.addListener('beforeRemove', (e: any) => {
       if (isLeaving.current) {
         return;
       }
@@ -94,7 +94,7 @@ export const GameX01Screen = ({ navigation, route }: any) => {
       <Toast
         visible={toast.visible}
         title={toast.title}
-        description={toast.description}
+        description={toast.description ?? ''}
         type={toast.type}
         mode={toast.mode}
         showCloseButton={toast.showCloseButton}
