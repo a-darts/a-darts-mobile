@@ -67,7 +67,7 @@ export const CompetitionModeConfigScreen = ({ navigation }: any) => {
 
             // Limpiamos listeners previos para evitar duplicados si hay re-renders
             socket.off('match_assigned');
-            socket.off('match_started');
+            socket.off('match_started_confirmed');
             socket.off('match_restored');
 
             // 1. Escucha de asignación
@@ -90,7 +90,7 @@ export const CompetitionModeConfigScreen = ({ navigation }: any) => {
             });
 
             // 2. Escucha de inicio
-            socket.on('match_started', async (data: { matchId: string }) => {
+            socket.on('match_started_confirmed', async (data: { matchId: string }) => {
                 console.log(`[Pantalla] Evento match_started detectado para ID: ${data.matchId}`);
                 await handleMatchStartedEvent(data.matchId);
             });
@@ -130,6 +130,7 @@ export const CompetitionModeConfigScreen = ({ navigation }: any) => {
     };
 
     const handleMatchStartedEvent = async (matchId: string) => {
+        console.log(`[Match Start] Intentando iniciar match...`);
         setIsLoadingMatch(true);
         try {
             // Usamos la referencia mutable para leer el valor en tiempo real libre de cierres obsoletos

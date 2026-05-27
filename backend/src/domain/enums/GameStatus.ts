@@ -1,4 +1,4 @@
 export enum GameStatus {
-    PLAYING,
-    FINISHED,
+    PLAYING = 'PLAYING',
+    FINISHED = 'FINISHED',
 }

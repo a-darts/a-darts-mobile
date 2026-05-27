@@ -61,7 +61,7 @@ class SocketClientService {
         });
     }
 
-    emitScoreEdit(historyThrows: any[]) {
+    public emitScoreEdit(historyThrows: any[]) {
         if (this.socket) {
             this.socket.emit('score_edit', {
                 boardShortId: this.boardShortId,
