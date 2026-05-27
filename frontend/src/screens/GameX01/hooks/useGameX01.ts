@@ -125,7 +125,7 @@ export const useGameX01 = (navigation: any, route: any) => {
                     onCloseAction: () => navigation.navigate('MatchX01SummaryScreen', { matchId: match.id }),
                 });
             }
-        } catch (error) {
+        } catch (error: any) {
             if (error instanceof BustException) {
                 openToast({
                     title: 'EXCESO',
@@ -198,6 +198,8 @@ export const useGameX01 = (navigation: any, route: any) => {
     };
 
     const handleEnterRemaining = async () => {
+        if (!match) return;
+        
         if (inputValue === '') return;
         const remaining = parseInt(inputValue, 10);
         if (isNaN(remaining)) return;
