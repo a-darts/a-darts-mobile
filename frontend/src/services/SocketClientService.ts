@@ -1,10 +1,15 @@
 import { io, Socket } from 'socket.io-client';
 
+type MatchStatusListener = (data: { matchId: string }) => void;
+
 class SocketClientService {
     // Cambiamos a public para poder escuchar directamente desde el useEffect de los componentes si es necesario
     public socket: Socket | null = null;
     private boardShortId: string | null = null;
     private matchId: string | null = null;
+
+    private matchSuspendedListeners: MatchStatusListener[] = [];
+    private matchResumedListeners: MatchStatusListener[] = [];
 
     private readonly SERVER_URL = process.env.EXPO_PUBLIC_API_URL || 'http://192.168.0.44:3000';
 
@@ -29,6 +34,16 @@ class SocketClientService {
         this.socket.on('connect_error', (error) => {
             console.error('[Socket] Error de conexión:', error);
         });
+
+        this.socket.on('match_suspended', (data: { matchId: string }) => {
+            console.log('[Socket] match_suspended recibido:', data);
+            this.matchSuspendedListeners.forEach(fn => fn(data));
+        });
+
+        this.socket.on('match_resumed', (data: { matchId: string }) => {
+            console.log('[Socket] match_resumed recibido:', data);
+            this.matchResumedListeners.forEach(fn => fn(data));
+        });
     }
 
     public disconnect(): void {
@@ -38,6 +53,12 @@ class SocketClientService {
         }
         this.boardShortId = null;
         this.matchId = null;
+        this.matchSuspendedListeners = [];
+        this.matchResumedListeners = [];
+    }
+
+    public isConnected(): boolean {
+        return this.socket?.connected || false;
     }
 
     public setMatchId(matchId: string): void {
@@ -71,8 +92,18 @@ class SocketClientService {
         }
     }
 
-    public isConnected(): boolean {
-        return this.socket?.connected || false;
+    public onMatchSuspended(listener: MatchStatusListener): () => void {
+        this.matchSuspendedListeners.push(listener);
+        return () => {
+            this.matchSuspendedListeners = this.matchSuspendedListeners.filter(fn => fn !== listener);
+        };
+    }
+
+    public onMatchResumed(listener: MatchStatusListener): () => void {
+        this.matchResumedListeners.push(listener);
+        return () => {
+            this.matchResumedListeners = this.matchResumedListeners.filter(fn => fn !== listener);
+        };
     }
 }
 

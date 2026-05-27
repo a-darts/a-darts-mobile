@@ -10,7 +10,7 @@ export interface ToastProps {
     type: 'error' | 'success',
     mode: 'auto' | 'manual',
     onFinished: () => void,
-    children?,
+    children?: any,
     showCloseButton?: boolean,
 }
 

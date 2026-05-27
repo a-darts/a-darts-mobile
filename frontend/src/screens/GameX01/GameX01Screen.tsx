@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, TouchableOpacity, Dimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useGameX01 } from './hooks/useGameX01';
@@ -11,6 +11,8 @@ import { Button } from '../../components/Button';
 import { TextInput } from '../../components/TextInput';
 import { useSettings } from '../../utils/SettingsContext';
 import { GameStatus } from '../../../../backend/src/domain/enums/GameStatus';
+import SocketClientService from '../../services/SocketClientService';
+import { MaterialIcons } from '@expo/vector-icons';
 
 const { width, height } = Dimensions.get('window');
 const aspectRatio = height / width;
@@ -34,6 +36,22 @@ export const GameX01Screen = ({ navigation, route }: any) => {
   } = useKeypad();
 
   const isLeaving = useRef(false);
+
+  const [isMatchSuspended, setIsMatchSuspended] = useState(false);
+
+  useEffect(() => {
+      const unsubSuspended = SocketClientService.onMatchSuspended(() => {
+          setIsMatchSuspended(true);
+      });
+      const unsubResumed = SocketClientService.onMatchResumed(() => {
+          setIsMatchSuspended(false);
+      });
+
+      return () => {
+          unsubSuspended();
+          unsubResumed();
+      };
+  }, []);
 
   // Si el usuario pulsa atrás, se le pide una segunda confirmación de la acción
   React.useEffect(() => {
@@ -88,6 +106,19 @@ export const GameX01Screen = ({ navigation, route }: any) => {
 
   return (
     <SafeAreaView style={[styles.container]} edges={['bottom']}>
+      {isMatchSuspended && (
+        <View style={styles.suspensionOverlay}>
+          <View style={styles.suspensionCard}>
+            {/* <Text style={styles.suspensionIcon}>⏸</Text> */}
+            <MaterialIcons name="pause" size={48} color="#FF4C4C" />
+            <Text style={styles.suspensionTitle}>Partida suspendida</Text>
+            <Text style={styles.suspensionSubtitle}>
+                El administrador ha pausado este partido.{'\n\n'}
+                Contacta con él si necesitas ayuda.
+            </Text>
+          </View>
+        </View>
+      )}
       {toast.visible && (
         <View style={styles.overlay} />
       )}
