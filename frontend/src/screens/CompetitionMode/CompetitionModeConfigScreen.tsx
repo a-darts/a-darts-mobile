@@ -311,6 +311,14 @@ export const CompetitionModeConfigScreen = ({ navigation }: any) => {
         }
     };
 
+    if (isBootstrapping) {
+        return (
+            <View style={styles.waitingContainer}>
+                <ActivityIndicator size="large" color={theme.colors.activityIndicator} />
+            </View>
+        );
+    }
+
     if (isConnected) {
         if (assignedMatchId) {
             return (
