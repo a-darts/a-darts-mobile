@@ -15,7 +15,7 @@ export const useConfigX01 = (navigation: any) => {
         typeOfGame: GameTypes.FIRST_TO,
         numSets: 1,
         numLegs: 1,
-        playerNames: ['']
+        playerNames: [''],
     });
 
     const [error, setError] = useState<string | null>(null);
