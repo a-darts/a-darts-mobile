@@ -14,7 +14,6 @@ const boardService = BoardServiceFactory.getInstance();
 const matchX01Service = MatchX01ServiceFactory.getMatchX01Service();
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://192.168.0.44:3000';
-const ASYNC_STORAGE_KEY = '@competition_board_id';
 
 export const useCompetitionModeConfig = (navigation: any) => {
     const [boardShortId, setBoardShortId] = useState('');
