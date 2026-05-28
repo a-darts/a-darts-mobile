@@ -24,7 +24,7 @@ type ToastState = {
 };
 
 export const useGameX01 = (navigation: any, route: any) => {
-    const { matchId } = route.params;
+    const { matchId, isCompetitionMode = false } = route.params;
 
     const {
         canCheckoutWithDarts,
@@ -134,7 +134,12 @@ export const useGameX01 = (navigation: any, route: any) => {
                     description: 'Partida finalizada',
                     type: 'success',
                     mode: 'auto',
-                    onCloseAction: () => navigation.navigate('MatchX01SummaryScreen', { matchId: match.id }),
+                    onCloseAction: () => navigation.navigate(
+                        'MatchX01SummaryScreen', {
+                            matchId: match.id,
+                            isCompetitionMode: isCompetitionMode,
+                        },
+                    ),
                 });
             }
         } catch (error: any) {
@@ -366,7 +371,12 @@ export const useGameX01 = (navigation: any, route: any) => {
                     description: 'Partida finalizada',
                     type: 'success',
                     mode: 'auto',
-                    onCloseAction: () => navigation.navigate('MatchX01SummaryScreen', { matchId: match.id }),
+                    onCloseAction: () => navigation.navigate(
+                        'MatchX01SummaryScreen', {
+                            matchId: match.id,
+                            isCompetitionMode: isCompetitionMode,
+                        },
+                    ),
                 });
             } else {
                 closeToast();

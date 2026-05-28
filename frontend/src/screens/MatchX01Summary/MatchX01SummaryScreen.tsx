@@ -17,7 +17,7 @@ const matchRepo = MatchX01ServiceFactory.getRepository();
 const matchX01Service = MatchX01ServiceFactory.getMatchX01Service();
 
 export const MatchX01SummaryScreen = ({ route, navigation }) => {
-  const { matchId } = route.params;
+  const { matchId, isCompetitionMode = false } = route.params;
 
   const [match, setMatch] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -74,7 +74,11 @@ export const MatchX01SummaryScreen = ({ route, navigation }) => {
   };
 
   const handleExit = () => {
-    navigation.navigate('HomeScreen');
+    if (isCompetitionMode) {
+      navigation.navigate('CompetitionModeConfig');
+    } else {
+      navigation.navigate('HomeScreen');
+    }
   };
 
 
@@ -131,17 +135,19 @@ export const MatchX01SummaryScreen = ({ route, navigation }) => {
       </ScrollView>
 
       <View style={[styles.buttonsContainer]}>
+        {!isCompetitionMode && (
+          <Button
+            title="VOLVER A JUGAR"
+            iconName="gps-fixed"
+            variant='primary'
+            size='large'
+            onPress={handleReplay}
+          />
+        )}
         <Button
-          title="VOLVER A JUGAR"
-          iconName="gps-fixed"
-          variant='primary'
-          size='large'
-          onPress={handleReplay}
-        />
-        <Button
-          title="SALIR"
-          iconName="home"
-          variant='secondary'
+          title={isCompetitionMode ? "VOLVER A LA ESPERA" : "SALIR"}
+          iconName={isCompetitionMode ? "refresh" : "home"}
+          variant={isCompetitionMode ? 'primary' : 'secondary'}
           size='large'
           onPress={handleExit}
         />

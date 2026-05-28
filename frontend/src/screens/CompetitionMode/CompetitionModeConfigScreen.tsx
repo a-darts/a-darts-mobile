@@ -239,7 +239,8 @@ export const CompetitionModeConfigScreen = ({ navigation }: any) => {
                 game: config.game,
                 numSets: config.numSets,
                 numLegs: config.numLegs,
-                typeOfGame: config.typeOfGame
+                typeOfGame: config.typeOfGame,
+                isCompetitionMode: true,
             });
         } catch (error) {
             console.error('Error al instanciar el partido localmente:', error);
@@ -297,7 +298,8 @@ export const CompetitionModeConfigScreen = ({ navigation }: any) => {
                 numSets: config.numSets,
                 numLegs: config.numLegs,
                 typeOfGame: config.typeOfGame,
-                historyThrows: historyThrows
+                historyThrows: historyThrows,
+                isCompetitionMode: true,
             });
 
         } catch (error) {
