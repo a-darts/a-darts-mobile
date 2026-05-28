@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, TextInput, StyleSheet, ActivityIndicator, Alert } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator, Alert } from 'react-native';
 import SocketClientService from '../../services/SocketClientService';
 import { Button } from '../../components/Button';
+import { TextInput } from '../../components/TextInput';
 import { theme } from '../../theme/theme';
 import { MatchX01 } from '../../../../backend/src/domain/models/MatchX01';
 import MatchX01ServiceFactory from '../../../../backend/src/infrastructure/factories/MatchX01ServiceFactory';
@@ -171,7 +172,7 @@ export const CompetitionModeConfigScreen = ({ navigation }: any) => {
             
             // Borramos el registro para que la próxima vez pida el ID de nuevo
             await AsyncStorage.removeItem(ASYNC_STORAGE_KEY);
-            console.log('[AsyncStorage] ID de diana removido del almacenamiento local.');
+            console.log('[AsyncStorage] ID de diana eliminado del almacenamiento local.');
         } catch (error) {
             console.error('[AsyncStorage] Error al borrar el ID:', error);
         }
@@ -345,6 +346,15 @@ export const CompetitionModeConfigScreen = ({ navigation }: any) => {
                         ) : (
                             <>
                                 <Text style={styles.matchTitle}>¡Partido Asignado!</Text>
+                                {matchInfo.status === "PENDING" && (
+                                    <View style={{ marginBottom: 24 }}>
+                                        <Text style={[styles.waitingMessage, { textAlign: 'center' }]}>
+                                            Esperando al otro rival...
+                                        </Text>
+                                        <ActivityIndicator size="large" color={theme.colors.activityIndicator} />
+                                    </View>
+                                )}
+                                        
                                 <View style={styles.matchCard}>
                                     <Text style={styles.playerText}>{matchInfo?.participant1?.alias || 'Jugador 1'}</Text>
                                     <Text style={styles.vsText}>VS</Text>
@@ -360,12 +370,21 @@ export const CompetitionModeConfigScreen = ({ navigation }: any) => {
                                     </View>
                                 )}
 
-                                <View style={{ marginTop: 30, width: '100%' }}>
+                                <View style={{ display: 'flex', flexDirection: 'column', width: '100%', marginTop: 30, gap: 24 }}>
+                                    {matchInfo.status === "READY" && (
+                                        <Button
+                                            title="INICIAR PARTIDA"
+                                            onPress={handleStartMatch}
+                                            variant="primary"
+                                            size="large"
+                                            iconName="play-arrow"
+                                        />
+                                    )}
                                     <Button
-                                        title="Iniciar Partida"
-                                        onPress={handleStartMatch}
-                                        variant="primary"
-                                        size="large"
+                                        title="DESCONECTAR"
+                                        iconName="link-off"
+                                        onPress={handleDisconnect}
+                                        variant="secondary"
                                     />
                                 </View>
                             </>
@@ -382,12 +401,13 @@ export const CompetitionModeConfigScreen = ({ navigation }: any) => {
                     <Text style={styles.waitingTitle}>Diana Emparejada</Text>
                     <Text style={styles.waitingSubtitle}>ID: {boardShortId}</Text>
                     <Text style={styles.waitingMessage}>
-                        Esperando a que el administrador asigne un partido desde el panel web...
+                        Esperando a que el administrador asigne un partido...
                     </Text>
                 </View>
                 <View style={styles.disconnectContainer}>
                     <Button
-                        title="Desconectar"
+                        title="DESCONECTAR"
+                        iconName="link-off"
                         onPress={handleDisconnect}
                         variant="secondary"
                     />
@@ -399,22 +419,22 @@ export const CompetitionModeConfigScreen = ({ navigation }: any) => {
     return (
         <View style={styles.container}>
             <Text style={styles.title}>Modo Competición</Text>
-            <Text style={styles.subtitle}>Empareja esta tablet con una diana</Text>
+            <Text style={styles.subtitle}>Empareja esta tablet con una diana del servidor introduciendo su ID</Text>
 
             <TextInput
-                style={styles.input}
-                placeholder="ID de la Diana (Ej: uuid...)"
+                description="ID de la diana"
+                label="(Ej: SXXX-D001)"
                 value={boardShortId}
                 onChangeText={setBoardShortId}
                 autoCapitalize="none"
-                placeholderTextColor={theme.colors.inputPlaceholder}
             />
 
             <Button
-                title="Conectar"
+                title="CONECTAR"
                 onPress={handleConnect}
                 variant="primary"
                 size="large"
+                iconName="link"
             />
         </View>
     );
@@ -440,17 +460,6 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         color: theme.colors.textSecondary,
         marginBottom: 30,
-    },
-    input: {
-        borderWidth: 1,
-        borderColor: theme.colors.inputBorder,
-        borderRadius: 12,
-        padding: 15,
-        fontSize: 18,
-        marginBottom: 25,
-        textAlign: 'center',
-        color: theme.colors.inputText,
-        backgroundColor: theme.colors.inputBackground,
     },
     waitingContainer: {
         flex: 1,

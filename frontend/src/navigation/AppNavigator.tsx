@@ -75,7 +75,7 @@ export const AppNavigator = () => {
         <Stack.Screen
           name="CompetitionModeConfig"
           component={CompetitionModeConfigScreen}
-          options={{ title: 'Modo Competición' }}
+          options={{ title: 'Modo competición' }}
         />
         <Stack.Screen
           name="GameX01Screen"

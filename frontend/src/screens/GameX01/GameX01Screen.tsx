@@ -50,8 +50,8 @@ export const GameX01Screen = ({ navigation, route }: any) => {
       if (data.matchId === match?.id) {
         setToast({
           visible: true,
-          title: 'Partido Desasignado',
-          description: 'El administrador ha movido este partido a otra diana.',
+          title: 'Partida asignada a otra diana',
+          description: 'El administrador ha movido esta partida a otra diana. Contacta con él si necesitas ayuda.',
           type: 'error',
           mode: 'manual',
           showCloseButton: false,
