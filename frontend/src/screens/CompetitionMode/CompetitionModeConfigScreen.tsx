@@ -59,65 +59,128 @@ export const CompetitionModeConfigScreen = ({ navigation }: any) => {
         }
     };
 
-    useEffect(() => {
-        // Función auxiliar para verificar si el socket está listo y asignarle los eventos
-        const setupSocketListeners = () => {
-            const socket = SocketClientService.socket;
-            if (!socket) return;
+    // useEffect(() => {
+    //     // Función auxiliar para verificar si el socket está listo y asignarle los eventos
+    //     const setupSocketListeners = () => {
+    //         const socket = SocketClientService.socket;
+    //         if (!socket) return;
 
-            // Limpiamos listeners previos para evitar duplicados si hay re-renders
-            socket.off('match_assigned');
+    //         // Limpiamos listeners previos para evitar duplicados si hay re-renders
+    //         socket.off('match_assigned');
+    //         socket.off('match_started_confirmed');
+    //         socket.off('match_restored');
+
+    //         // 1. Escucha de asignación
+    //         socket.on('match_assigned', async (data: { matchId: string }) => {
+    //             console.log(`[Pantalla] ¡Evento match_assigned detectado directamente! ID: ${data.matchId}`);
+
+    //             // Forzamos el cambio de estado de React de manera inmediata
+    //             setAssignedMatchId(data.matchId);
+    //             setIsLoadingMatch(true);
+
+    //             try {
+    //                 const { matchDetails, tournamentDetails } = await fetchMatchAndTournamentData(data.matchId);
+    //                 updateMatchDataStates(matchDetails, tournamentDetails);
+    //             } catch (error) {
+    //                 console.error('[Pantalla] Error al procesar HTTP tras la asignación:', error);
+    //                 Alert.alert('Error de Red', 'Se asignó el partido pero falló la descarga de detalles.');
+    //             } finally {
+    //                 setIsLoadingMatch(false);
+    //             }
+    //         });
+
+    //         // 2. Escucha de inicio
+    //         socket.on('match_started_confirmed', async (data: { matchId: string }) => {
+    //             console.log(`[Pantalla] Evento match_started detectado para ID: ${data.matchId}`);
+    //             await handleMatchStartedEvent(data.matchId);
+    //         });
+
+    //         // 3. Escucha de restauración
+    //         socket.on('match_restored', async (data: { matchId: string, historyThrows: any[] }) => {
+    //             console.log(`[Pantalla] Evento match_restored detectado para ID: ${data.matchId}`);
+    //             await handleMatchRestoredEvent(data.matchId, data.historyThrows);
+    //         });
+    //     };
+
+    //     // Ejecutamos la configuración inicial
+    //     setupSocketListeners();
+
+    //     // Pequeño intervalo de control por si el socket tarda milisegundos en instanciarse tras dar al botón "Conectar"
+    //     const interval = setInterval(() => {
+    //         if (SocketClientService.socket && !SocketClientService.socket.hasListeners('match_assigned')) {
+    //             setupSocketListeners();
+    //         }
+    //     }, 1000);
+
+    //     return () => {
+    //         clearInterval(interval);
+    //         const socket = SocketClientService.socket;
+    //         if (socket) {
+    //             socket.off('match_assigned');
+    //             socket.off('match_started');
+    //             socket.off('match_restored');
+    //         }
+    //     };
+    // }, [isConnected]);
+    useEffect(() => {
+        // Si no le hemos dado a conectar, no hacemos nada
+        if (!isConnected) return;
+
+        console.log('[Pantalla] Suscribiendo listeners nativos del SocketClientService');
+
+        // 1. Escuchar Asignación usando tu arquitectura de servicio limpio
+        const unsubscribeAssigned = SocketClientService.onMatchAssigned(async (data: { matchId: string }) => {
+            console.log(`[Pantalla] ¡match_assigned detectado vía Servicio! ID: ${data.matchId}`);
+            
+            setAssignedMatchId(data.matchId);
+            setIsLoadingMatch(true);
+
+            try {
+                const { matchDetails, tournamentDetails } = await fetchMatchAndTournamentData(data.matchId);
+                updateMatchDataStates(matchDetails, tournamentDetails);
+            } catch (error) {
+                console.error('[Pantalla] Error al procesar HTTP tras la asignación:', error);
+                Alert.alert('Error de Red', 'Se asignó el partido pero falló la descarga de detalles.');
+            } finally {
+                setIsLoadingMatch(false);
+            }
+        });
+
+        // 2. Escuchar Desasignación (Para cuando se ejecute el paso 6 de tu caso de uso)
+        const unsubscribeUnassigned = SocketClientService.onMatchUnassigned((data: { matchId: string }) => {
+            console.log(`[Pantalla] ¡match_unassigned detectado vía Servicio! Limpiando estados.`);
+            setAssignedMatchId(null);
+            setMatchInfo(null);
+            setTournamentInfo(null);
+            matchInfoRef.current = null;
+            tournamentInfoRef.current = null;
+        });
+
+        // 3. Para los eventos que NO tienes mapeados en el servicio (como start y restore),
+        // los escuchamos del socket actual de forma segura
+        const socket = SocketClientService.socket;
+        if (socket) {
             socket.off('match_started_confirmed');
             socket.off('match_restored');
 
-            // 1. Escucha de asignación
-            socket.on('match_assigned', async (data: { matchId: string }) => {
-                console.log(`[Pantalla] ¡Evento match_assigned detectado directamente! ID: ${data.matchId}`);
-
-                // Forzamos el cambio de estado de React de manera inmediata
-                setAssignedMatchId(data.matchId);
-                setIsLoadingMatch(true);
-
-                try {
-                    const { matchDetails, tournamentDetails } = await fetchMatchAndTournamentData(data.matchId);
-                    updateMatchDataStates(matchDetails, tournamentDetails);
-                } catch (error) {
-                    console.error('[Pantalla] Error al procesar HTTP tras la asignación:', error);
-                    Alert.alert('Error de Red', 'Se asignó el partido pero falló la descarga de detalles.');
-                } finally {
-                    setIsLoadingMatch(false);
-                }
-            });
-
-            // 2. Escucha de inicio
             socket.on('match_started_confirmed', async (data: { matchId: string }) => {
-                console.log(`[Pantalla] Evento match_started detectado para ID: ${data.matchId}`);
+                console.log(`[Pantalla] Evento match_started_confirmed detectado para ID: ${data.matchId}`);
                 await handleMatchStartedEvent(data.matchId);
             });
 
-            // 3. Escucha de restauración
             socket.on('match_restored', async (data: { matchId: string, historyThrows: any[] }) => {
                 console.log(`[Pantalla] Evento match_restored detectado para ID: ${data.matchId}`);
                 await handleMatchRestoredEvent(data.matchId, data.historyThrows);
             });
-        };
+        }
 
-        // Ejecutamos la configuración inicial
-        setupSocketListeners();
-
-        // Pequeño intervalo de control por si el socket tarda milisegundos en instanciarse tras dar al botón "Conectar"
-        const interval = setInterval(() => {
-            if (SocketClientService.socket && !SocketClientService.socket.hasListeners('match_assigned')) {
-                setupSocketListeners();
-            }
-        }, 1000);
-
+        // Limpieza estricta de listeners al desmontar el componente o desconectar
         return () => {
-            clearInterval(interval);
-            const socket = SocketClientService.socket;
+            console.log('[Pantalla] Limpiando todos los listeners');
+            unsubscribeAssigned();
+            unsubscribeUnassigned();
             if (socket) {
-                socket.off('match_assigned');
-                socket.off('match_started');
+                socket.off('match_started_confirmed');
                 socket.off('match_restored');
             }
         };
@@ -260,7 +323,6 @@ export const CompetitionModeConfigScreen = ({ navigation }: any) => {
         }
     };
 
-    // --- RENDERIZADO DE INTERFAZ ---
     if (isConnected) {
         if (assignedMatchId) {
             return (

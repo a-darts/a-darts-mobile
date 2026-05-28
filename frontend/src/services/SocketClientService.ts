@@ -10,6 +10,8 @@ class SocketClientService {
 
     private matchSuspendedListeners: MatchStatusListener[] = [];
     private matchResumedListeners: MatchStatusListener[] = [];
+    private matchUnassignedListeners: MatchStatusListener[] = [];
+    private matchAssignedListeners: MatchStatusListener[] = [];
 
     private readonly SERVER_URL = process.env.EXPO_PUBLIC_API_URL || 'http://192.168.0.44:3000';
 
@@ -44,6 +46,16 @@ class SocketClientService {
             console.log('[Socket] match_resumed recibido:', data);
             this.matchResumedListeners.forEach(fn => fn(data));
         });
+
+        this.socket.on('match_unassigned', (data: { matchId: string }) => {
+            console.log('[Socket] match_unassigned recibido:', data);
+            this.matchUnassignedListeners.forEach(fn => fn(data));
+        });
+
+        this.socket.on('match_assigned', (data: { matchId: string }) => {
+            console.log('[Socket] match_assigned recibido:', data);
+            this.matchAssignedListeners.forEach(fn => fn(data));
+        });
     }
 
     public disconnect(): void {
@@ -55,6 +67,8 @@ class SocketClientService {
         this.matchId = null;
         this.matchSuspendedListeners = [];
         this.matchResumedListeners = [];
+        this.matchUnassignedListeners = [];
+        this.matchAssignedListeners = [];
     }
 
     public isConnected(): boolean {
@@ -103,6 +117,20 @@ class SocketClientService {
         this.matchResumedListeners.push(listener);
         return () => {
             this.matchResumedListeners = this.matchResumedListeners.filter(fn => fn !== listener);
+        };
+    }
+
+    public onMatchUnassigned(listener: MatchStatusListener): () => void {
+        this.matchUnassignedListeners.push(listener);
+        return () => {
+            this.matchUnassignedListeners = this.matchUnassignedListeners.filter(fn => fn !== listener);
+        };
+    }
+
+    public onMatchAssigned(listener: MatchStatusListener): () => void {
+        this.matchAssignedListeners.push(listener);
+        return () => {
+            this.matchAssignedListeners = this.matchAssignedListeners.filter(fn => fn !== listener);
         };
     }
 }

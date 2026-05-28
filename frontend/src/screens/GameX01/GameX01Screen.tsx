@@ -40,18 +40,35 @@ export const GameX01Screen = ({ navigation, route }: any) => {
   const [isMatchSuspended, setIsMatchSuspended] = useState(false);
 
   useEffect(() => {
-      const unsubSuspended = SocketClientService.onMatchSuspended(() => {
-          setIsMatchSuspended(true);
-      });
-      const unsubResumed = SocketClientService.onMatchResumed(() => {
-          setIsMatchSuspended(false);
-      });
+    const unsubSuspended = SocketClientService.onMatchSuspended(() => {
+      setIsMatchSuspended(true);
+    });
+    const unsubResumed = SocketClientService.onMatchResumed(() => {
+      setIsMatchSuspended(false);
+    });
+    const unsubUnassigned = SocketClientService.onMatchUnassigned((data) => {
+      if (data.matchId === match?.id) {
+        setToast({
+          visible: true,
+          title: 'Partido Desasignado',
+          description: 'El administrador ha movido este partido a otra diana.',
+          type: 'error',
+          mode: 'manual',
+          showCloseButton: false,
+          onCloseAction: () => {
+            isLeaving.current = true;
+            navigation.navigate('CompetitionModeConfigScreen'); 
+          }
+        });
+      }
+    });
 
-      return () => {
-          unsubSuspended();
-          unsubResumed();
-      };
-  }, []);
+    return () => {
+      unsubSuspended();
+      unsubResumed();
+      unsubUnassigned();
+    };
+  }, [match?.id]);
 
   // Si el usuario pulsa atrás, se le pide una segunda confirmación de la acción
   React.useEffect(() => {
@@ -109,7 +126,6 @@ export const GameX01Screen = ({ navigation, route }: any) => {
       {isMatchSuspended && (
         <View style={styles.suspensionOverlay}>
           <View style={styles.suspensionCard}>
-            {/* <Text style={styles.suspensionIcon}>⏸</Text> */}
             <MaterialIcons name="pause" size={48} color="#FF4C4C" />
             <Text style={styles.suspensionTitle}>Partida suspendida</Text>
             <Text style={styles.suspensionSubtitle}>
