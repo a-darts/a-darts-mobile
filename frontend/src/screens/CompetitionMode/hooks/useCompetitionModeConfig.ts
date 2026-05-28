@@ -1,11 +1,17 @@
 import { useState, useEffect, useRef } from 'react';
 import SocketClientService from '../../../services/SocketClientService';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Alert } from 'react-native';
 import { GameTypes } from '../../../../../backend/src/domain/enums/GameTypes';
 import { MatchX01Config } from '../../../../../backend/src/domain/models/MatchX01Config';
 import { MatchX01 } from '../../../../../backend/src/domain/models/MatchX01';
 import MatchX01ServiceFactory from '../../../../../backend/src/infrastructure/factories/MatchX01ServiceFactory';
+import BoardServiceFactory from '../../../../../backend/src/infrastructure/factories/BoardServiceFactory';
+import { CreateMatchX01RequestDTO } from '../../../../../backend/src/application/dtos/MatchX01DTOs';
+import { SaveBoardRequestDTO } from '../../../../../backend/src/application/dtos/BoardDTOs';
+
+
+const boardService = BoardServiceFactory.getInstance();
+const matchX01Service = MatchX01ServiceFactory.getMatchX01Service();
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://192.168.0.44:3000';
 const ASYNC_STORAGE_KEY = '@competition_board_id';
@@ -23,17 +29,16 @@ export const useCompetitionModeConfig = (navigation: any) => {
     const tournamentInfoRef = useRef<any>(null);
 
     useEffect(() => {
-        // Podrías abstraer esto en un GetSavedBoardIdUseCase
         const loadSavedBoardId = async () => {
             try {
-                const savedId = await AsyncStorage.getItem(ASYNC_STORAGE_KEY);
-                if (savedId) {
-                    setBoardShortId(savedId);
-                    SocketClientService.connect(savedId);
+                const savedBoard = await boardService.getBoard();
+                if (savedBoard) {
+                    setBoardShortId(savedBoard.shortId);
+                    SocketClientService.connect(savedBoard.shortId);
                     setIsConnected(true);
                 }
             } catch (error) {
-                console.error('[AsyncStorage] Error al leer el ID:', error);
+                console.error('[CompetitionModeConfig] Error al leer el ID de la diana:', error);
             } finally {
                 setIsBootstrapping(false);
             }
@@ -116,7 +121,11 @@ export const useCompetitionModeConfig = (navigation: any) => {
         try {
             SocketClientService.connect(cleanId);
             setIsConnected(true);
-            await AsyncStorage.setItem(ASYNC_STORAGE_KEY, cleanId); // Abstraer en ConnectBoardUseCase
+            
+            const request: SaveBoardRequestDTO = {
+                shortId: cleanId,
+            };
+            await boardService.saveBoard(request);
         } catch (error) {
             console.error(error);
         }
@@ -126,7 +135,7 @@ export const useCompetitionModeConfig = (navigation: any) => {
         try {
             SocketClientService.disconnect();
             setIsConnected(false);
-            await AsyncStorage.removeItem(ASYNC_STORAGE_KEY); // Abstraer en DisconnectBoardUseCase
+            await boardService.deleteBoard();
             setAssignedMatchId(null);
             setMatchInfo(null);
             setTournamentInfo(null);
@@ -174,7 +183,15 @@ export const useCompetitionModeConfig = (navigation: any) => {
             }
 
             // Guardamos en el repositorio de la capa de aplicación/infraestructura
-            await MatchX01ServiceFactory.getRepository().save(match);
+            const request: CreateMatchX01RequestDTO = {
+                game: config.game,
+                typeOfGame: config.typeOfGame,
+                numSets: config.numSets,
+                numLegs: config.numLegs,
+                playerNames: config.playerNames,
+            };
+            await matchX01Service.createMatchX01(request);
+
             SocketClientService.setMatchId(matchId);
 
             navigation.navigate('GameX01Screen', {

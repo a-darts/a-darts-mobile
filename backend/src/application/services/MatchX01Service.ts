@@ -1,12 +1,12 @@
 import { MatchX01 } from '../../domain/models/MatchX01';
 import { MatchX01Config } from '../../domain/models/MatchX01Config';
 import { IMatchX01Repository } from '../../domain/repositories/IMatchX01Repository';
-import { CreateMatchX01Request } from '../dtos/CreateMatchX01Request';
+import { CreateMatchX01RequestDTO } from '../dtos/MatchX01DTOs';
 
 export class MatchX01Service {
     constructor(private readonly matchRepository: IMatchX01Repository) { }
 
-    async createMatchX01(request: CreateMatchX01Request): Promise<MatchX01> {
+    async createMatchX01(request: CreateMatchX01RequestDTO): Promise<MatchX01> {
         // 1. Generamos un ID único para la partida
         const id = Math.random().toString(36).substring(2, 15);
 

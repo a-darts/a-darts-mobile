@@ -1,7 +1,6 @@
-// application/dtos/CreateMatchX01Request.ts
 import { GameTypes } from "../../domain/enums/GameTypes";
 
-export interface CreateMatchX01Request {
+export interface CreateMatchX01RequestDTO {
     game: number;
     typeOfGame: GameTypes;
     numSets: number;

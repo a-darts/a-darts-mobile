@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { GameTypes } from '../../../../../backend/src/domain/enums/GameTypes';
-import { CreateMatchX01Request } from '../../../../../backend/src/application/dtos/CreateMatchX01Request';
+import { CreateMatchX01RequestDTO } from '../../../../../backend/src/application/dtos/MatchX01DTOs';
 import { normalizeOdd } from '../utils/normalizeOdd';
 
 import UserServiceFactory from '../../../../../backend/src/infrastructure/factories/UserServiceFactory';
@@ -69,7 +69,7 @@ export const useConfigX01 = (navigation: any) => {
             });
 
             // 3. Ejecutar el servicio con el DTO (request)
-            const request: CreateMatchX01Request = {
+            const request: CreateMatchX01RequestDTO = {
                 game: config.game,
                 typeOfGame: config.typeOfGame,
                 numSets: config.numSets,

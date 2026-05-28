@@ -7,7 +7,7 @@ import { StatsCard } from '../../components/StatsCard';
 
 import MatchX01ServiceFactory from '../../../../backend/src/infrastructure/factories/MatchX01ServiceFactory';
 import { Button } from '../../components/Button';
-import { CreateMatchX01Request } from '../../../../backend/src/application/dtos/CreateMatchX01Request';
+import { CreateMatchX01RequestDTO } from '../../../../backend/src/application/dtos/MatchX01DTOs';
 
 import { Card } from '../../components/Card';
 
@@ -60,7 +60,7 @@ export const MatchX01SummaryScreen = ({ route, navigation }) => {
 
   const handleReplay = async () => {
     // 3. Ejecutar el servicio con el DTO (request)
-    const request: CreateMatchX01Request = {
+    const request: CreateMatchX01RequestDTO = {
       game: match.config.game,
       typeOfGame: match.config.typeOfGame,
       numSets: match.config.numSets,
