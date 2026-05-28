@@ -7,12 +7,15 @@ import { MatchX01 } from '../../../../backend/src/domain/models/MatchX01';
 import MatchX01ServiceFactory from '../../../../backend/src/infrastructure/factories/MatchX01ServiceFactory';
 import { MatchX01Config } from '../../../../backend/src/domain/models/MatchX01Config';
 import { GameTypes } from '../../../../backend/src/domain/enums/GameTypes';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://192.168.0.44:3000';
+const ASYNC_STORAGE_KEY = '@competition_board_id';
 
 export const CompetitionModeConfigScreen = ({ navigation }: any) => {
     const [boardShortId, setBoardShortId] = useState('');
     const [isConnected, setIsConnected] = useState(false);
+    const [isBootstrapping, setIsBootstrapping] = useState(true);
 
     const [assignedMatchId, setAssignedMatchId] = useState<string | null>(null);
     const [matchInfo, setMatchInfo] = useState<any>(null);
@@ -22,6 +25,28 @@ export const CompetitionModeConfigScreen = ({ navigation }: any) => {
     // Guardamos referencias mutables de los datos para evitar cierres de JS obsoletos en eventos asíncronos
     const matchInfoRef = useRef<any>(null);
     const tournamentInfoRef = useRef<any>(null);
+
+    useEffect(() => {
+        const loadSavedBoardId = async () => {
+            try {
+                const savedId = await AsyncStorage.getItem(ASYNC_STORAGE_KEY);
+                if (savedId) {
+                    console.log(`[AsyncStorage] Encontrada diana guardada: ${savedId}. Autoconectando...`);
+                    setBoardShortId(savedId);
+                    
+                    // Conectamos directamente el socket usando el ID recuperado
+                    SocketClientService.connect(savedId);
+                    setIsConnected(true);
+                }
+            } catch (error) {
+                console.error('[AsyncStorage] Error al leer el ID guardado:', error);
+            } finally {
+                setIsBootstrapping(false); // La app ya sabe si había diana o no
+            }
+        };
+
+        loadSavedBoardId();
+    }, []);
 
     const updateMatchDataStates = (matchDetails: any, tournamentDetails: any) => {
         setMatchInfo(matchDetails);
@@ -59,69 +84,6 @@ export const CompetitionModeConfigScreen = ({ navigation }: any) => {
         }
     };
 
-    // useEffect(() => {
-    //     // Función auxiliar para verificar si el socket está listo y asignarle los eventos
-    //     const setupSocketListeners = () => {
-    //         const socket = SocketClientService.socket;
-    //         if (!socket) return;
-
-    //         // Limpiamos listeners previos para evitar duplicados si hay re-renders
-    //         socket.off('match_assigned');
-    //         socket.off('match_started_confirmed');
-    //         socket.off('match_restored');
-
-    //         // 1. Escucha de asignación
-    //         socket.on('match_assigned', async (data: { matchId: string }) => {
-    //             console.log(`[Pantalla] ¡Evento match_assigned detectado directamente! ID: ${data.matchId}`);
-
-    //             // Forzamos el cambio de estado de React de manera inmediata
-    //             setAssignedMatchId(data.matchId);
-    //             setIsLoadingMatch(true);
-
-    //             try {
-    //                 const { matchDetails, tournamentDetails } = await fetchMatchAndTournamentData(data.matchId);
-    //                 updateMatchDataStates(matchDetails, tournamentDetails);
-    //             } catch (error) {
-    //                 console.error('[Pantalla] Error al procesar HTTP tras la asignación:', error);
-    //                 Alert.alert('Error de Red', 'Se asignó el partido pero falló la descarga de detalles.');
-    //             } finally {
-    //                 setIsLoadingMatch(false);
-    //             }
-    //         });
-
-    //         // 2. Escucha de inicio
-    //         socket.on('match_started_confirmed', async (data: { matchId: string }) => {
-    //             console.log(`[Pantalla] Evento match_started detectado para ID: ${data.matchId}`);
-    //             await handleMatchStartedEvent(data.matchId);
-    //         });
-
-    //         // 3. Escucha de restauración
-    //         socket.on('match_restored', async (data: { matchId: string, historyThrows: any[] }) => {
-    //             console.log(`[Pantalla] Evento match_restored detectado para ID: ${data.matchId}`);
-    //             await handleMatchRestoredEvent(data.matchId, data.historyThrows);
-    //         });
-    //     };
-
-    //     // Ejecutamos la configuración inicial
-    //     setupSocketListeners();
-
-    //     // Pequeño intervalo de control por si el socket tarda milisegundos en instanciarse tras dar al botón "Conectar"
-    //     const interval = setInterval(() => {
-    //         if (SocketClientService.socket && !SocketClientService.socket.hasListeners('match_assigned')) {
-    //             setupSocketListeners();
-    //         }
-    //     }, 1000);
-
-    //     return () => {
-    //         clearInterval(interval);
-    //         const socket = SocketClientService.socket;
-    //         if (socket) {
-    //             socket.off('match_assigned');
-    //             socket.off('match_started');
-    //             socket.off('match_restored');
-    //         }
-    //     };
-    // }, [isConnected]);
     useEffect(() => {
         // Si no le hemos dado a conectar, no hacemos nada
         if (!isConnected) return;
@@ -186,10 +148,33 @@ export const CompetitionModeConfigScreen = ({ navigation }: any) => {
         };
     }, [isConnected]);
 
-    const handleConnect = () => {
-        if (!boardShortId.trim()) return;
-        SocketClientService.connect(boardShortId.trim());
-        setIsConnected(true);
+    const handleConnect = async () => {
+        const cleanId = boardShortId.trim();
+        if (!cleanId) return;
+        
+        try {
+            SocketClientService.connect(cleanId);
+            setIsConnected(true);
+            
+            // Persistimos el ID en el almacenamiento de la tablet
+            await AsyncStorage.setItem(ASYNC_STORAGE_KEY, cleanId);
+            console.log('[AsyncStorage] ID de diana guardado correctamente.');
+        } catch (error) {
+            console.error('[AsyncStorage] Error al guardar el ID:', error);
+        }
+    };
+
+    const handleDisconnect = async () => {
+        try {
+            SocketClientService.disconnect();
+            setIsConnected(false);
+            
+            // Borramos el registro para que la próxima vez pida el ID de nuevo
+            await AsyncStorage.removeItem(ASYNC_STORAGE_KEY);
+            console.log('[AsyncStorage] ID de diana removido del almacenamiento local.');
+        } catch (error) {
+            console.error('[AsyncStorage] Error al borrar el ID:', error);
+        }
     };
 
     const handleMatchStartedEvent = async (matchId: string) => {
@@ -403,10 +388,7 @@ export const CompetitionModeConfigScreen = ({ navigation }: any) => {
                 <View style={styles.disconnectContainer}>
                     <Button
                         title="Desconectar"
-                        onPress={() => {
-                            SocketClientService.disconnect();
-                            setIsConnected(false);
-                        }}
+                        onPress={handleDisconnect}
                         variant="secondary"
                     />
                 </View>
