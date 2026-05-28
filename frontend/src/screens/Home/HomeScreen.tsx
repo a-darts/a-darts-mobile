@@ -6,20 +6,27 @@ import { Avatar } from '../../components/Avatar';
 import { Card } from '../../components/Card';
 import { theme } from '../../theme/theme';
 
-import { useHome } from './hooks/useHome';
+import { useHome, RecentGameItem } from './hooks/useHome';
 import { styles } from './styles/Home.styles';
+import { MatchX01Config } from '../../../../backend/src/domain/models/MatchX01Config';
 
-export const HomeScreen = ({ route, navigation }) => {
+// 2. Definimos las propiedades básicas de React Navigation que recibe la pantalla
+interface HomeScreenProps {
+  route: any;       // Puedes cambiarlo por RouteProp<RootStackParamList, 'Home'> si usas un tipado global de navegación
+  navigation: any;  // Puedes cambiarlo por NativeStackNavigationProp<RootStackParamList, 'Home'>
+}
+
+export const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
   const { username, isGuest, recentGames, handlePlayRecentGame } = useHome(route);
 
-  const onPressPlayRecent = async (config) => {
+  const onPressPlayRecent = async (config: MatchX01Config) => {
     const matchId = await handlePlayRecentGame(config);
     if (matchId) {
       navigation.navigate('GameX01Screen', { matchId });
     }
   };
 
-  const renderGameItem = ({ item, index }) => (
+  const renderGameItem = ({ item, index }: { item: RecentGameItem; index: number;  }) => (
     <Card key={item.id || index} style={styles.gameCard}>
       <View style={styles.gameIconContainer}>
         <Feather name="rotate-ccw" size={20} color={theme.colors.textSecondary} />
