@@ -138,6 +138,6 @@ export const styles = StyleSheet.create({
         lineHeight: 22,
     },
     suspensionButton: {
-        marginTop: 16,
+        marginTop: 24,
     },
 });

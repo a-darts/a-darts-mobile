@@ -148,7 +148,7 @@ export const GameX01Screen = ({ navigation, route }: any) => {
       {isMatchCancelled && (
         <View style={styles.suspensionOverlay}>
           <View style={styles.suspensionCard}>
-            <MaterialIcons name="pause" size={48} color={theme.colors.textError} />
+            <MaterialIcons name="cancel" size={48} color={theme.colors.textError} />
             <Text style={styles.suspensionTitle}>Partida cancelada</Text>
             <Text style={styles.suspensionSubtitle}>
               El administrador ha cancelado esta partida.{'\n\n'}
