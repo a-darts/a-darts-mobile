@@ -13,6 +13,8 @@ import { useSettings } from '../../utils/SettingsContext';
 import { GameStatus } from '../../../../backend/src/domain/enums/GameStatus';
 import SocketClientService from '../../services/SocketClientService';
 import { MaterialIcons } from '@expo/vector-icons';
+import { theme } from '../../theme/theme';
+
 
 const { width, height } = Dimensions.get('window');
 const aspectRatio = height / width;
@@ -57,7 +59,7 @@ export const GameX01Screen = ({ navigation, route }: any) => {
           showCloseButton: false,
           onCloseAction: () => {
             isLeaving.current = true;
-            navigation.navigate('CompetitionModeConfigScreen'); 
+            navigation.navigate('CompetitionModeConfigScreen');
           }
         });
       }
@@ -126,11 +128,11 @@ export const GameX01Screen = ({ navigation, route }: any) => {
       {isMatchSuspended && (
         <View style={styles.suspensionOverlay}>
           <View style={styles.suspensionCard}>
-            <MaterialIcons name="pause" size={48} color="#FF4C4C" />
+            <MaterialIcons name="pause" size={48} color={theme.colors.textError} />
             <Text style={styles.suspensionTitle}>Partida suspendida</Text>
             <Text style={styles.suspensionSubtitle}>
-                El administrador ha pausado este partido.{'\n\n'}
-                Contacta con él si necesitas ayuda.
+              El administrador ha pausado este partido.{'\n\n'}
+              Contacta con él si necesitas ayuda.
             </Text>
           </View>
         </View>

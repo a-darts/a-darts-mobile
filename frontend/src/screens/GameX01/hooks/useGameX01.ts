@@ -136,9 +136,9 @@ export const useGameX01 = (navigation: any, route: any) => {
                     mode: 'auto',
                     onCloseAction: () => navigation.navigate(
                         'MatchX01SummaryScreen', {
-                            matchId: match.id,
-                            isCompetitionMode: isCompetitionMode,
-                        },
+                        matchId: match.id,
+                        isCompetitionMode: isCompetitionMode,
+                    },
                     ),
                 });
             }
@@ -216,7 +216,7 @@ export const useGameX01 = (navigation: any, route: any) => {
 
     const handleEnterRemaining = async () => {
         if (!match) return;
-        
+
         if (inputValue === '') return;
         const remaining = parseInt(inputValue, 10);
         if (isNaN(remaining)) return;
@@ -373,9 +373,9 @@ export const useGameX01 = (navigation: any, route: any) => {
                     mode: 'auto',
                     onCloseAction: () => navigation.navigate(
                         'MatchX01SummaryScreen', {
-                            matchId: match.id,
-                            isCompetitionMode: isCompetitionMode,
-                        },
+                        matchId: match.id,
+                        isCompetitionMode: isCompetitionMode,
+                    },
                     ),
                 });
             } else {

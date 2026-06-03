@@ -3,7 +3,6 @@ import { io, Socket } from 'socket.io-client';
 type MatchStatusListener = (data: { matchId: string }) => void;
 
 class SocketClientService {
-    // Cambiamos a public para poder escuchar directamente desde el useEffect de los componentes si es necesario
     public socket: Socket | null = null;
     private boardShortId: string | null = null;
     private matchId: string | null = null;
@@ -21,7 +20,7 @@ class SocketClientService {
         }
 
         this.boardShortId = boardShortId;
-        // Forzamos transporte websocket para evitar problemas de polling en redes locales
+        // MIRAR: (igual sobra) Forzamos transporte websocket para evitar problemas de polling en redes locales
         this.socket = io(this.SERVER_URL, { transports: ['websocket'] });
 
         this.socket.on('connect', () => {

@@ -54,6 +54,7 @@ export const useCompetitionModeConfig = (navigation: any) => {
             try {
                 const { matchDetails, tournamentDetails } = await fetchMatchAndTournamentData(data.matchId);
                 updateMatchDataStates(matchDetails, tournamentDetails);
+                // await handleMatchEvent(data.matchId);
             } catch (error) {
                 Alert.alert('Error de Red', 'Fallo al descargar detalles del partido.');
             } finally {
@@ -120,7 +121,7 @@ export const useCompetitionModeConfig = (navigation: any) => {
         try {
             SocketClientService.connect(cleanId);
             setIsConnected(true);
-            
+
             const request: SaveBoardRequestDTO = {
                 shortId: cleanId,
             };
@@ -143,7 +144,6 @@ export const useCompetitionModeConfig = (navigation: any) => {
         }
     };
 
-    // ¡Aquí delegarías idealmente en un InitializeLocalMatchUseCase!
     const handleMatchEvent = async (matchId: string, historyThrows?: any[]) => {
         setIsLoadingMatch(true);
         try {
@@ -183,6 +183,7 @@ export const useCompetitionModeConfig = (navigation: any) => {
 
             // Guardamos en el repositorio de la capa de aplicación/infraestructura
             const request: CreateMatchX01RequestDTO = {
+                id: matchId,
                 game: config.game,
                 typeOfGame: config.typeOfGame,
                 numSets: config.numSets,

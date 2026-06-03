@@ -2,7 +2,7 @@ export const colors = {
   background: '#0E0E0E',
   text: '#FFFFFF',
   textSecondary: '#B3B3B3',
-  textError: '#FF4C4C',
+  textError: '#FF6060',
 
   activityIndicator: '#BFE55F',
   line: '#4C4C4C',
@@ -16,8 +16,8 @@ export const colors = {
   avatarDropdownBorder: '#4C4C4C',
   avatarDropdownText: '#FFFFFF',
   avatarDropdownIcon: '#FFFFFF',
-  avatarDropdownCloseText: '#FF4C4C',
-  avatarDropdownCloseIcon: '#FF4C4C',
+  avatarDropdownCloseText: '#FF6060',
+  avatarDropdownCloseIcon: '#FF6060',
   avatarDropdownDivider: '#4C4C4C',
 
 
@@ -34,7 +34,7 @@ export const colors = {
 
   // StatsCard
   statsCardSuccessBorder: '#BFE55F',
-  statsCardErrorBorder: '#FF4C4C',
+  statsCardErrorBorder: '#FF6060',
   statsCardText: '#FFFFFF',
   statsCardTextSecondary: '#B0B0B0',
 
@@ -48,9 +48,9 @@ export const colors = {
   buttonPrimaryText: '#000000',
   buttonPrimaryIcon: '#000000',
 
-  buttonSecondaryBackground: '#2C2C2C',
-  buttonSecondaryText: '#FFFFFF',
-  buttonSecondaryIcon: '#FFFFFF',
+  buttonSecondaryBackground: '#242424',
+  buttonSecondaryText: '#B0B0B0',
+  buttonSecondaryIcon: '#B0B0B0',
   buttonSecondaryBorder: '#4C4C4C',
 
   buttonTertiaryBackground: 'rgba(191, 229, 95, 0.1)',
@@ -58,14 +58,14 @@ export const colors = {
   buttonTertiaryIcon: '#BFE55F',
   buttonTertiaryBorder: '#BFE55F',
 
-  buttonErrorBackground: '#FF4C4C',
+  buttonErrorBackground: '#FF6060',
   buttonErrorText: '#000000',
   buttonErrorIcon: '#000000',
   buttonErrorBorder: 'transparent',
 
   buttonRemoveBackground: 'transparent',
-  buttonRemoveText: '#FF4C4C',
-  buttonRemoveIcon: '#FF4C4C',
+  buttonRemoveText: '#FF6060',
+  buttonRemoveIcon: '#FF6060',
   buttonRemoveBorder: 'transparent',
 
   // Key
@@ -86,10 +86,10 @@ export const colors = {
   inputBackground: '#1A1A1A',
   inputBorder: '#222222',
   inputBorderFocus: '#BFE55F',
-  inputBorderError: '#FF4C4C',
+  inputBorderError: '#FF6060',
   inputLabel: '#FFFFFF',
   inputText: '#FFFFFF',
-  inputTextError: '#FF4C4C',
+  inputTextError: '#FF6060',
   inputIcon: '#FFFFFF',
   inputPlaceholder: '#B3B3B3',
 
@@ -102,7 +102,7 @@ export const colors = {
   toastBackground: '#1A1A1A',
   toastText: '#FFFFFF',
   toastTextSecondary: '#B3B3B3',
-  toastBorderError: '#FF4C4C',
+  toastBorderError: '#FF6060',
   toastBorderSuccess: '#BFE55F',
   toastShadow: '#B3B3B3',
 };

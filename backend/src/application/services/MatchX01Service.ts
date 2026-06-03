@@ -7,8 +7,8 @@ export class MatchX01Service {
     constructor(private readonly matchRepository: IMatchX01Repository) { }
 
     async createMatchX01(request: CreateMatchX01RequestDTO): Promise<MatchX01> {
-        // 1. Generamos un ID único para la partida
-        const id = Math.random().toString(36).substring(2, 15);
+        // 1. Generamos un ID único para la partida (si no nos lo pasan)
+        const id = request.id ?? Math.random().toString(36).substring(2, 15);
 
         // 2. Creamos el objeto de valor de configuración
         const config = new MatchX01Config(
@@ -24,7 +24,7 @@ export class MatchX01Service {
 
         // 4. Persistimos en el repositorio
         await this.matchRepository.save(match);
-        
+
         // 5. Guardar en configuraciones recientes
         await this.matchRepository.saveRecentConfig(config);
 
