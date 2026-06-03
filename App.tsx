@@ -18,6 +18,7 @@ import {
 
 import { AuthProvider } from './frontend/src/utils/AuthContext';
 import { SettingsProvider } from './frontend/src/utils/SettingsContext';
+import { BoardProvider } from './frontend/src/utils/BoardContext';
 
 export default function App() {
   const [fontsLoaded, setFontsLoaded] = useState(false);
@@ -50,7 +51,9 @@ export default function App() {
     <SafeAreaProvider>
       <SettingsProvider>
         <AuthProvider>
-          <AppNavigator />
+          <BoardProvider>
+            <AppNavigator />
+          </BoardProvider>
         </AuthProvider>
       </SettingsProvider>
     </SafeAreaProvider>

@@ -8,6 +8,7 @@ import MatchX01ServiceFactory from '../../../../../backend/src/infrastructure/fa
 import BoardServiceFactory from '../../../../../backend/src/infrastructure/factories/BoardServiceFactory';
 import { CreateMatchX01RequestDTO } from '../../../../../backend/src/application/dtos/MatchX01DTOs';
 import { SaveBoardRequestDTO } from '../../../../../backend/src/application/dtos/BoardDTOs';
+import { useBoard } from '../../../utils/BoardContext';
 
 
 const boardService = BoardServiceFactory.getInstance();
@@ -16,9 +17,15 @@ const matchX01Service = MatchX01ServiceFactory.getMatchX01Service();
 const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://192.168.0.44:3000';
 
 export const useCompetitionModeConfig = (navigation: any) => {
-    const [boardShortId, setBoardShortId] = useState('');
-    const [isConnected, setIsConnected] = useState(false);
-    const [isBootstrapping, setIsBootstrapping] = useState(true);
+    const {
+        boardShortId,
+        setBoardShortId,
+        isConnected,
+        setIsConnected,
+        isBootstrapping,
+        disconnectBoard
+    } = useBoard();
+
     const [assignedMatchId, setAssignedMatchId] = useState<string | null>(null);
     const [matchInfo, setMatchInfo] = useState<any>(null);
     const [tournamentInfo, setTournamentInfo] = useState<any>(null);
@@ -28,25 +35,12 @@ export const useCompetitionModeConfig = (navigation: any) => {
     const tournamentInfoRef = useRef<any>(null);
 
     useEffect(() => {
-        const loadSavedBoardId = async () => {
-            try {
-                const savedBoard = await boardService.getBoard();
-                if (savedBoard) {
-                    setBoardShortId(savedBoard.shortId);
-                    SocketClientService.connect(savedBoard.shortId);
-                    setIsConnected(true);
-                }
-            } catch (error) {
-                console.error('[CompetitionModeConfig] Error al leer el ID de la diana:', error);
-            } finally {
-                setIsBootstrapping(false);
-            }
-        };
-        loadSavedBoardId();
-    }, []);
-
-    useEffect(() => {
-        if (!isConnected) return;
+        if (!isConnected) {
+            setAssignedMatchId(null);
+            setMatchInfo(null);
+            setTournamentInfo(null);
+            return;
+        }
 
         const unsubscribeAssigned = SocketClientService.onMatchAssigned(async (data: { matchId: string }) => {
             setAssignedMatchId(data.matchId);
@@ -66,8 +60,12 @@ export const useCompetitionModeConfig = (navigation: any) => {
             setAssignedMatchId(null);
             setMatchInfo(null);
             setTournamentInfo(null);
-            matchInfoRef.current = null;
-            tournamentInfoRef.current = null;
+        });
+
+        const unsubscribeCancelled = SocketClientService.onMatchCancelled(() => {
+            setAssignedMatchId(null);
+            setMatchInfo(null);
+            setTournamentInfo(null);
         });
 
         const socket = SocketClientService.socket;
@@ -79,14 +77,21 @@ export const useCompetitionModeConfig = (navigation: any) => {
             socket.on('match_restored', async (data: { matchId: string, historyThrows: any[] }) => {
                 await handleMatchEvent(data.matchId, data.historyThrows);
             });
+
+            socket.on('match_cancelled', async (data: { matchId: string }) => {
+                console.log("[useCompetitionModeConfig]: Match CANCELLED");
+                await handleMatchCancelled();
+            });
         }
 
         return () => {
             unsubscribeAssigned();
             unsubscribeUnassigned();
+            unsubscribeCancelled();
             if (socket) {
                 socket.off('match_started_confirmed');
                 socket.off('match_restored');
+                socket.off('match_cancelled');
             }
         };
     }, [isConnected]);
@@ -132,16 +137,7 @@ export const useCompetitionModeConfig = (navigation: any) => {
     };
 
     const handleDisconnect = async () => {
-        try {
-            SocketClientService.disconnect();
-            setIsConnected(false);
-            await boardService.deleteBoard();
-            setAssignedMatchId(null);
-            setMatchInfo(null);
-            setTournamentInfo(null);
-        } catch (error) {
-            console.error(error);
-        }
+        await disconnectBoard();
     };
 
     const handleMatchEvent = async (matchId: string, historyThrows?: any[]) => {
@@ -209,6 +205,24 @@ export const useCompetitionModeConfig = (navigation: any) => {
         } finally {
             setIsLoadingMatch(false);
         }
+    };
+
+    const handleMatchCancelled = async () => {
+        // 1. Limpiamos los estados reactivos para vaciar la interfaz
+        setAssignedMatchId(null);
+        setMatchInfo(null);
+        setTournamentInfo(null);
+
+        // 2. IMPORTANTE: Limpiamos también las referencias del useRef
+        // Si no lo haces, al asignarse un partido nuevo podría leer datos obsoletos
+        matchInfoRef.current = null;
+        tournamentInfoRef.current = null;
+
+        // 3. Notificamos al usuario de forma visual
+        Alert.alert(
+            'Partido Cancelado',
+            'El administrador ha cancelado el partido que estaba asignado a esta diana.'
+        );
     };
 
     const handleStartMatch = async () => {

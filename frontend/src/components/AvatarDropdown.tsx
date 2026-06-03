@@ -5,12 +5,15 @@ import { useSettings } from '../utils/SettingsContext';
 import { theme } from '../theme/theme';
 import { Feather } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import { useCompetitionModeConfig } from '../screens/CompetitionMode/hooks/useCompetitionModeConfig';
+import { useBoard } from '../utils/BoardContext';
 
 export const AvatarDropdown = () => {
     const { user, logout } = useAuth();
     const { showAverage, setShowAverage, askDartsOnCheckout, setAskDartsOnCheckout } = useSettings();
     const [showMenu, setShowMenu] = useState(false);
     const navigation = useNavigation<any>();
+    const { isConnected, disconnectBoard } = useBoard();
 
     const initial = user ? (user.name ? user.name.charAt(0).toUpperCase() : '?') : 'I';
 
@@ -27,6 +30,12 @@ export const AvatarDropdown = () => {
     const handleMyProfile = () => {
         setShowMenu(false);
         navigation.navigate('MyProfileScreen');
+    };
+
+    const handleDisconnectBoard = async () => {
+        await disconnectBoard();
+        setShowMenu(false);
+        navigation.navigate('CompetitionModeConfig');
     };
 
     return (
@@ -117,6 +126,16 @@ export const AvatarDropdown = () => {
                                     >
                                         <Feather name="log-in" size={18} color={theme.colors.avatarDropdownIcon} />
                                         <Text style={styles.menuItemText}>Iniciar sesión</Text>
+                                    </TouchableOpacity>
+                                )}
+
+                                {isConnected && (
+                                    <TouchableOpacity
+                                        style={[styles.menuItem, styles.logoutItem]}
+                                        onPress={handleDisconnectBoard}
+                                    >
+                                        <Feather name="link" size={18} color={theme.colors.avatarDropdownIcon} />
+                                        <Text style={styles.menuItemText}>Desconectar</Text>
                                     </TouchableOpacity>
                                 )}
                             </View>

@@ -40,6 +40,7 @@ export const GameX01Screen = ({ navigation, route }: any) => {
   const isLeaving = useRef(false);
 
   const [isMatchSuspended, setIsMatchSuspended] = useState(false);
+  const [isMatchCancelled, setIsMatchCancelled] = useState(false);
 
   useEffect(() => {
     const unsubSuspended = SocketClientService.onMatchSuspended(() => {
@@ -47,6 +48,9 @@ export const GameX01Screen = ({ navigation, route }: any) => {
     });
     const unsubResumed = SocketClientService.onMatchResumed(() => {
       setIsMatchSuspended(false);
+    });
+    const unsubCancelled = SocketClientService.onMatchCancelled(() => {
+      setIsMatchCancelled(true);
     });
     const unsubUnassigned = SocketClientService.onMatchUnassigned((data) => {
       if (data.matchId === match?.id) {
@@ -68,6 +72,7 @@ export const GameX01Screen = ({ navigation, route }: any) => {
     return () => {
       unsubSuspended();
       unsubResumed();
+      unsubCancelled();
       unsubUnassigned();
     };
   }, [match?.id]);
@@ -98,6 +103,9 @@ export const GameX01Screen = ({ navigation, route }: any) => {
     return unsubscribe;
   }, [navigation, match?.status]);
 
+  const handleExit = () => {
+    navigation.navigate('CompetitionModeConfig');
+  };
 
   if (!match) {
     return <View style={styles.container} />;
@@ -134,6 +142,25 @@ export const GameX01Screen = ({ navigation, route }: any) => {
               El administrador ha pausado este partido.{'\n\n'}
               Contacta con él si necesitas ayuda.
             </Text>
+          </View>
+        </View>
+      )}
+      {isMatchCancelled && (
+        <View style={styles.suspensionOverlay}>
+          <View style={styles.suspensionCard}>
+            <MaterialIcons name="pause" size={48} color={theme.colors.textError} />
+            <Text style={styles.suspensionTitle}>Partida cancelada</Text>
+            <Text style={styles.suspensionSubtitle}>
+              El administrador ha cancelado esta partida.{'\n\n'}
+              Contacta con él si necesitas ayuda.
+            </Text>
+            <Button
+              title="VOLVER A LA ESPERA"
+              iconName={"home"}
+              variant={'primary'}
+              size='large'
+              onPress={handleExit}
+            />
           </View>
         </View>
       )}

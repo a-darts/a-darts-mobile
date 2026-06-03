@@ -9,6 +9,7 @@ class SocketClientService {
 
     private matchSuspendedListeners: MatchStatusListener[] = [];
     private matchResumedListeners: MatchStatusListener[] = [];
+    private matchCancelledListeners: MatchStatusListener[] = [];
     private matchUnassignedListeners: MatchStatusListener[] = [];
     private matchAssignedListeners: MatchStatusListener[] = [];
 
@@ -46,6 +47,11 @@ class SocketClientService {
             this.matchResumedListeners.forEach(fn => fn(data));
         });
 
+        this.socket.on('match_cancelled', (data: { matchId: string }) => {
+            console.log('[Socket] match_cancelled recibido:', data);
+            this.matchCancelledListeners.forEach(fn => fn(data));
+        });
+
         this.socket.on('match_unassigned', (data: { matchId: string }) => {
             console.log('[Socket] match_unassigned recibido:', data);
             this.matchUnassignedListeners.forEach(fn => fn(data));
@@ -66,6 +72,7 @@ class SocketClientService {
         this.matchId = null;
         this.matchSuspendedListeners = [];
         this.matchResumedListeners = [];
+        this.matchCancelledListeners = [];
         this.matchUnassignedListeners = [];
         this.matchAssignedListeners = [];
     }
@@ -116,6 +123,13 @@ class SocketClientService {
         this.matchResumedListeners.push(listener);
         return () => {
             this.matchResumedListeners = this.matchResumedListeners.filter(fn => fn !== listener);
+        };
+    }
+
+    public onMatchCancelled(listener: MatchStatusListener): () => void {
+        this.matchCancelledListeners.push(listener);
+        return () => {
+            this.matchCancelledListeners = this.matchCancelledListeners.filter(fn => fn !== listener);
         };
     }
 
