@@ -154,13 +154,15 @@ export const GameX01Screen = ({ navigation, route }: any) => {
               El administrador ha cancelado esta partida.{'\n\n'}
               Contacta con él si necesitas ayuda.
             </Text>
-            <Button
-              title="VOLVER A LA ESPERA"
-              iconName={"home"}
-              variant={'primary'}
-              size='large'
-              onPress={handleExit}
-            />
+            <View style={styles.suspensionButton}>
+              <Button
+                title="VOLVER A LA ESPERA"
+                iconName={"refresh"}
+                variant={'primary'}
+                size='large'
+                onPress={handleExit}
+              />
+            </View>
           </View>
         </View>
       )}

@@ -7,6 +7,7 @@ import { styles } from './styles/CompetitionModeConfig.styles';
 
 // Importas el hook personalizado
 import { useCompetitionModeConfig } from './hooks/useCompetitionModeConfig';
+import { MaterialIcons } from '@expo/vector-icons';
 
 export const CompetitionModeConfigScreen = ({ navigation }: any) => {
     const {
@@ -24,12 +25,38 @@ export const CompetitionModeConfigScreen = ({ navigation }: any) => {
         fetchMatchAndTournamentData,
         updateMatchDataStates,
         setIsLoadingMatch,
+        isMatchCancelled,
+        setIsMatchCancelled,
     } = useCompetitionModeConfig(navigation);
 
     if (isBootstrapping) {
         return (
             <View style={styles.waitingContainer}>
                 <ActivityIndicator size="large" color={theme.colors.activityIndicator} />
+            </View>
+        );
+    }
+
+    if (isMatchCancelled) {
+        return (
+            <View style={styles.suspensionOverlay}>
+                <View style={styles.suspensionCard}>
+                    <MaterialIcons name="pause" size={48} color={theme.colors.textError} />
+                    <Text style={styles.suspensionTitle}>Partida cancelada</Text>
+                    <Text style={styles.suspensionSubtitle}>
+                        El administrador ha cancelado esta partida.{'\n\n'}
+                        Contacta con él si necesitas ayuda.
+                    </Text>
+                    <View style={styles.suspensionButton}>
+                        <Button
+                            title="VOLVER A LA ESPERA"
+                            iconName={"refresh"}
+                            variant={'primary'}
+                            size='large'
+                            onPress={() => { setIsMatchCancelled(false) }}
+                        />
+                    </View>
+                </View>
             </View>
         );
     }
@@ -77,7 +104,7 @@ export const CompetitionModeConfigScreen = ({ navigation }: any) => {
                                         <ActivityIndicator size="large" color={theme.colors.activityIndicator} />
                                     </View>
                                 )}
-                                        
+
                                 <View style={styles.matchCard}>
                                     <Text style={styles.playerText}>{matchInfo?.participant1?.alias || 'Jugador 1'}</Text>
                                     <Text style={styles.vsText}>VS</Text>

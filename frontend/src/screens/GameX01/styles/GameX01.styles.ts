@@ -244,4 +244,7 @@ export const styles = StyleSheet.create({
         textAlign: 'center',
         lineHeight: 22,
     },
+    suspensionButton: {
+        marginTop: 16,
+    },
 });

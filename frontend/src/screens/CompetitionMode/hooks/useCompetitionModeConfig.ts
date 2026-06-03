@@ -30,6 +30,7 @@ export const useCompetitionModeConfig = (navigation: any) => {
     const [matchInfo, setMatchInfo] = useState<any>(null);
     const [tournamentInfo, setTournamentInfo] = useState<any>(null);
     const [isLoadingMatch, setIsLoadingMatch] = useState(false);
+    const [isMatchCancelled, setIsMatchCancelled] = useState(false);
 
     const matchInfoRef = useRef<any>(null);
     const tournamentInfoRef = useRef<any>(null);
@@ -48,7 +49,6 @@ export const useCompetitionModeConfig = (navigation: any) => {
             try {
                 const { matchDetails, tournamentDetails } = await fetchMatchAndTournamentData(data.matchId);
                 updateMatchDataStates(matchDetails, tournamentDetails);
-                // await handleMatchEvent(data.matchId);
             } catch (error) {
                 Alert.alert('Error de Red', 'Fallo al descargar detalles del partido.');
             } finally {
@@ -79,7 +79,6 @@ export const useCompetitionModeConfig = (navigation: any) => {
             });
 
             socket.on('match_cancelled', async (data: { matchId: string }) => {
-                console.log("[useCompetitionModeConfig]: Match CANCELLED");
                 await handleMatchCancelled();
             });
         }
@@ -208,21 +207,15 @@ export const useCompetitionModeConfig = (navigation: any) => {
     };
 
     const handleMatchCancelled = async () => {
+        setIsMatchCancelled(true);
+
         // 1. Limpiamos los estados reactivos para vaciar la interfaz
         setAssignedMatchId(null);
         setMatchInfo(null);
         setTournamentInfo(null);
 
-        // 2. IMPORTANTE: Limpiamos también las referencias del useRef
-        // Si no lo haces, al asignarse un partido nuevo podría leer datos obsoletos
         matchInfoRef.current = null;
         tournamentInfoRef.current = null;
-
-        // 3. Notificamos al usuario de forma visual
-        Alert.alert(
-            'Partido Cancelado',
-            'El administrador ha cancelado el partido que estaba asignado a esta diana.'
-        );
     };
 
     const handleStartMatch = async () => {
@@ -252,5 +245,7 @@ export const useCompetitionModeConfig = (navigation: any) => {
         fetchMatchAndTournamentData,
         updateMatchDataStates,
         setIsLoadingMatch,
+        isMatchCancelled,
+        setIsMatchCancelled,
     };
 };

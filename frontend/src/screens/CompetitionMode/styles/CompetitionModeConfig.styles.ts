@@ -95,5 +95,49 @@ export const styles = StyleSheet.create({
         fontSize: 16,
         color: theme.colors.textSecondary,
         marginVertical: 5,
-    }
+    },
+
+    suspensionOverlay: {
+        ...StyleSheet.absoluteFill,
+        backgroundColor: 'rgba(0, 0, 0, 0.85)',
+        zIndex: 1000,
+        elevation: 20,
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: 30,
+    },
+    suspensionCard: {
+        backgroundColor: theme.colors.toastBackground,
+        borderRadius: 16,
+        borderWidth: 2,
+        borderColor: theme.colors.toastBorderError,
+        padding: 32,
+        alignItems: 'center',
+        width: '100%',
+        shadowColor: theme.colors.toastBorderError,
+        shadowOpacity: 0.5,
+        shadowRadius: 20,
+        elevation: 10,
+    },
+    suspensionIcon: {
+        fontSize: 52,
+        marginBottom: 16,
+    },
+    suspensionTitle: {
+        color: theme.colors.toastText,
+        fontFamily: theme.typography.fontFamily.bold,
+        fontSize: theme.typography.sizes.lg,
+        textAlign: 'center',
+        marginBottom: 12,
+    },
+    suspensionSubtitle: {
+        color: theme.colors.toastTextSecondary,
+        fontFamily: theme.typography.fontFamily.regular,
+        fontSize: theme.typography.sizes.sm,
+        textAlign: 'center',
+        lineHeight: 22,
+    },
+    suspensionButton: {
+        marginTop: 16,
+    },
 });
