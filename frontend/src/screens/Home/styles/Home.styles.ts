@@ -8,7 +8,7 @@ export const styles = StyleSheet.create({
         paddingBottom: theme.spacing.xl,
     },
     contentContainer: {
-        padding: theme.spacing.lg,
+        padding: theme.spacing.xl,
     },
     profileCard: {
         alignItems: 'center',

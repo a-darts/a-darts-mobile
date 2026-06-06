@@ -26,7 +26,7 @@ export const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
     }
   };
 
-  const renderGameItem = ({ item, index }: { item: RecentGameItem; index: number;  }) => (
+  const renderGameItem = ({ item, index }: { item: RecentGameItem; index: number; }) => (
     <Card key={item.id || index} style={styles.gameCard}>
       <View style={styles.gameIconContainer}>
         <Feather name="rotate-ccw" size={20} color={theme.colors.textSecondary} />
@@ -74,15 +74,6 @@ export const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
           size='large'
           onPress={() => navigation.navigate('ConfigX01')}
         />
-        <View style={{ marginTop: 15 }}>
-          <Button
-            title="MODO COMPETICIÓN"
-            iconName="monitor"
-            variant='secondary'
-            size='large'
-            onPress={() => navigation.navigate('CompetitionModeConfig')}
-          />
-        </View>
       </View>
 
       {/* Recent Games */}

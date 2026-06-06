@@ -65,6 +65,14 @@ export const LoginScreen = ({ navigation }) => {
           />
         </View>
       </View>
+
+      <Button
+        title="MODO COMPETICIÓN"
+        iconName="monitor"
+        variant='primary'
+        size='large'
+        onPress={() => navigation.navigate('CompetitionModeConfig')}
+      />
     </View>
   );
 };
