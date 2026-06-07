@@ -11,6 +11,8 @@ interface BoardContextType {
     setIsConnected: (val: boolean) => void;
     isBootstrapping: boolean;
     disconnectBoard: () => Promise<void>;
+    assignedMatchId: string | null;
+    setAssignedMatchId: (id: string | null) => void;
 }
 
 const BoardContext = createContext<BoardContextType | undefined>(undefined);
@@ -19,6 +21,7 @@ export const BoardProvider = ({ children }: any) => {
     const [boardShortId, setBoardShortId] = useState('');
     const [isConnected, setIsConnected] = useState(false);
     const [isBootstrapping, setIsBootstrapping] = useState(true);
+    const [assignedMatchId, setAssignedMatchId] = useState<string | null>(null);
 
     useEffect(() => {
         const loadSavedBoardId = async () => {
@@ -38,10 +41,39 @@ export const BoardProvider = ({ children }: any) => {
         loadSavedBoardId();
     }, []);
 
+    useEffect(() => {
+        if (!isConnected) {
+            setAssignedMatchId(null);
+            return;
+        }
+
+        const unsubscribeAssigned = SocketClientService.onMatchAssigned((data: { matchId: string }) => {
+            console.log(`[BoardContext] ¡Partido asignado detectado globalmente!: ${data.matchId}`);
+            setAssignedMatchId(data.matchId);
+        });
+
+        const unsubscribeUnassigned = SocketClientService.onMatchUnassigned(() => {
+            console.log('[BoardContext] Partido desasignado por el administrador.');
+            setAssignedMatchId(null);
+        });
+
+        const unsubscribeCancelled = SocketClientService.onMatchCancelled(() => {
+            console.log('[BoardContext] Partido cancelado por el administrador.');
+            setAssignedMatchId(null);
+        });
+
+        return () => {
+            unsubscribeAssigned();
+            unsubscribeUnassigned();
+            unsubscribeCancelled();
+        };
+    }, [isConnected]);
+
     const disconnectBoard = async () => {
         try {
             SocketClientService.disconnect();
             setIsConnected(false);
+            setAssignedMatchId(null);
             await boardService.deleteBoard();
         } catch (error) {
             console.error(error);
@@ -55,7 +87,9 @@ export const BoardProvider = ({ children }: any) => {
             isConnected,
             setIsConnected,
             isBootstrapping,
-            disconnectBoard
+            disconnectBoard,
+            assignedMatchId,
+            setAssignedMatchId,
         }}>
             {children}
         </BoardContext.Provider>

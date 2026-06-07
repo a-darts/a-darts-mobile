@@ -23,10 +23,11 @@ export const useCompetitionModeConfig = (navigation: any) => {
         isConnected,
         setIsConnected,
         isBootstrapping,
-        disconnectBoard
+        disconnectBoard,
+        assignedMatchId,
+        setAssignedMatchId,
     } = useBoard();
 
-    const [assignedMatchId, setAssignedMatchId] = useState<string | null>(null);
     const [matchInfo, setMatchInfo] = useState<any>(null);
     const [tournamentInfo, setTournamentInfo] = useState<any>(null);
     const [isLoadingMatch, setIsLoadingMatch] = useState(false);
@@ -35,38 +36,41 @@ export const useCompetitionModeConfig = (navigation: any) => {
     const matchInfoRef = useRef<any>(null);
     const tournamentInfoRef = useRef<any>(null);
 
+    // 1. Sincronización de datos (HTTP Fetch)
     useEffect(() => {
-        if (!isConnected) {
-            setAssignedMatchId(null);
+        if (!isConnected || !assignedMatchId) {
             setMatchInfo(null);
             setTournamentInfo(null);
+            matchInfoRef.current = null;
+            tournamentInfoRef.current = null;
             return;
         }
 
-        const unsubscribeAssigned = SocketClientService.onMatchAssigned(async (data: { matchId: string }) => {
-            setAssignedMatchId(data.matchId);
-            setIsLoadingMatch(true);
-            try {
-                const { matchDetails, tournamentDetails } = await fetchMatchAndTournamentData(data.matchId);
-                updateMatchDataStates(matchDetails, tournamentDetails);
-            } catch (error) {
-                Alert.alert('Error de Red', 'Fallo al descargar detalles del partido.');
-            } finally {
-                setIsLoadingMatch(false);
-            }
-        });
+        if (!matchInfo || matchInfo.id !== assignedMatchId) {
+            const loadMatchDetails = async () => {
+                setIsLoadingMatch(true);
+                try {
+                    const { matchDetails, tournamentDetails } = await fetchMatchAndTournamentData(assignedMatchId);
+                    updateMatchDataStates(matchDetails, tournamentDetails);
 
-        const unsubscribeUnassigned = SocketClientService.onMatchUnassigned(() => {
-            setAssignedMatchId(null);
-            setMatchInfo(null);
-            setTournamentInfo(null);
-        });
+                    if (matchDetails && (matchDetails.status === 'IN_PROGRESS')) {
+                        const existingThrows = matchDetails.historyThrows || [];
+                        await handleMatchEvent(assignedMatchId, existingThrows);
+                    }
+                } catch (error) {
+                    Alert.alert('Error de Red', 'Fallo al descargar detalles del partido.');
+                } finally {
+                    setIsLoadingMatch(false);
+                }
+            };
+            loadMatchDetails();
+        }
+    }, [assignedMatchId, isConnected]);
 
-        const unsubscribeCancelled = SocketClientService.onMatchCancelled(() => {
-            setAssignedMatchId(null);
-            setMatchInfo(null);
-            setTournamentInfo(null);
-        });
+
+    // 2. Ciclo de vida del socket (Eventos de partida)
+    useEffect(() => {
+        if (!isConnected) return;
 
         const socket = SocketClientService.socket;
         if (socket) {
@@ -84,9 +88,6 @@ export const useCompetitionModeConfig = (navigation: any) => {
         }
 
         return () => {
-            unsubscribeAssigned();
-            unsubscribeUnassigned();
-            unsubscribeCancelled();
             if (socket) {
                 socket.off('match_started_confirmed');
                 socket.off('match_restored');
@@ -176,7 +177,6 @@ export const useCompetitionModeConfig = (navigation: any) => {
                 });
             }
 
-            // Guardamos en el repositorio de la capa de aplicación/infraestructura
             const request: CreateMatchX01RequestDTO = {
                 id: matchId,
                 game: config.game,
@@ -208,14 +208,7 @@ export const useCompetitionModeConfig = (navigation: any) => {
 
     const handleMatchCancelled = async () => {
         setIsMatchCancelled(true);
-
-        // 1. Limpiamos los estados reactivos para vaciar la interfaz
         setAssignedMatchId(null);
-        setMatchInfo(null);
-        setTournamentInfo(null);
-
-        matchInfoRef.current = null;
-        tournamentInfoRef.current = null;
     };
 
     const handleStartMatch = async () => {

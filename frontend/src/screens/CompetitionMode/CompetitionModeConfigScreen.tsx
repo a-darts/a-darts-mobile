@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, Text, ActivityIndicator, Alert } from 'react-native';
 import { Button } from '../../components/Button';
 import { TextInput } from '../../components/TextInput';
@@ -28,6 +28,21 @@ export const CompetitionModeConfigScreen = ({ navigation }: any) => {
         isMatchCancelled,
         setIsMatchCancelled,
     } = useCompetitionModeConfig(navigation);
+
+    useEffect(() => {
+        const unsubscribe = navigation.addListener('beforeRemove', (e: any) => {
+            if (e.data.action.type === 'RESET') {
+                return;
+            }
+            e.preventDefault();
+            navigation.reset({
+                index: 0,
+                routes: [{ name: 'Login' }],
+            });
+        });
+
+        return unsubscribe;
+    }, [navigation]);
 
     if (isBootstrapping) {
         return (
