@@ -28,6 +28,7 @@ export const GameX01Screen = ({ navigation, route }: any) => {
     handleEnter, handleEnterRemaining, handleGameShot, handleCheckout,
     handleSwapStartingPlayer,
     editingThrow, setEditingThrow, handleEditThrowPress, handleSaveEdit,
+    isCompetitionMode,
   } = useGameX01(navigation, route);
 
   const { showAverage } = useSettings();
@@ -78,7 +79,7 @@ export const GameX01Screen = ({ navigation, route }: any) => {
   }, [match?.id]);
 
   // Si el usuario pulsa atrás, se le pide una segunda confirmación de la acción
-  React.useEffect(() => {
+  useEffect(() => {
     const unsubscribe = navigation.addListener('beforeRemove', (e: any) => {
       if (isLeaving.current) {
         return;
@@ -95,7 +96,11 @@ export const GameX01Screen = ({ navigation, route }: any) => {
         showCloseButton: false,
         onCloseAction: () => {
           isLeaving.current = true;
-          navigation.navigate('HomeScreen');
+          if (isCompetitionMode) {
+            navigation.navigate('CompetitionModeConfig');
+          } else {
+            navigation.navigate('HomeScreen');
+          }
         }
       });
     });

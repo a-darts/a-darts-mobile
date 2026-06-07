@@ -53,10 +53,10 @@ export const useCompetitionModeConfig = (navigation: any) => {
                     const { matchDetails, tournamentDetails } = await fetchMatchAndTournamentData(assignedMatchId);
                     updateMatchDataStates(matchDetails, tournamentDetails);
 
-                    if (matchDetails && (matchDetails.status === 'IN_PROGRESS')) {
-                        const existingThrows = matchDetails.historyThrows || [];
-                        await handleMatchEvent(assignedMatchId, existingThrows);
-                    }
+                    // if (matchDetails && (matchDetails.status === 'IN_PROGRESS')) {
+                    //     const existingThrows = matchDetails.historyThrows || [];
+                    //     await handleMatchEvent(assignedMatchId, existingThrows);
+                    // }
                 } catch (error) {
                     Alert.alert('Error de Red', 'Fallo al descargar detalles del partido.');
                 } finally {
@@ -75,14 +75,17 @@ export const useCompetitionModeConfig = (navigation: any) => {
         const socket = SocketClientService.socket;
         if (socket) {
             socket.on('match_started_confirmed', async (data: { matchId: string }) => {
+                console.log(`Received match_started_confirmed ${data.matchId}`);
                 await handleMatchEvent(data.matchId);
             });
 
             socket.on('match_restored', async (data: { matchId: string, historyThrows: any[] }) => {
+                console.log(`Received match_restored ${data.matchId}`);
                 await handleMatchEvent(data.matchId, data.historyThrows);
             });
 
             socket.on('match_cancelled', async (data: { matchId: string }) => {
+                console.log(`Received match_cancelled ${data.matchId}`);
                 await handleMatchCancelled();
             });
         }
@@ -184,6 +187,7 @@ export const useCompetitionModeConfig = (navigation: any) => {
                 numSets: config.numSets,
                 numLegs: config.numLegs,
                 playerNames: config.playerNames,
+                historyThrows: historyThrows,
             };
             await matchX01Service.createMatchX01(request);
 

@@ -22,10 +22,19 @@ export class MatchX01Service {
         // 3. Usamos el Factory Method del Dominio para crear la entidad
         const match = MatchX01.create(id, config);
 
-        // 4. Persistimos en el repositorio
+        // 4. Si nos mandan un historial de tiradas, lo restauramos
+        if (request.historyThrows && Array.isArray(request.historyThrows)) {
+            request.historyThrows.forEach((t: any) => {
+                const score = typeof t === 'number' ? t : t.score;
+                const darts = t.dartsUsed !== undefined ? t.dartsUsed : 3;
+                match.addThrow(score, darts);
+            });
+        }
+
+        // 5. Persistimos en el repositorio
         await this.matchRepository.save(match);
 
-        // 5. Guardar en configuraciones recientes
+        // 6. Guardar la configuración del partido en configuraciones recientes
         await this.matchRepository.saveRecentConfig(config);
 
         return match;

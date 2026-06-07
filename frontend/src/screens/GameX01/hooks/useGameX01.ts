@@ -446,5 +446,6 @@ export const useGameX01 = (navigation: any, route: any) => {
         setEditingThrow,
         handleEditThrowPress,
         handleSaveEdit,
+        isCompetitionMode,
     };
 };

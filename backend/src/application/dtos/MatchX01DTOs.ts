@@ -7,4 +7,5 @@ export interface CreateMatchX01RequestDTO {
     numSets: number;
     numLegs: number;
     playerNames: string[];
+    historyThrows?: any[];
 }
