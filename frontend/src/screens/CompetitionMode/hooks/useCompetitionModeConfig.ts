@@ -52,11 +52,6 @@ export const useCompetitionModeConfig = (navigation: any) => {
                 try {
                     const { matchDetails, tournamentDetails } = await fetchMatchAndTournamentData(assignedMatchId);
                     updateMatchDataStates(matchDetails, tournamentDetails);
-
-                    // if (matchDetails && (matchDetails.status === 'IN_PROGRESS')) {
-                    //     const existingThrows = matchDetails.historyThrows || [];
-                    //     await handleMatchEvent(assignedMatchId, existingThrows);
-                    // }
                 } catch (error) {
                     Alert.alert('Error de Red', 'Fallo al descargar detalles del partido.');
                 } finally {
