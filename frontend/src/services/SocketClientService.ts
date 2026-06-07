@@ -112,6 +112,14 @@ class SocketClientService {
         }
     }
 
+    public emitSwapStartingPlayer(): void {
+        if (!this.socket?.connected) return;
+        this.socket.emit('swap_starting_player', {
+            boardShortId: this.boardShortId,
+            matchId: this.matchId,
+        });
+    }
+
     public onMatchSuspended(listener: MatchStatusListener): () => void {
         this.matchSuspendedListeners.push(listener);
         return () => {

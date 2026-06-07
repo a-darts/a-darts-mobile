@@ -396,6 +396,10 @@ export const useGameX01 = (navigation: any, route: any) => {
         try {
             const updatedMatch = await matchX01Service.swapStartingPlayer(match.id);
             setMatch(updatedMatch);
+
+            if (SocketClientService.isConnected()) {
+                SocketClientService.emitSwapStartingPlayer();
+            }
         } catch (error: any) {
             openToast({
                 title: 'Error',
