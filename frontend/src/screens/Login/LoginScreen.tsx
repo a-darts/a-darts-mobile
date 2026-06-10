@@ -6,7 +6,7 @@ import { useLogin } from './hooks/useLogin';
 import { styles } from './styles/Login.styles';
 
 
-export const LoginScreen = ({ navigation }) => {
+export const LoginScreen = ({ navigation }: any) => {
   const {
     alias, setAlias, error, isLoading,
     handleEntrar, handleEntrarComoInvitado,

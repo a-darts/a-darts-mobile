@@ -9,11 +9,13 @@ import { styles } from './styles/CompetitionModeConfig.styles';
 import { useCompetitionModeConfig } from './hooks/useCompetitionModeConfig';
 import { MaterialIcons } from '@expo/vector-icons';
 import { KeyboardAvoidingView } from 'react-native';
+import { ScrollView } from 'react-native';
 
 export const CompetitionModeConfigScreen = ({ navigation }: any) => {
     const {
         boardShortId,
         setBoardShortId,
+        error,
         isConnected,
         isBootstrapping,
         assignedMatchId,
@@ -183,25 +185,37 @@ export const CompetitionModeConfigScreen = ({ navigation }: any) => {
     }
 
     return (
-        <KeyboardAvoidingView style={styles.container}>
-            <Text style={styles.title}>Modo Competición</Text>
-            <Text style={styles.subtitle}>Empareja esta tablet con una diana del servidor introduciendo su ID</Text>
+        <KeyboardAvoidingView
+            style={styles.container}
+            behavior='height'
+        >
+            <ScrollView
+                contentContainerStyle={styles.scrollContent}
+                keyboardShouldPersistTaps='handled'
+            >
+                <Text style={styles.title}>Modo Competición</Text>
+                <Text style={styles.subtitle}>Empareja esta tablet con una diana del servidor introduciendo su ID</Text>
 
-            <TextInput
-                description="ID de la diana"
-                label="(Ej: SXXX-D001)"
-                value={boardShortId}
-                onChangeText={setBoardShortId}
-                autoCapitalize="none"
-            />
+                <TextInput
+                    description="ID de la diana"
+                    label="(Ej: SXXX-D001)"
+                    value={boardShortId}
+                    onChangeText={setBoardShortId}
+                    autoCapitalize="none"
+                />
 
-            <Button
-                title="CONECTAR"
-                onPress={handleConnect}
-                variant="primary"
-                size="large"
-                iconName="link"
-            />
+                {error && (
+                    <Text style={styles.errorText}>{error}</Text>
+                )}
+
+                <Button
+                    title="CONECTAR"
+                    onPress={handleConnect}
+                    variant="primary"
+                    size="large"
+                    iconName="link"
+                />
+            </ScrollView>
         </KeyboardAvoidingView>
     );
 };

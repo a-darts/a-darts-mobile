@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet, Modal, TouchableWithoutFeedba
 import { useAuth } from '../utils/AuthContext';
 import { useSettings } from '../utils/SettingsContext';
 import { theme } from '../theme/theme';
-import { Feather } from '@expo/vector-icons';
+import { Feather, MaterialIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { useCompetitionModeConfig } from '../screens/CompetitionMode/hooks/useCompetitionModeConfig';
 import { useBoard } from '../utils/BoardContext';
@@ -134,7 +134,7 @@ export const AvatarDropdown = () => {
                                         style={[styles.menuItem, styles.logoutItem]}
                                         onPress={handleDisconnectBoard}
                                     >
-                                        <Feather name="link" size={18} color={theme.colors.avatarDropdownIcon} />
+                                        <MaterialIcons name="link-off" size={18} color={theme.colors.avatarDropdownIcon} />
                                         <Text style={styles.menuItemText}>Desconectar</Text>
                                     </TouchableOpacity>
                                 )}

@@ -98,7 +98,7 @@ export const AppNavigator = () => {
         />
         <Stack.Screen
           name="SettingsScreen"
-          component={HomeScreen} // Placeholder
+          component={HomeScreen}
           options={{ title: 'Ajustes' }}
         />
       </Stack.Navigator>

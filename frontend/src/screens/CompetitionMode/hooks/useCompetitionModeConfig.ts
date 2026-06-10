@@ -28,6 +28,8 @@ export const useCompetitionModeConfig = (navigation: any) => {
         setAssignedMatchId,
     } = useBoard();
 
+    const [error, setError] = useState<string | null>(null);
+
     const [matchInfo, setMatchInfo] = useState<any>(null);
     const [tournamentInfo, setTournamentInfo] = useState<any>(null);
     const [isLoadingMatch, setIsLoadingMatch] = useState(false);
@@ -118,9 +120,23 @@ export const useCompetitionModeConfig = (navigation: any) => {
         return { matchDetails: actualMatchData, tournamentDetails: tInfo?.info || tInfo };
     };
 
+    const handleBoardShortIdChange = (text: string) => {
+        setBoardShortId(text);
+        if (error) setError(null);
+    };
+
     const handleConnect = async () => {
         const cleanId = boardShortId.trim();
-        if (!cleanId) return;
+        if (!cleanId) {
+            setError("* El ID de la diana no puede estar vacío");
+            return;
+        }
+        const boardIdPattern = /^S[A-Z0-9]{3}-D\d{3}$/i;
+        if (!boardIdPattern.test(cleanId)) {
+            setError("* Formato inválido. El ID de la diana debe seguir el patrón SXXX-DNNN");
+            return;
+        }
+
         try {
             SocketClientService.connect(cleanId);
             setIsConnected(true);
@@ -231,7 +247,8 @@ export const useCompetitionModeConfig = (navigation: any) => {
 
     return {
         boardShortId,
-        setBoardShortId,
+        setBoardShortId: handleBoardShortIdChange,
+        error,
         isConnected,
         isBootstrapping,
         assignedMatchId,

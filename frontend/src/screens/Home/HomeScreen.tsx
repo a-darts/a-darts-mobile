@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, Text, FlatList, TouchableOpacity, ScrollView } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { Button } from '../../components/Button';
@@ -18,6 +18,23 @@ interface HomeScreenProps {
 
 export const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
   const { username, isGuest, recentGames, handlePlayRecentGame } = useHome(route);
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('beforeRemove', (e: any) => {
+      if (e.data.action.type === 'RESET') {
+        return;
+      }
+
+      e.preventDefault();
+
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'Login' }],
+      });
+    });
+
+    return unsubscribe;
+  }, [navigation]);
 
   const onPressPlayRecent = async (config: MatchX01Config) => {
     const matchId = await handlePlayRecentGame(config);

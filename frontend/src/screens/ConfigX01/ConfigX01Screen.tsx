@@ -21,16 +21,20 @@ enum GameTypes {
 }
 
 
-export const ConfigX01Screen = ({ navigation }) => {
+export const ConfigX01Screen = ({ navigation }: any) => {
   const {
     config, handlePlay, updateConfig, hasSecondPlayer,
     handlePlayerNameChange, handleAddPlayer, handleRemovePlayer, error
   } = useConfigX01(navigation);
 
   return (
-    <KeyboardAvoidingView style={styles.container}>
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={'height'}
+    >
       <ScrollView
         contentContainerStyle={styles.scrollContent}
+        keyboardShouldPersistTaps='handled'
       >
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>JUEGO</Text>

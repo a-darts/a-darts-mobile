@@ -8,6 +8,11 @@ export const styles = StyleSheet.create({
         padding: 20,
         backgroundColor: theme.colors.background,
     },
+    scrollContent: {
+        padding: theme.spacing.lg,
+        flexGrow: 1,
+        justifyContent: 'center',
+    },
     title: {
         fontSize: 28,
         fontWeight: 'bold',
@@ -95,6 +100,12 @@ export const styles = StyleSheet.create({
         fontSize: 16,
         color: theme.colors.textSecondary,
         marginVertical: 5,
+    },
+    errorText: {
+        fontSize: theme.typography.sizes.sm,
+        fontFamily: theme.typography.fontFamily.semiBold,
+        color: theme.colors.textError,
+        marginBottom: theme.spacing.lg,
     },
 
     suspensionOverlay: {
