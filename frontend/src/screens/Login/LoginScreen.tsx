@@ -73,6 +73,6 @@ export const LoginScreen = ({ navigation }: any) => {
         size='large'
         onPress={() => navigation.navigate('CompetitionModeConfig')}
       />
-    </View>
+    </View >
   );
 };
