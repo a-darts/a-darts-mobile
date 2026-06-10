@@ -31,7 +31,6 @@ export const MatchX01SummaryScreen = ({ route, navigation }: any) => {
         setMatch(result);
       } catch (error) {
         console.error("Error cargando estadísticas");
-        // MIRAR que hacer
       } finally {
         setLoading(false);
       }

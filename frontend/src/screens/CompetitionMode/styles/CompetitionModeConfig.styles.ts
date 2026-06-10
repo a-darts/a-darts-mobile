@@ -5,11 +5,11 @@ export const styles = StyleSheet.create({
     container: {
         flex: 1,
         justifyContent: 'center',
-        padding: 20,
+        padding: theme.spacing.lg,
+        paddingBottom: theme.spacing.lg + theme.spacing.xl,
         backgroundColor: theme.colors.background,
     },
     scrollContent: {
-        padding: theme.spacing.lg,
         flexGrow: 1,
         justifyContent: 'center',
     },
