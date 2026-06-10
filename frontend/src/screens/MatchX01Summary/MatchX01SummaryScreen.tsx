@@ -10,14 +10,16 @@ import { Button } from '../../components/Button';
 import { CreateMatchX01RequestDTO } from '../../../../backend/src/application/dtos/MatchX01DTOs';
 
 import { Card } from '../../components/Card';
+import { useBoard } from '../../utils/BoardContext';
 
 
 // Obtenemos los servicios y el repo desde la Factoría
 const matchRepo = MatchX01ServiceFactory.getRepository();
 const matchX01Service = MatchX01ServiceFactory.getMatchX01Service();
 
-export const MatchX01SummaryScreen = ({ route, navigation }) => {
+export const MatchX01SummaryScreen = ({ route, navigation }: any) => {
   const { matchId, isCompetitionMode = false } = route.params;
+  const { setAssignedMatchId } = useBoard();
 
   const [match, setMatch] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -75,6 +77,7 @@ export const MatchX01SummaryScreen = ({ route, navigation }) => {
 
   const handleExit = () => {
     if (isCompetitionMode) {
+      setAssignedMatchId(null);
       navigation.navigate('CompetitionModeConfig');
     } else {
       navigation.navigate('HomeScreen');
