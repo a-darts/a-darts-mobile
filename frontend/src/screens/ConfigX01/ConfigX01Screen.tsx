@@ -10,6 +10,7 @@ import { theme } from '../../theme/theme';
 import { styles } from './styles/ConfigX01.styles';
 import { GAME_OPTIONS, TYPE_OPTIONS } from './constants/ConfigX01.constants';
 import { useConfigX01 } from './hooks/useConfigX01';
+import { KeyboardAvoidingView } from 'react-native';
 
 
 type GamesX01 = 170 | 301 | 501 | 701 | 1001;
@@ -27,7 +28,7 @@ export const ConfigX01Screen = ({ navigation }) => {
   } = useConfigX01(navigation);
 
   return (
-    <View style={styles.container}>
+    <KeyboardAvoidingView style={styles.container}>
       <ScrollView
         contentContainerStyle={styles.scrollContent}
       >
@@ -123,6 +124,6 @@ export const ConfigX01Screen = ({ navigation }) => {
           onPress={handlePlay}
         />
       </View>
-    </View>
+    </KeyboardAvoidingView>
   );
 };

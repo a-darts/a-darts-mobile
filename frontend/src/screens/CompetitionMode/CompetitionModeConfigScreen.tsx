@@ -8,6 +8,7 @@ import { styles } from './styles/CompetitionModeConfig.styles';
 // Importas el hook personalizado
 import { useCompetitionModeConfig } from './hooks/useCompetitionModeConfig';
 import { MaterialIcons } from '@expo/vector-icons';
+import { KeyboardAvoidingView } from 'react-native';
 
 export const CompetitionModeConfigScreen = ({ navigation }: any) => {
     const {
@@ -182,7 +183,7 @@ export const CompetitionModeConfigScreen = ({ navigation }: any) => {
     }
 
     return (
-        <View style={styles.container}>
+        <KeyboardAvoidingView style={styles.container}>
             <Text style={styles.title}>Modo Competición</Text>
             <Text style={styles.subtitle}>Empareja esta tablet con una diana del servidor introduciendo su ID</Text>
 
@@ -201,6 +202,6 @@ export const CompetitionModeConfigScreen = ({ navigation }: any) => {
                 size="large"
                 iconName="link"
             />
-        </View>
+        </KeyboardAvoidingView>
     );
 };

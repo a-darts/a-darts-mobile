@@ -131,6 +131,13 @@ export const useCompetitionModeConfig = (navigation: any) => {
             await boardService.saveBoard(request);
         } catch (error) {
             console.error(error);
+
+            await disconnectBoard();
+            Alert.alert(
+                'Error de conexión',
+                'No se pudo establecer conexión con la diana. Por favor, verifica el ID e inténtalo de nuevo.',
+                [{ text: 'OK' }]
+            );
         }
     };
 
