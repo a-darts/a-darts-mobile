@@ -13,7 +13,7 @@ class SocketClientService {
     private matchUnassignedListeners: MatchStatusListener[] = [];
     private matchAssignedListeners: MatchStatusListener[] = [];
 
-    private readonly SERVER_URL = process.env.EXPO_PUBLIC_API_URL || 'http://192.168.0.44:3000';
+    private readonly SERVER_URL = process.env.EXPO_PUBLIC_SOCKET_URL || 'http://192.168.0.44:3000';
 
     public connect(boardShortId: string): void {
         if (this.socket) {
@@ -21,8 +21,12 @@ class SocketClientService {
         }
 
         this.boardShortId = boardShortId;
-        // MIRAR: (igual sobra) Forzamos transporte websocket para evitar problemas de polling en redes locales
-        this.socket = io(this.SERVER_URL, { transports: ['websocket'] });
+
+        this.socket = io(this.SERVER_URL, {
+            transports: ['websocket'],
+            forceNew: true,
+            secure: this.SERVER_URL.startsWith('wss://')
+        });
 
         this.socket.on('connect', () => {
             console.log(`[Socket] Conectado exitosamente. Socket ID: ${this.socket?.id}`);
