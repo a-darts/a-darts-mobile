@@ -3,8 +3,17 @@
     "preview": {
       "android": {
         "buildType": "apk"
+      },
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://api.a-darts.com",
+        "EXPO_PUBLIC_SOCKET_URL": "wss://api.a-darts.com"
       }
     },
-    "production": {}
+    "production": {
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://api.a-darts.com",
+        "EXPO_PUBLIC_SOCKET_URL": "wss://api.a-darts.com"
+      }
+    }
   }
 }
