@@ -25,7 +25,7 @@ export class MatchX01Mapper {
         const statusStr = raw.status ?? 'PLAYING';
         const status = isNaN(Number(statusStr))
             ? (statusStr === 'FINISHED' ? GameStatus.FINISHED : GameStatus.PLAYING)
-            : Number(statusStr) as GameStatus;
+            : statusStr as GameStatus;
 
         return MatchX01.restore(
             raw.id,
@@ -162,7 +162,7 @@ export class MatchX01Mapper {
         const statusStr = s.status ?? 'PLAYING';
         const status = isNaN(Number(statusStr))
             ? (statusStr === 'FINISHED' ? GameStatus.FINISHED : GameStatus.PLAYING)
-            : Number(statusStr) as GameStatus;
+            : statusStr as GameStatus;
 
         return {
             players: s.players.map(p => MatchX01Mapper.playerDTOtoPlayerX01(p).takeSnapshot()),

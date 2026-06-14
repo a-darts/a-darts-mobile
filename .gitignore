@@ -44,3 +44,5 @@ yarn-error.*
 
 # Coverage
 backend/tests/coverage/
+frontend/tests/coverage/
+coverage/
