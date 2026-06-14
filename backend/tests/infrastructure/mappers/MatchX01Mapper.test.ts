@@ -317,5 +317,82 @@ describe('MatchX01Mapper', () => {
             expect(dto.players[0].stats).toHaveProperty('hundredPlus');
             expect(dto.players[0].stats).toHaveProperty('average');
         });
+
+        it('debería serializar el historial y restaurarlo (snapshotToDTO round-trip)', () => {
+            const config = new MatchX01Config(301, GameTypes.FIRST_TO, 1, 1, ['Alice', 'Bob']);
+            const match = MatchX01.create('snap-rt', config);
+            match.addThrow(60); // genera 1 snapshot en historial
+
+            const dto = MatchX01Mapper.toPersistence(match);
+            // snapshotToDTO convierte el snapshot; snapshotDTOtoSnapshot lo restaura
+            const restored = MatchX01Mapper.toDomain(dto);
+
+            expect(restored.history).toHaveLength(1);
+            expect(restored.history[0].players).toHaveLength(2);
+            expect(restored.history[0].activePlayerIndex).toBe(0);
+        });
+    });
+
+    // -------------------------------------------------------------------------
+    // Branch coverage: numeric status strings
+    // -------------------------------------------------------------------------
+
+    describe('Ramas de status numérico', () => {
+        it('toDomain debería procesar status numérico como string (rama else de isNaN)', () => {
+            // GameStatus.PLAYING = 0, GameStatus.FINISHED = 1 (numeric enum assumed)
+            // Usamos '0' para que isNaN(Number('0')) === false → rama else
+            const dto = makeMatchDTO({ status: '0' });
+
+            // No debe lanzar, simplemente procesa el número como GameStatus
+            const match = MatchX01Mapper.toDomain(dto);
+            expect(match).toBeTruthy();
+        });
+
+        it('snapshotDTOtoSnapshot debería procesar status numérico en snapshot', () => {
+            const snapshot = {
+                players: [makePlayerDTO(), makePlayerDTO({ id: 'p-2', name: 'Bob' })],
+                activePlayerIndex: 0,
+                startingPlayerIndexForLeg: 0,
+                startingPlayerIndexForSet: 0,
+                status: '0', // numérico → rama else de isNaN dentro de snapshotDTOtoSnapshot
+            };
+            const dto = makeMatchDTO({ history: [snapshot] });
+
+            const match = MatchX01Mapper.toDomain(dto);
+            expect(match.history).toHaveLength(1);
+        });
+
+        it('toDomain debería usar array vacío cuando history es null (rama ?? [])', () => {
+            const dto = { ...makeMatchDTO(), history: null };
+
+            const match = MatchX01Mapper.toDomain(dto);
+
+            expect(match.history).toHaveLength(0);
+        });
+    });
+
+    // -------------------------------------------------------------------------
+    // Branch coverage: configToDTO con objeto plano (claves públicas)
+    // -------------------------------------------------------------------------
+
+    describe('configToDTO() con objeto plano sin claves privadas', () => {
+        it('debería usar las claves públicas cuando las privadas no existen', () => {
+            // Pasamos un objeto que no tiene _game etc., solo game
+            const plainConfig = {
+                game: 401,
+                typeOfGame: GameTypes.BEST_OF,
+                numSets: 3,
+                numLegs: 2,
+                playerNames: ['X', 'Y'],
+            } as any;
+
+            const dto = MatchX01Mapper.configToDTO(plainConfig);
+
+            expect(dto.game).toBe(401);
+            expect(dto.typeOfGame).toBe(GameTypes.BEST_OF);
+            expect(dto.numSets).toBe(3);
+            expect(dto.numLegs).toBe(2);
+            expect(dto.playerNames).toEqual(['X', 'Y']);
+        });
     });
 });

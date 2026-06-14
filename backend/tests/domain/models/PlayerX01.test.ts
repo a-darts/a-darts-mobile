@@ -195,6 +195,87 @@ describe('PlayerX01 Entity', () => {
             expect(restoredPlayer.remainingScore).toBe(361);
         });
     });
+
+    describe('editThrow()', () => {
+        it('debería lanzar error si el índice es 0 (tiro inicial protegido)', () => {
+            const player = PlayerX01.create('Alice', 301);
+            player.addThrow(60);
+            expect(() => player.editThrow(0, 50)).toThrow('Índice de tirada inválido');
+        });
+
+        it('debería lanzar error si el índice es >= throws.length', () => {
+            const player = PlayerX01.create('Alice', 301);
+            player.addThrow(60);
+            expect(() => player.editThrow(5, 50)).toThrow('Índice de tirada inválido');
+        });
+
+        it('debería truncar si newRemaining === 0 en el tiro editado', () => {
+            const player = PlayerX01.create('Alice', 180);
+            player.addThrow(60);  // index 1: remaining 120
+            player.addThrow(60);  // index 2: remaining 60
+
+            player.editThrow(1, 180);
+
+            expect(player.throws).toHaveLength(2);
+            expect(player.remainingScore).toBe(0);
+        });
+
+        it('debería recalcular tiros posteriores sin truncar cuando ninguno llega a 0', () => {
+            const player = PlayerX01.create('Alice', 501);
+            player.addThrow(100); // index 1: remaining 401
+            player.addThrow(100); // index 2: remaining 301
+
+            player.editThrow(1, 50);
+
+            expect(player.throws[1].score).toBe(50);
+            expect(player.throws[1].remainingScore).toBe(451);
+            expect(player.throws[2].remainingScore).toBe(351);
+            expect(player.remainingScore).toBe(351);
+        });
+
+        it('debería truncar en el tiro posterior si el recalculado llega a 0', () => {
+            const player = PlayerX01.create('Alice', 300);
+            player.addThrow(60);  // index 1: remaining 240
+            player.addThrow(60);  // index 2: remaining 180
+            player.addThrow(60);  // index 3: remaining 120
+
+            // Editamos index 1 a 120: previousRemaining=300, newRemaining=180
+            // Recalculamos: index 2 (score=60): 180-60=120. index 3 (score=60): 120-60=60. Sin truncar.
+            // Para truncar necesitamos que un posterior = remaining anterior:
+            // Editamos index 1 a 180: newRemaining=120. index2: 120-60=60. index3: 60-60=0 → trunca
+            player.editThrow(1, 180); // newRem=120; index2: 120-60=60; index3: 60-60=0 → truncateAt=3
+
+            expect(player.throws).toHaveLength(4); // [0, 1, 2, 3]
+            expect(player.remainingScore).toBe(0);
+        });
+
+        it('debería recalcular las stats tras editar un tiro', () => {
+            const player = PlayerX01.create('Alice', 501);
+            player.addThrow(180); // stats: 1x180
+            player.addThrow(60);
+
+            player.editThrow(1, 60); // cambia 180 → 60, stats deben recalcularse
+
+            expect(player.stats.oneEighties).toBe(0);
+            expect(player.stats.hundredPlus).toBe(0);
+        });
+    });
+
+    describe('resetLegsForMatchEnd()', () => {
+        it('debería poner numLegsWon a 0 sin afectar numSetsWon ni remainingScore', () => {
+            const player = PlayerX01.create('Alice', 301);
+            player.winLeg();
+            player.winLeg();
+            player.winSet();
+            player.addThrow(60);
+
+            player.resetLegsForMatchEnd();
+
+            expect(player.numLegsWon).toBe(0);
+            expect(player.numSetsWon).toBe(1);
+            expect(player.remainingScore).toBe(241);
+        });
+    });
 });
 
 describe('ThrowX01 Value Object', () => {

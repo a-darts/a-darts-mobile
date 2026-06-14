@@ -74,6 +74,17 @@ describe('MatchX01 Entity', () => {
             expect(() => match.addThrow(302)).toThrow(BustException);
         });
 
+        it('debería truncar en el tiro posterior si el recalculado llega a 0', () => {
+            const p = PlayerX01.create('Test', 200);
+            p.addThrow(60);  // index 1: remaining 140
+            p.addThrow(40);  // index 2: remaining 100
+            p.addThrow(30);  // index 3: remaining 70
+            p.editThrow(1, 160);
+
+            expect(p.throws).toHaveLength(3);
+            expect(p.remainingScore).toBe(0);
+        });
+
         it('debería lanzar InvalidThrowException si el resto es 1', () => {
             const match = MatchX01.create(MATCH_ID, config);
 
@@ -246,5 +257,95 @@ describe('MatchX01 Entity', () => {
             expect(match.startingPlayerIndexForLeg).toBe(0);
             expect(match.startingPlayerIndexForSet).toBe(0);
         });
+    });
+
+    describe('history getter', () => {
+        it('debería devolver una copia del historial de snapshots', () => {
+            const match = MatchX01.create(MATCH_ID, config);
+            match.addThrow(60);
+
+            const history = match.history;
+            expect(history).toHaveLength(1);
+            // Copia defensiva: no es la misma referencia que la interna
+            expect(history).not.toBe(match.history);
+        });
+    });
+});
+
+describe('MatchX01 - editThrow branch coverage', () => {
+    const MATCH_ID = 'edit-match';
+    let config: MatchX01Config;
+
+    beforeEach(() => {
+        config = new MatchX01Config(501, GameTypes.FIRST_TO, 1, 1, ['Alice', 'Bob']);
+    });
+
+    it('debería lanzar error si el jugador no existe', () => {
+        const match = MatchX01.create(MATCH_ID, config);
+        match.addThrow(60);
+
+        expect(() => match.editThrow('nonexistent-id', 1, 40)).toThrow('Jugador no encontrado');
+    });
+
+    it('debería actualizar el historial sin truncar cuando el editar no cierra el leg', () => {
+        const match = MatchX01.create(MATCH_ID, config);
+        match.addThrow(100); // Alice index 1: 401
+        match.addThrow(100); // Bob
+        const aliceId = match.players[0].id;
+
+        // No debería lanzar, Alice aún no ha terminado
+        match.editThrow(aliceId, 1, 50);
+
+        expect(match.players[0].remainingScore).toBe(451);
+        expect(match.status).toBe(GameStatus.PLAYING);
+    });
+
+    it('debería activar handleLegWon si editar lleva remainingScore a 0', () => {
+        // Usamos un juego de 180 para poder llegar a 0 con 1 dardo (180 pts)
+        const cfg180 = new MatchX01Config(180, GameTypes.FIRST_TO, 1, 1, ['Alice', 'Bob']);
+        const match = MatchX01.create(MATCH_ID, cfg180);
+        match.addThrow(60); // Alice: 120 remaining
+        match.addThrow(60); // Bob
+        const aliceId = match.players[0].id;
+
+        // Editamos para que Alice cierre con 180 (desde remaining 180 original)
+        match.editThrow(aliceId, 1, 180);
+
+        expect(match.status).toBe(GameStatus.FINISHED);
+    });
+
+    it('debería restaurar status a PLAYING si se edita en una partida FINISHED (no cierra de nuevo)', () => {
+        // Usamos juego de 180 para poder ganar con un solo tiro
+        const cfg180 = new MatchX01Config(180, GameTypes.FIRST_TO, 1, 1, ['Alice', 'Bob']);
+        const match = MatchX01.create(MATCH_ID, cfg180);
+        match.addThrow(180); // Alice gana → FINISHED
+        expect(match.status).toBe(GameStatus.FINISHED);
+        const aliceId = match.players[0].id;
+
+        // Editamos el tiro ganador para que NO cierre (180 → 60, remaining= 120)
+        match.editThrow(aliceId, 1, 60);
+
+        expect(match.status).toBe(GameStatus.PLAYING);
+    });
+});
+
+describe('MatchX01 - swapStartingPlayer branch coverage', () => {
+    const MATCH_ID = 'swap-match';
+    let config: MatchX01Config;
+
+    beforeEach(() => {
+        config = new MatchX01Config(301, GameTypes.FIRST_TO, 1, 1, ['Alice', 'Bob']);
+    });
+
+    it('debería ignorar el swap si ya hay historial de tiros', () => {
+        const match = MatchX01.create(MATCH_ID, config);
+        match.addThrow(60); // genera historial
+
+        match.swapStartingPlayer(); // debe ser ignorado
+
+        // El turno activo pertenece ahora a Bob (índice 1) porque Alice ya tiró,
+        // NO debería volver a Alice por el swap
+        expect(match.activePlayerIndex).toBe(1);
+        expect(match.startingPlayerIndexForLeg).toBe(0); // no cambia
     });
 });
