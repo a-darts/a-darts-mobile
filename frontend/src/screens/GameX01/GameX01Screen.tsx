@@ -62,10 +62,10 @@ export const GameX01Screen = ({ navigation, route }: any) => {
           type: 'error',
           mode: 'manual',
           showCloseButton: false,
-          onCloseAction: () => {
-            isLeaving.current = true;
-            navigation.navigate('CompetitionModeConfigScreen');
-          }
+          // onCloseAction: () => {
+          //   isLeaving.current = true;
+          //   navigation.navigate('CompetitionModeConfigScreen');
+          // }
         });
       }
     });
@@ -245,6 +245,17 @@ export const GameX01Screen = ({ navigation, route }: any) => {
                 onPress={handleSaveEdit}
               />
             </View>
+          </View>
+        )}
+        {toast.title === 'Partida asignada a otra diana' && (
+          <View style={{ marginTop: 10 }}>
+            <Button
+              title="VOLVER A LA ESPERA"
+              iconName={"refresh"}
+              variant={'primary'}
+              size='large'
+              onPress={handleExit}
+            />
           </View>
         )}
       </Toast>
