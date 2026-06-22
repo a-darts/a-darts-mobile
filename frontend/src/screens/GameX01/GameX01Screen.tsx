@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { View, Text, TouchableOpacity, Dimensions } from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useGameX01 } from './hooks/useGameX01';
 import { useKeypad } from './hooks/useKeypad';
@@ -14,11 +14,7 @@ import { GameStatus } from '../../../../backend/src/domain/enums/GameStatus';
 import SocketClientService from '../../services/SocketClientService';
 import { MaterialIcons } from '@expo/vector-icons';
 import { theme } from '../../theme/theme';
-
-
-const { width, height } = Dimensions.get('window');
-const aspectRatio = height / width;
-const isTablet = aspectRatio < 1.6 && width > 600;
+import { isTablet } from '../../utils/device';
 
 
 export const GameX01Screen = ({ navigation, route }: any) => {

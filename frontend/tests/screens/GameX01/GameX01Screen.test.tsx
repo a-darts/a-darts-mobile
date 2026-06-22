@@ -4,6 +4,16 @@ import { GameX01Screen } from '../../../src/screens/GameX01/GameX01Screen';
 import { GameStatus } from '../../../../backend/src/domain/enums/GameStatus';
 import MatchX01ServiceFactory from '../../../../backend/src/infrastructure/factories/MatchX01ServiceFactory';
 
+jest.mock('react-native', () => {
+    const reactNative = jest.requireActual('react-native');
+    Object.defineProperty(reactNative, 'Dimensions', {
+        get: jest.fn(() => ({
+            get: jest.fn().mockReturnValue({ width: 1024, height: 768, scale: 1, fontScale: 1 })
+        }))
+    });
+    return reactNative;
+});
+
 jest.mock('../../../src/services/SocketClientService', () => {
     return {
         onMatchSuspended: jest.fn(() => jest.fn()),

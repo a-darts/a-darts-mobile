@@ -1,13 +1,10 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Dimensions, useWindowDimensions } from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { theme } from '../../../theme/theme';
 import { useKeypad } from '../hooks/useKeypad';
-
-const { width, height } = Dimensions.get('window');
-const aspectRatio = height / width;
-const isTablet = aspectRatio < 1.6 && width > 600;
-
+import { styles } from '../styles/Keypad.styles';
+import { isTablet } from '../../../utils/device';
 
 export const Keypad = ({
   onKeyPress,
@@ -29,15 +26,12 @@ export const Keypad = ({
   isInputEmpty?: boolean;
 }) => {
 
-  const { width, height } = useWindowDimensions();
-  const aspectRatio = height / width;
-  const isTablet = aspectRatio < 1.6 && width > 600;
-
   const {
     getButtonStatus,
     getGameShotStatus,
     canCheckoutWithDarts,
   } = useKeypad();
+
 
   const NumberKey = ({ num }: { num: string }) => {
     const n = parseInt(num, 10);
@@ -184,57 +178,3 @@ export const Keypad = ({
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    width: '100%',
-  },
-  keypadRow: {
-    flexDirection: 'row',
-    gap: theme.spacing.sm,
-    marginTop: theme.spacing.sm,
-  },
-  keyBtn: {
-    flex: 1,
-    paddingVertical: theme.spacing.md,
-    backgroundColor: theme.colors.keyBackground,
-    borderRadius: theme.borderRadius.md,
-    borderWidth: 1,
-    borderColor: theme.colors.keyBorder,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  fastBtnContainer: {
-    flex: isTablet ? 3 : 2,
-    flexDirection: 'row',
-    gap: theme.spacing.sm,
-  },
-  fastBtn: {
-    flex: 1,
-    paddingVertical: theme.spacing.md,
-    backgroundColor: theme.colors.keyBackground,
-    borderRadius: theme.borderRadius.md,
-    borderWidth: 1,
-    borderColor: theme.colors.keyBorder,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  separator: {
-    width: theme.spacing.md,
-  },
-  keyNum: {
-    color: theme.colors.keyText,
-    fontFamily: theme.typography.fontFamily.bold,
-    fontSize: theme.typography.sizes.lg,
-  },
-  fastNum: {
-    color: theme.colors.keyTextSecondary,
-    fontFamily: theme.typography.fontFamily.bold,
-    fontSize: theme.typography.sizes.lg,
-  },
-  gameShotBtnText: {
-    color: theme.colors.keyTextSecondary,
-    fontFamily: theme.typography.fontFamily.bold,
-    fontSize: theme.typography.sizes.lg,
-  },
-});

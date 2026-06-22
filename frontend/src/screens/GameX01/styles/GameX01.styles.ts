@@ -1,9 +1,6 @@
-import { StyleSheet, Dimensions, Platform } from 'react-native';
+import { StyleSheet, Platform } from 'react-native';
 import { theme } from '../../../theme/theme';
-
-const { width, height } = Dimensions.get('window');
-const aspectRatio = height / width;
-const isTablet = aspectRatio < 1.6 && width > 600;
+import { isTablet } from '../../../utils/device';
 
 export const styles = StyleSheet.create({
     container: {
