@@ -14,7 +14,7 @@ export interface RecentGameItem {
 }
 
 export const useHome = (route: any) => {
-    const { user } = useAuth();
+    const { user, logout } = useAuth();
     const [recentGames, setRecentGames] = useState<RecentGameItem[]>([]);
 
     const username = user?.name || 'INVITADO';
@@ -72,6 +72,7 @@ export const useHome = (route: any) => {
         isGuest,
         recentGames,
         loadGames,
-        handlePlayRecentGame
+        handlePlayRecentGame,
+        logout,
     };
 };

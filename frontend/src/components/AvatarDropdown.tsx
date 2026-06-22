@@ -23,7 +23,7 @@ export const AvatarDropdown = () => {
 
         navigation.reset({
             index: 0,
-            routes: [{ name: 'Login' }],
+            routes: [{ name: 'LoginScreen' }],
         });
     };
 
@@ -122,7 +122,13 @@ export const AvatarDropdown = () => {
                                 {!user && (
                                     <TouchableOpacity
                                         style={[styles.menuItem, styles.logoutItem]}
-                                        onPress={() => { setShowMenu(false); navigation.navigate('Login'); }}
+                                        onPress={() => {
+                                            setShowMenu(false);
+                                            navigation.reset({
+                                                index: 0,
+                                                routes: [{ name: 'LoginScreen' }],
+                                            });
+                                        }}
                                     >
                                         <Feather name="log-in" size={18} color={theme.colors.avatarDropdownIcon} />
                                         <Text style={styles.menuItemText}>Iniciar sesión</Text>

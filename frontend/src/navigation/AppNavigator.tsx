@@ -16,7 +16,7 @@ import { theme } from '../theme/theme';
 
 export type AppStackParamList = {
   Intro: undefined;
-  Login: undefined;
+  LoginScreen: undefined;
   HomeScreen: undefined;
   ConfigX01: undefined;
   CompetitionModeConfig: undefined;
@@ -58,14 +58,14 @@ export const AppNavigator = () => {
           options={{ title: 'A-Darts', headerRight: () => null }}
         />
         <Stack.Screen
-          name="Login"
+          name="LoginScreen"
           component={LoginScreen}
           options={{ title: 'Inicio', headerRight: () => null }}
         />
         <Stack.Screen
           name="HomeScreen"
           component={HomeScreen}
-          options={{ title: 'Inicio' }}
+          options={{ title: 'Menú' }}
         />
         <Stack.Screen
           name="ConfigX01"

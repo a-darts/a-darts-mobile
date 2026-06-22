@@ -85,6 +85,10 @@ export const GameX01Screen = ({ navigation, route }: any) => {
         return;
       }
 
+      if (e.data.action.type === 'RESET' || match?.status === 'FINISHED') {
+        return;
+      }
+
       e.preventDefault();
 
       setToast({

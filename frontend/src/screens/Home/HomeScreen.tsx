@@ -19,16 +19,15 @@ export const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
   const { username, isGuest, recentGames, handlePlayRecentGame } = useHome(route);
 
   useEffect(() => {
+    console.log("Pressed");
     const unsubscribe = navigation.addListener('beforeRemove', (e: any) => {
       if (e.data.action.type === 'RESET') {
         return;
       }
-
       e.preventDefault();
-
       navigation.reset({
         index: 0,
-        routes: [{ name: 'Login' }],
+        routes: [{ name: 'LoginScreen' }],
       });
     });
 

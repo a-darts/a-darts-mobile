@@ -11,6 +11,7 @@ import { CreateMatchX01RequestDTO } from '../../../../backend/src/application/dt
 
 import { Card } from '../../components/Card';
 import { useBoard } from '../../utils/BoardContext';
+import { MatchX01 } from '../../../../backend/src/domain/models/MatchX01';
 
 
 // Obtenemos los servicios y el repo desde la Factoría
@@ -21,7 +22,7 @@ export const MatchX01SummaryScreen = ({ route, navigation }: any) => {
   const { matchId, isCompetitionMode = false } = route.params;
   const { setAssignedMatchId } = useBoard();
 
-  const [match, setMatch] = useState(null);
+  const [match, setMatch] = useState<MatchX01 | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -45,7 +46,7 @@ export const MatchX01SummaryScreen = ({ route, navigation }: any) => {
 
   const winnerName = match.players[match.activePlayerIndex].name;
 
-  const getBestValueColor = (currentValue, allPlayersValues) => {
+  const getBestValueColor = (currentValue: number, allPlayersValues: number[]) => {
     const max = Math.max(...allPlayersValues);
     const allSame = allPlayersValues.every(v => v === allPlayersValues[0]);
     if (max === 0 || allSame) return theme.colors.statsCardSuccessBorder;
@@ -79,7 +80,10 @@ export const MatchX01SummaryScreen = ({ route, navigation }: any) => {
       setAssignedMatchId(null);
       navigation.navigate('CompetitionModeConfig');
     } else {
-      navigation.navigate('HomeScreen');
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'HomeScreen' }],
+      });
     }
   };
 
