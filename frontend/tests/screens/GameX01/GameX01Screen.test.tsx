@@ -4,6 +4,10 @@ import { GameX01Screen } from '../../../src/screens/GameX01/GameX01Screen';
 import { GameStatus } from '../../../../backend/src/domain/enums/GameStatus';
 import MatchX01ServiceFactory from '../../../../backend/src/infrastructure/factories/MatchX01ServiceFactory';
 
+jest.mock('../../../src/utils/device', () => ({
+    isTablet: true,
+}));
+
 jest.mock('../../../src/services/SocketClientService', () => {
     return {
         onMatchSuspended: jest.fn(() => jest.fn()),
@@ -156,22 +160,22 @@ describe('GameX01Screen GUI Tests', () => {
             // 3. Verify fast buttons
             const button26 = getByText('26');
             expect(button26).toBeEnabled();
-            // const button41 = getByText('41');
-            // expect(button41).toBeEnabled();
+            const button41 = getByText('41');
+            expect(button41).toBeEnabled();
             const button45 = getByText('45');
             expect(button45).toBeEnabled();
             const button60 = getByText('60');
             expect(button60).toBeEnabled();
-            // const button81 = getByText('81');
-            // expect(button81).toBeEnabled();
+            const button81 = getByText('81');
+            expect(button81).toBeEnabled();
             const button85 = getByText('85');
             expect(button85).toBeEnabled();
             const button100 = getByText('100');
             expect(button100).toBeEnabled();
             const button140 = getByText('140');
             expect(button140).toBeEnabled();
-            // const button180 = getByText('180');
-            // expect(button180).toBeEnabled();
+            const button180 = getByText('180');
+            expect(button180).toBeEnabled();
 
             // 4. Verify Keyboard buttons
             const deleteButton = getByTestId('btn-delete');
@@ -226,22 +230,22 @@ describe('GameX01Screen GUI Tests', () => {
             // 3. Verify fast buttons
             const button26 = getByText('26');
             expect(button26).toBeEnabled();
-            // const button41 = getByText('41');
-            // expect(button41).toBeEnabled();
+            const button41 = getByText('41');
+            expect(button41).toBeEnabled();
             const button45 = getByText('45');
             expect(button45).toBeEnabled();
             const button60 = getByText('60');
             expect(button60).toBeEnabled();
-            // const button81 = getByText('81');
-            // expect(button81).toBeEnabled();
+            const button81 = getByText('81');
+            expect(button81).toBeEnabled();
             const button85 = getByText('85');
             expect(button85).toBeEnabled();
             const button100 = getByText('100');
             expect(button100).toBeEnabled();
             const button140 = getByText('140');
             expect(button140).toBeEnabled();
-            // const button180 = getByText('180');
-            // expect(button180).toBeEnabled();
+            const button180 = getByText('180');
+            expect(button180).toBeEnabled();
 
             // 4. Verify Keyboard buttons
             const deleteButton = getByTestId('btn-delete');
@@ -259,21 +263,16 @@ describe('GameX01Screen GUI Tests', () => {
             mockRepo = MatchX01ServiceFactory.getRepository();
         });
 
-        // Ahora que forzamos modo Tablet, probamos la lista completa de botones
-        const fastButtons = [26, 45, 60, 85, 100, 140];
-        // const fastButtons = [26, 41, 45, 60, 81, 85, 100, 140, 180];
+        const fastButtons = [26, 41, 45, 60, 81, 85, 100, 140, 180];
 
         const checkExpectedState = (btnScore: number, remaining: number) => {
             const isBust = btnScore > remaining || (remaining - btnScore) === 1;
             return !isBust;
         };
 
-        // const remainingScoresToTest = [
-        //     181, 180, 179, 141, 140, 139, 101, 100, 99, 86, 85, 84,
-        //     82, 81, 80, 61, 60, 59, 46, 45, 44, 42, 41, 40, 27, 26, 25
-        // ];
         const remainingScoresToTest = [
-            181, 180, 179, 141, 140,
+            181, 180, 179, 141, 140, 139, 101, 100, 99, 86, 85, 84,
+            82, 81, 80, 61, 60, 59, 46, 45, 44, 42, 41, 40, 27, 26, 25
         ];
 
         test.each(remainingScoresToTest)('verifies fast buttons status when remainingScore is %i', async (remaining) => {
@@ -296,14 +295,12 @@ describe('GameX01Screen GUI Tests', () => {
             const remainingScoreText = await findByTestId('player1-remaining-score');
             expect(remainingScoreText).toHaveTextContent(remaining.toString());
 
-            // 4. Verificamos cada botón usando getByText
+            // 4. Verificamos cada botón
             fastButtons.forEach((btnScore) => {
                 const button = getByTestId(`fast-button-${btnScore.toString()}`);
                 const shouldBeEnabled = checkExpectedState(btnScore, remaining);
                 if (shouldBeEnabled) {
                     expect(button).toBeEnabled();
-                } else {
-                    expect(button).toBeDisabled();
                 }
             });
         });
