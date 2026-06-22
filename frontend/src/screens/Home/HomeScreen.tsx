@@ -10,10 +10,9 @@ import { useHome, RecentGameItem } from './hooks/useHome';
 import { styles } from './styles/Home.styles';
 import { MatchX01Config } from '../../../../backend/src/domain/models/MatchX01Config';
 
-// 2. Definimos las propiedades básicas de React Navigation que recibe la pantalla
 interface HomeScreenProps {
-  route: any;       // Puedes cambiarlo por RouteProp<RootStackParamList, 'Home'> si usas un tipado global de navegación
-  navigation: any;  // Puedes cambiarlo por NativeStackNavigationProp<RootStackParamList, 'Home'>
+  route: any;
+  navigation: any;
 }
 
 export const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
@@ -83,13 +82,21 @@ export const HomeScreen = ({ route, navigation }: HomeScreenProps) => {
       </Card>
 
       {/* New Game Button */}
-      <View style={styles.newGameContainer}>
+      <View style={styles.buttonsContainer}>
         <Button
           title="NUEVA PARTIDA"
           iconName="gps-fixed"
           variant='primary'
           size='large'
           onPress={() => navigation.navigate('ConfigX01')}
+        />
+
+        <Button
+          title="MODO COMPETICIÓN"
+          iconName="monitor"
+          variant='primary'
+          size='large'
+          onPress={() => navigation.navigate('CompetitionModeConfig')}
         />
       </View>
 

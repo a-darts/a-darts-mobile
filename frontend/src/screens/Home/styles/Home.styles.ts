@@ -32,9 +32,10 @@ export const styles = StyleSheet.create({
     usernameTextGuest: {
         marginTop: theme.spacing.sm,
     },
-    newGameContainer: {
+    buttonsContainer: {
         marginBottom: theme.spacing.xl,
         marginTop: theme.spacing.md,
+        gap: theme.spacing.md,
     },
     recentGamesContainer: {
         // flex: 1,

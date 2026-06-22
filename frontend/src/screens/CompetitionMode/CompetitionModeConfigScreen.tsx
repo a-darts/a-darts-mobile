@@ -40,7 +40,7 @@ export const CompetitionModeConfigScreen = ({ navigation }: any) => {
             e.preventDefault();
             navigation.reset({
                 index: 0,
-                routes: [{ name: 'Login' }],
+                routes: [{ name: 'HomeScreen' }],
             });
         });
 
