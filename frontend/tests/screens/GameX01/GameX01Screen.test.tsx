@@ -47,8 +47,8 @@ const mockRoute = {
     },
 };
 
-const mockMatch = {
-    id: 'TEST-MATCH-ID',
+const mockMatch1Player = {
+    id: 'TEST-MATCH-ID-1',
     status: GameStatus.PLAYING,
     activePlayerIndex: 0,
     config: {
@@ -81,7 +81,7 @@ describe('GameX01Screen GUI Tests', () => {
     beforeEach(() => {
         jest.clearAllMocks();
         mockRepo = MatchX01ServiceFactory.getRepository();
-        jest.spyOn(mockRepo, 'getById').mockResolvedValue(mockMatch as any);
+        jest.spyOn(mockRepo, 'getById').mockResolvedValue(mockMatch1Player as any);
     });
 
     it('should have correct buttons enabled/disabled on initial load (1 player, 501)', async () => {

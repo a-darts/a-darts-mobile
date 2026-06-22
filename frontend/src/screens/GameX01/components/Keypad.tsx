@@ -161,7 +161,7 @@ export const Keypad = ({
         </View>
         <View style={styles.separator} />
         <TouchableOpacity
-          style={[styles.keyBtn, isInputEmpty && { opacity: 0.5 }]}
+          style={[styles.keyBtn, isInputEmpty && { opacity: 0.3 }]}
           onPress={onBackspace}
           disabled={isInputEmpty}
           testID="btn-delete"
@@ -170,7 +170,7 @@ export const Keypad = ({
         </TouchableOpacity>
         <NumberKey num="0" />
         <TouchableOpacity
-          style={[styles.keyBtn, isInputEmpty && { opacity: 0.5 }]}
+          style={[styles.keyBtn, isInputEmpty && { opacity: 0.3 }]}
           onPress={onEnter}
           disabled={isInputEmpty}
           testID="btn-enter"
