@@ -52,7 +52,7 @@ const mockNavigation = {
 
 const mockRoute = {
     params: {
-        matchId: 'TEST-MATCH-ID',
+        matchId: 'TEST-MATCH-ID-1',
     },
 };
 
@@ -84,68 +84,177 @@ const mockMatch1Player = {
     },
 };
 
+const mockMatch2Players = {
+    id: 'TEST-MATCH-ID-2',
+    status: GameStatus.PLAYING,
+    activePlayerIndex: 0,
+    config: {
+        game: 501,
+        typeOfGame: 'BEST_OF',
+        numSets: 1,
+        numLegs: 3,
+        playerNames: ['Jugador 1', 'Jugador 2'],
+    },
+    players: [
+        {
+            id: 'PLAYER-1',
+            name: 'Jugador 1',
+            remainingScore: 501,
+            numSetsWon: 0,
+            numLegsWon: 0,
+            stats: { average: 0, oneEighties: 0, hundredFortyPlus: 0, hundredPlus: 0 },
+            throws: [],
+        },
+        {
+            id: 'PLAYER-2',
+            name: 'Jugador 2',
+            remainingScore: 501,
+            numSetsWon: 0,
+            numLegsWon: 0,
+            stats: { average: 0, oneEighties: 0, hundredFortyPlus: 0, hundredPlus: 0 },
+            throws: [],
+        },
+    ],
+    history: [],
+    get activePlayer() {
+        return this.players[this.activePlayerIndex];
+    },
+};
+
 describe('GameX01Screen GUI Tests', () => {
     let mockRepo: any;
 
-    beforeEach(() => {
-        jest.clearAllMocks();
-        mockRepo = MatchX01ServiceFactory.getRepository();
-        jest.spyOn(mockRepo, 'getById').mockResolvedValue(mockMatch1Player as any);
+    describe('1 player tests', () => {
+        beforeEach(() => {
+            jest.clearAllMocks();
+            mockRepo = MatchX01ServiceFactory.getRepository();
+            jest.spyOn(mockRepo, 'getById').mockResolvedValue(mockMatch1Player as any);
+        });
+
+        it('should have correct buttons enabled/disabled on initial load (1 player, 501)', async () => {
+            const { getByText, findByText, getByTestId } = render(
+                <GameX01Screen navigation={mockNavigation} route={mockRoute} />
+            );
+
+            // 1. Verify match loading parameters
+            const playerText = await findByText(/Jugador 1/i);
+            expect(playerText).toBeTruthy();
+            const setsText = await findByText('SETS');
+            expect(setsText).toBeTruthy();
+            const legsText = await findByText('LEGS');
+            expect(legsText).toBeTruthy();
+
+            const legsWonText = getByTestId('player1-legs-won');
+            expect(legsWonText).toHaveTextContent('0');
+            const setsWonText = getByTestId('player1-sets-won');
+            expect(setsWonText).toHaveTextContent('0');
+
+            // 2. Verify match enabled and disabled buttons
+            const deshacerButton = getByText('DESHACER');
+            expect(deshacerButton).toBeDisabled();
+
+            const restoButton = getByText('RESTO');
+            expect(restoButton).toBeDisabled();
+
+            const buttonDARDO = getByText('DARDO');
+            expect(buttonDARDO).toBeDisabled();
+
+            // 3. Verify fast buttons
+            const button26 = getByText('26');
+            expect(button26).toBeEnabled();
+            // const button41 = getByText('41');
+            // expect(button41).toBeEnabled();
+            const button45 = getByText('45');
+            expect(button45).toBeEnabled();
+            const button60 = getByText('60');
+            expect(button60).toBeEnabled();
+            // const button81 = getByText('81');
+            // expect(button81).toBeEnabled();
+            const button85 = getByText('85');
+            expect(button85).toBeEnabled();
+            const button100 = getByText('100');
+            expect(button100).toBeEnabled();
+            const button140 = getByText('140');
+            expect(button140).toBeEnabled();
+            // const button180 = getByText('180');
+            // expect(button180).toBeEnabled();
+
+            // 4. Verify Keyboard buttons
+            const deleteButton = getByTestId('btn-delete');
+            expect(deleteButton).toBeDisabled();
+
+            const enterButton = getByTestId('btn-enter');
+            expect(enterButton).toBeDisabled();
+        });
     });
 
-    it('should have correct buttons enabled/disabled on initial load (1 player, 501)', async () => {
-        const { getByText, findByText, getByTestId } = render(
-            <GameX01Screen navigation={mockNavigation} route={mockRoute} />
-        );
+    describe('2 players tests', () => {
+        beforeEach(() => {
+            jest.clearAllMocks();
+            mockRepo = MatchX01ServiceFactory.getRepository();
+            jest.spyOn(mockRepo, 'getById').mockResolvedValue(mockMatch2Players as any);
+        });
 
-        // 1. Verify match loading parameters
-        const playerText = await findByText(/Jugador 1/i);
-        expect(playerText).toBeTruthy();
-        const setsText = await findByText('SETS');
-        expect(setsText).toBeTruthy();
-        const legsText = await findByText('LEGS');
-        expect(legsText).toBeTruthy();
+        it('should have correct buttons enabled/disabled on initial load (1 player, 501)', async () => {
+            const { getByText, findByText, getByTestId } = render(
+                <GameX01Screen navigation={mockNavigation} route={mockRoute} />
+            );
 
-        const legsWonText = getByTestId('player1-legs-won');
-        expect(legsWonText).toHaveTextContent('0');
-        const setsWonText = getByTestId('player1-sets-won');
-        expect(setsWonText).toHaveTextContent('0');
+            // 1. Verify match loading parameters
+            const player1Text = await findByText(/Jugador 1/i);
+            expect(player1Text).toBeTruthy();
+            const player2Text = await findByText(/Jugador 2/i);
+            expect(player2Text).toBeTruthy();
+            const setsText = await findByText('SETS');
+            expect(setsText).toBeTruthy();
+            const legsText = await findByText('LEGS');
+            expect(legsText).toBeTruthy();
 
-        // 2. Verify match enabled and disabled buttons
-        const deshacerButton = getByText('DESHACER');
-        expect(deshacerButton).toBeDisabled();
+            const legsWonPlayer1Text = getByTestId('player1-legs-won');
+            expect(legsWonPlayer1Text).toHaveTextContent('0 - 0');
+            const setsWonPlayer1Text = getByTestId('player1-sets-won');
+            expect(setsWonPlayer1Text).toHaveTextContent('0 - 0');
+            const legsWonPlayer2Text = getByTestId('player2-legs-won');
+            expect(legsWonPlayer2Text).toHaveTextContent('- 0');
+            const setsWonPlayer2Text = getByTestId('player2-sets-won');
+            expect(setsWonPlayer2Text).toHaveTextContent('- 0');
 
-        const restoButton = getByText('RESTO');
-        expect(restoButton).toBeDisabled();
+            // 2. Verify match enabled and disabled buttons
+            const deshacerButton = getByText('DESHACER');
+            expect(deshacerButton).toBeDisabled();
 
-        const buttonDARDO = getByText('DARDO');
-        expect(buttonDARDO).toBeDisabled();
+            const restoButton = getByText('RESTO');
+            expect(restoButton).toBeDisabled();
 
-        // 3. Verify fast buttons
-        const button26 = getByText('26');
-        expect(button26).toBeEnabled();
-        // const button41 = getByText('41');
-        // expect(button41).toBeEnabled();
-        const button45 = getByText('45');
-        expect(button45).toBeEnabled();
-        const button60 = getByText('60');
-        expect(button60).toBeEnabled();
-        // const button81 = getByText('81');
-        // expect(button81).toBeEnabled();
-        const button85 = getByText('85');
-        expect(button85).toBeEnabled();
-        const button100 = getByText('100');
-        expect(button100).toBeEnabled();
-        const button140 = getByText('140');
-        expect(button140).toBeEnabled();
-        // const button180 = getByText('180');
-        // expect(button180).toBeEnabled();
+            const buttonDARDO = getByText('DARDO');
+            expect(buttonDARDO).toBeDisabled();
 
-        // 4. Verify Keyboard buttons
-        const deleteButton = getByTestId('btn-delete');
-        expect(deleteButton).toBeDisabled();
+            // 3. Verify fast buttons
+            const button26 = getByText('26');
+            expect(button26).toBeEnabled();
+            // const button41 = getByText('41');
+            // expect(button41).toBeEnabled();
+            const button45 = getByText('45');
+            expect(button45).toBeEnabled();
+            const button60 = getByText('60');
+            expect(button60).toBeEnabled();
+            // const button81 = getByText('81');
+            // expect(button81).toBeEnabled();
+            const button85 = getByText('85');
+            expect(button85).toBeEnabled();
+            const button100 = getByText('100');
+            expect(button100).toBeEnabled();
+            const button140 = getByText('140');
+            expect(button140).toBeEnabled();
+            // const button180 = getByText('180');
+            // expect(button180).toBeEnabled();
 
-        const enterButton = getByTestId('btn-enter');
-        expect(enterButton).toBeDisabled();
+            // 4. Verify Keyboard buttons
+            const deleteButton = getByTestId('btn-delete');
+            expect(deleteButton).toBeDisabled();
+
+            const enterButton = getByTestId('btn-enter');
+            expect(enterButton).toBeDisabled();
+        });
     });
 });
