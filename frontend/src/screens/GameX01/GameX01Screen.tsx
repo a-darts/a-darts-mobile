@@ -287,17 +287,17 @@ export const GameX01Screen = ({ navigation, route }: any) => {
 
         {/* Marcador central  */}
         <View style={styles.statsCard}>
-          <Text style={styles.statsRowText}>
+          <Text style={styles.statsRowText} testID='player1-legs-won'>
             {p1.numLegsWon}
             {p2 && (
-              <Text> - {p2?.numLegsWon ?? 0}</Text>
+              <Text testID='player2-legs-won'> - {p2?.numLegsWon ?? 0}</Text>
             )}
           </Text>
           <Text style={styles.statsLabel}>LEGS</Text>
-          <Text style={[styles.statsRowText, { marginTop: 10 }]}>
+          <Text style={[styles.statsRowText, { marginTop: 10 }]} testID='player1-sets-won'>
             {p1.numSetsWon}
             {p2 && (
-              <Text> - {p2?.numSetsWon ?? 0}</Text>
+              <Text testID='player2-sets-won'> - {p2?.numSetsWon ?? 0}</Text>
             )}
           </Text>
           <Text style={styles.statsLabel}>SETS</Text>

@@ -106,7 +106,7 @@ export const styles = StyleSheet.create({
     tableCol: {
         flex: 1,
         fontFamily: theme.typography.fontFamily.regular,
-        fontSize: isTablet ? theme.typography.sizes.xxl : theme.typography.sizes.sm,
+        fontSize: isTablet ? theme.typography.sizes.xxl : theme.typography.sizes.md,
         color: theme.colors.text,
     },
     tableScore: {

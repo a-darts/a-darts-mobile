@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Dimensions, useWindowDimensions } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { theme } from '../../../theme/theme';
 import { useKeypad } from '../hooks/useKeypad';
@@ -29,12 +29,15 @@ export const Keypad = ({
   isInputEmpty?: boolean;
 }) => {
 
+  const { width, height } = useWindowDimensions();
+  const aspectRatio = height / width;
+  const isTablet = aspectRatio < 1.6 && width > 600;
+
   const {
     getButtonStatus,
     getGameShotStatus,
     canCheckoutWithDarts,
   } = useKeypad();
-
 
   const NumberKey = ({ num }: { num: string }) => {
     const n = parseInt(num, 10);

@@ -4,7 +4,6 @@ import { GameX01Screen } from '../../../src/screens/GameX01/GameX01Screen';
 import { GameStatus } from '../../../../backend/src/domain/enums/GameStatus';
 import MatchX01ServiceFactory from '../../../../backend/src/infrastructure/factories/MatchX01ServiceFactory';
 
-// --- MOCKS ---
 jest.mock('../../../src/services/SocketClientService', () => {
     return {
         onMatchSuspended: jest.fn(() => jest.fn()),
@@ -89,30 +88,50 @@ describe('GameX01Screen GUI Tests', () => {
             <GameX01Screen navigation={mockNavigation} route={mockRoute} />
         );
 
-        // Wait for the match to load by checking for the player's name
+        // 1. Verify match loading parameters
         const playerText = await findByText(/Jugador 1/i);
         expect(playerText).toBeTruthy();
+        const setsText = await findByText('SETS');
+        expect(setsText).toBeTruthy();
+        const legsText = await findByText('LEGS');
+        expect(legsText).toBeTruthy();
 
-        // 1. "DESHACER" should be disabled because history is empty
+        const legsWonText = getByTestId('player1-legs-won');
+        expect(legsWonText).toHaveTextContent('0');
+        const setsWonText = getByTestId('player1-sets-won');
+        expect(setsWonText).toHaveTextContent('0');
+
+        // 2. Verify match enabled and disabled buttons
         const deshacerButton = getByText('DESHACER');
         expect(deshacerButton).toBeDisabled();
 
-        // 2. "RESTO" should be disabled because input is empty
         const restoButton = getByText('RESTO');
         expect(restoButton).toBeDisabled();
 
-        // 3. Fast Buttons should be enabled
-        const button26 = getByText('26');
-        expect(button26).not.toBeDisabled();
-
-        const button60 = getByText('60');
-        expect(button60).not.toBeDisabled();
-
-        // 4. DARDO button should be disabled at 501
         const buttonDARDO = getByText('DARDO');
         expect(buttonDARDO).toBeDisabled();
 
-        // 5. Delete and Enter keys should be disabled when input is empty
+        // 3. Verify fast buttons
+        const button26 = getByText('26');
+        expect(button26).toBeEnabled();
+        // const button41 = getByText('41');
+        // expect(button41).toBeEnabled();
+        const button45 = getByText('45');
+        expect(button45).toBeEnabled();
+        const button60 = getByText('60');
+        expect(button60).toBeEnabled();
+        // const button81 = getByText('81');
+        // expect(button81).toBeEnabled();
+        const button85 = getByText('85');
+        expect(button85).toBeEnabled();
+        const button100 = getByText('100');
+        expect(button100).toBeEnabled();
+        const button140 = getByText('140');
+        expect(button140).toBeEnabled();
+        // const button180 = getByText('180');
+        // expect(button180).toBeEnabled();
+
+        // 4. Verify Keyboard buttons
         const deleteButton = getByTestId('btn-delete');
         expect(deleteButton).toBeDisabled();
 
