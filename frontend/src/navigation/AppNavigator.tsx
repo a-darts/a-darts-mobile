@@ -65,7 +65,7 @@ export const AppNavigator = () => {
         <Stack.Screen
           name="HomeScreen"
           component={HomeScreen}
-          options={{ title: 'Menú' }}
+          options={{ title: 'A-Darts' }}
         />
         <Stack.Screen
           name="ConfigX01"
