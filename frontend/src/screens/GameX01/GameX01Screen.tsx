@@ -380,6 +380,7 @@ export const GameX01Screen = ({ navigation, route }: any) => {
           onGameShot={handleGameShot}
           onCheckout={handleCheckout}
           remainingScore={activePlayer.remainingScore}
+          isInputEmpty={inputValue === ''}
         />
       </View>
     </SafeAreaView>

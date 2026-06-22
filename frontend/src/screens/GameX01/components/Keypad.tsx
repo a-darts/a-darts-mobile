@@ -17,6 +17,16 @@ export const Keypad = ({
   onGameShot,
   onCheckout,
   remainingScore,
+  isInputEmpty,
+}: {
+  onKeyPress: (num: string) => void;
+  onBackspace: () => void;
+  onEnter: () => void;
+  onFastScore: (score: number) => void;
+  onGameShot: () => void;
+  onCheckout: (score: number, darts: number) => void;
+  remainingScore: number;
+  isInputEmpty?: boolean;
 }) => {
 
   const {
@@ -150,11 +160,21 @@ export const Keypad = ({
           )}
         </View>
         <View style={styles.separator} />
-        <TouchableOpacity style={styles.keyBtn} onPress={onBackspace}>
+        <TouchableOpacity
+          style={[styles.keyBtn, isInputEmpty && { opacity: 0.5 }]}
+          onPress={onBackspace}
+          disabled={isInputEmpty}
+          testID="btn-delete"
+        >
           <Feather name="delete" size={20} color={theme.colors.keyIcon} />
         </TouchableOpacity>
         <NumberKey num="0" />
-        <TouchableOpacity style={styles.keyBtn} onPress={onEnter}>
+        <TouchableOpacity
+          style={[styles.keyBtn, isInputEmpty && { opacity: 0.5 }]}
+          onPress={onEnter}
+          disabled={isInputEmpty}
+          testID="btn-enter"
+        >
           <Feather name="corner-down-left" size={20} color={theme.colors.keyIcon} />
         </TouchableOpacity>
       </View>
