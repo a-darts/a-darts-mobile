@@ -271,7 +271,10 @@ export const GameX01Screen = ({ navigation, route }: any) => {
           >
             {p1.name}
           </Text>
-          <Text style={[styles.scoreLeftText, activeIndex === 0 && styles.scoreActiveText]}>
+          <Text
+            style={[styles.scoreLeftText, activeIndex === 0 && styles.scoreActiveText]}
+            testID='player1-remaining-score'
+          >
             {p1.remainingScore}
           </Text>
           {showAverage && (
@@ -309,7 +312,10 @@ export const GameX01Screen = ({ navigation, route }: any) => {
             >
               {p2.name}
             </Text>
-            <Text style={[styles.scoreLeftText, activeIndex === 1 && styles.scoreActiveText]}>
+            <Text
+              style={[styles.scoreLeftText, activeIndex === 1 && styles.scoreActiveText]}
+              testID='player2-remaining-score'
+            >
               {p2.remainingScore}
             </Text>
             {showAverage && (

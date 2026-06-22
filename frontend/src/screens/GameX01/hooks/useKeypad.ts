@@ -3,7 +3,7 @@ const BOGEY_NUMBERS = [169, 168, 166, 165, 163, 162, 159];
 
 export const useKeypad = () => {
     const getButtonStatus = (buttonScore: number, remainingScore: number) => {
-        const isDisabled = buttonScore > remainingScore;
+        const isDisabled = buttonScore > remainingScore || (remainingScore - buttonScore) === 1;
         return {
             isDisabled,
             style: { opacity: isDisabled ? 0.2 : 1 }

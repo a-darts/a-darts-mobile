@@ -61,12 +61,14 @@ export const Keypad = ({
 
   const FastButton = ({ score }: { score: number }) => {
     const { isDisabled, style } = getButtonStatus(score, remainingScore);
+    const buttonId = "fast-button-" + score.toString();
     return (
       <TouchableOpacity
         style={[styles.fastBtn, style]}
         onPress={() => onFastScore(score)}
         disabled={isDisabled}
         activeOpacity={0.7}
+        testID={buttonId}
       >
         <Text style={styles.fastNum}>{score}</Text>
       </TouchableOpacity>
